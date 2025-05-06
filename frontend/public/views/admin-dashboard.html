@@ -45,9 +45,6 @@
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -58,7 +55,6 @@
                                 <i class="fas fa-user-circle me-1"></i> Administrador
                             </a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Perfil</a>
                                 <a class="dropdown-item" href="#/admin/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
@@ -72,47 +68,37 @@
         <!-- Dashboard Content -->
         <div class="container-fluid p-4">
             <div class="row mb-4">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <h2 class="mb-3">Dashboard Administrativo</h2>
                     <p class="text-muted">Bem-vindo ao painel de controle do AgendAI. Gerencie todos os aspectos do sistema.</p>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fas fa-download me-1"></i> Relatório
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary">
-                            <i class="fas fa-calendar me-1"></i> Data
-                        </button>
-                    </div>
                 </div>
             </div>
             
             <!-- Cards Row -->
             <div class="row mb-4">
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-primary shadow h-100 py-2">
-                        <div class="card-body">
+                <div class="col-xl-6 col-lg-6 col-md-6 mb-2">
+                    <div class="card border-left-primary shadow h-100 py-1">
+                        <div class="card-body py-2">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                        Agendamentos (Hoje)</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">28</div>
+                                        Quantidade de Empresas</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">42</div>
                                 </div>
                                 <div class="col-auto">
-                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                    <i class="fas fa-building fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-success shadow h-100 py-2">
-                        <div class="card-body">
+                <div class="col-xl-6 col-lg-6 col-md-6 mb-2">
+                    <div class="card border-left-success shadow h-100 py-1">
+                        <div class="card-body py-2">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                        Faturamento (Mensal)</div>
+                                        Faturamento Mensal</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 50.000</div>
                                 </div>
                                 <div class="col-auto">
@@ -122,42 +108,53 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-info shadow h-100 py-2">
-                        <div class="card-body">
+            </div>
+            
+            <!-- Cards dos Planos -->
+            <div class="row mb-4">
+                <div class="col-xl-4 col-md-4 mb-2">
+                    <div class="card border-left-info shadow h-100 py-1">
+                        <div class="card-body py-2">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                        Taxa de Comparecimento</div>
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col-auto">
-                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">78%</div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="progress progress-sm mr-2">
-                                                <div class="progress-bar bg-info" role="progressbar" style="width: 78%"></div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                        Empresas no Plano Básico</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
                                 </div>
                                 <div class="col-auto">
-                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                    <i class="fas fa-tag fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card border-left-warning shadow h-100 py-2">
-                        <div class="card-body">
+                <div class="col-xl-4 col-md-4 mb-2">
+                    <div class="card border-left-warning shadow h-100 py-1">
+                        <div class="card-body py-2">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                        Novos Clientes</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                        Empresas no Plano Intermediário</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">15</div>
                                 </div>
                                 <div class="col-auto">
-                                    <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                                    <i class="fas fa-tag fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-4 col-md-4 mb-2">
+                    <div class="card border-left-danger shadow h-100 py-1">
+                        <div class="card-body py-2">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Empresas no Plano Avançado</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">9</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tag fa-2x text-gray-300"></i>
                                 </div>
                             </div>
                         </div>
@@ -165,41 +162,18 @@
                 </div>
             </div>
             
-            <!-- Charts Row -->
+            <!-- Segunda linha de gráficos -->
             <div class="row">
-                <div class="col-xl-8 col-lg-7">
-                    <div class="card shadow mb-4">
+                <!-- Gráfico de Empresas por Tipo de Plano -->
+                <div class="col-xl-6 col-lg-6 mb-4">
+                    <div class="card shadow h-100">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Visão Geral de Agendamentos</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Empresas Por Planos</h6>
                             <div class="dropdown no-arrow">
-                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                                 </a>
-                                <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
-                                    <div class="dropdown-header">Opções:</div>
-                                    <a class="dropdown-item" href="#">Exportar</a>
-                                    <a class="dropdown-item" href="#">Imprimir</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Mais Detalhes</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="appointmentsChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-xl-4 col-lg-5">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Serviços Mais Procurados</h6>
-                            <div class="dropdown no-arrow">
-                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink2">
+                                <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink3">
                                     <div class="dropdown-header">Opções:</div>
                                     <a class="dropdown-item" href="#">Exportar</a>
                                     <a class="dropdown-item" href="#">Imprimir</a>
@@ -210,106 +184,49 @@
                         </div>
                         <div class="card-body">
                             <div class="chart-pie pt-4 pb-2">
-                                <canvas id="servicesChart"></canvas>
+                                <canvas id="companiesByPlanChart" width="400" height="300"></canvas>
                             </div>
                             <div class="mt-4 text-center small">
                                 <span class="me-2">
-                                    <i class="fas fa-circle text-primary"></i> Corte de Cabelo
+                                    <i class="fas fa-circle text-primary"></i> Básico
                                 </span>
                                 <span class="me-2">
-                                    <i class="fas fa-circle text-success"></i> Coloração
+                                    <i class="fas fa-circle text-success"></i> Premium
                                 </span>
                                 <span class="me-2">
-                                    <i class="fas fa-circle text-info"></i> Manicure
+                                    <i class="fas fa-circle text-info"></i> Enterprise
+                                </span>
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-warning"></i> Trial
                                 </span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Recent Appointments Table -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Agendamentos Recentes</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Cliente</th>
-                                    <th>Serviço</th>
-                                    <th>Profissional</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1001</td>
-                                    <td>Maria Silva</td>
-                                    <td>Corte de Cabelo</td>
-                                    <td>João Barbeiro</td>
-                                    <td>03/05/2025 09:30</td>
-                                    <td><span class="badge bg-success">Confirmado</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1002</td>
-                                    <td>José Pereira</td>
-                                    <td>Barba</td>
-                                    <td>João Barbeiro</td>
-                                    <td>03/05/2025 10:15</td>
-                                    <td><span class="badge bg-warning text-dark">Pendente</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1003</td>
-                                    <td>Ana Oliveira</td>
-                                    <td>Manicure</td>
-                                    <td>Carla Manicure</td>
-                                    <td>03/05/2025 11:00</td>
-                                    <td><span class="badge bg-success">Confirmado</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1004</td>
-                                    <td>Pedro Santos</td>
-                                    <td>Corte e Barba</td>
-                                    <td>João Barbeiro</td>
-                                    <td>03/05/2025 13:30</td>
-                                    <td><span class="badge bg-danger">Cancelado</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1005</td>
-                                    <td>Lucia Ferreira</td>
-                                    <td>Coloração</td>
-                                    <td>Amanda Cabeleireira</td>
-                                    <td>03/05/2025 14:45</td>
-                                    <td><span class="badge bg-success">Confirmado</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                
+                <!-- Gráfico de Empresas Cadastradas Por Mês -->
+                <div class="col-xl-6 col-lg-6 mb-4">
+                    <div class="card shadow h-100">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Empresas Cadastradas Por Mês</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink4" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink4">
+                                    <div class="dropdown-header">Opções:</div>
+                                    <a class="dropdown-item" href="#">Exportar</a>
+                                    <a class="dropdown-item" href="#">Imprimir</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Mais Detalhes</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="companiesGrowthChart" width="400" height="300"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -317,12 +234,68 @@
     </div>
 </div>
 
-<script>
-    // Toggle sidebar
-    document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-        document.getElementById('wrapper').classList.toggle('toggled');
-    });
+<style>
+    /* Estilos para cards de indicadores */
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
     
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+    
+    .border-left-danger {
+        border-left: 0.25rem solid #e74a3b !important;
+    }
+    
+    .progress-sm {
+        height: 0.5rem;
+    }
+    
+    .text-xs {
+        font-size: 0.7rem;
+    }
+    
+    .chart-area, .chart-pie, .chart-bar {
+        position: relative;
+        height: 20rem;
+    }
+
+    /* Estilos adicionais para os cards informativos compactos */
+    .mb-2 .card-body {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    .mb-2 .h5 {
+        font-size: 1.1rem;
+        margin-bottom: 0;
+    }
+    
+    .mb-2 .text-xs {
+        font-size: 0.65rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mb-2 .fa-2x {
+        font-size: 1.75rem;
+    }
+</style>
+
+<!-- Scripts externos -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="/src/js/dashboard-charts.js"></script>
+
+<script>
     // Configuração do logout
     document.getElementById('logout-button')?.addEventListener('click', function(e) {
         e.preventDefault();
@@ -353,93 +326,16 @@
             });
         });
         
-        // Inicializar gráficos quando o DOM estiver pronto
-        const appointmentsCtx = document.getElementById('appointmentsChart');
-        if (appointmentsCtx) {
-            new Chart(appointmentsCtx, {
-                type: 'line',
-                data: {
-                    labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-                    datasets: [{
-                        label: "Agendamentos",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(78, 115, 223, 0.05)",
-                        borderColor: "rgba(78, 115, 223, 1)",
-                        pointRadius: 3,
-                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                        pointBorderColor: "rgba(78, 115, 223, 1)",
-                        pointHoverRadius: 3,
-                        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                        pointHitRadius: 10,
-                        pointBorderWidth: 2,
-                        data: [650, 800, 950, 1100, 1200, 1250, 1300, 1350, 1400, 1450, 1500, 1550],
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 25,
-                            top: 25,
-                            bottom: 0
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                maxTicksLimit: 5,
-                                padding: 10
-                            },
-                            grid: {
-                                color: "rgb(234, 236, 244)",
-                                zeroLineColor: "rgb(234, 236, 244)",
-                                drawBorder: false,
-                                borderDash: [2],
-                                zeroLineBorderDash: [2]
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
-
-        // Gráfico de serviços
-        const servicesCtx = document.getElementById('servicesChart');
-        if (servicesCtx) {
-            new Chart(servicesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ["Corte de Cabelo", "Coloração", "Manicure"],
-                    datasets: [{
-                        data: [55, 30, 15],
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
+        // Inicializar os gráficos
+        setTimeout(function() {
+            console.log('Iniciando gráficos do dashboard...');
+            if (typeof initDashboardCharts === 'function') {
+                initDashboardCharts();
+            } else {
+                console.error('Função initDashboardCharts não encontrada!');
+            }
+        }, 500);
     });
-</script> 
+</script>
+</body>
+</html> 
