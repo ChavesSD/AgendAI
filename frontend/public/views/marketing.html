@@ -209,7 +209,7 @@
 </section>
 
 <!-- Contact Section -->
-<section id="contact" class="py-5">
+<section id="contact" class="py-5 bg-light">
     <div class="container px-4 py-5">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
@@ -217,56 +217,64 @@
                 <p class="lead mb-5">Tem dúvidas sobre nossos planos ou precisa de ajuda? Entre em contato conosco!</p>
             </div>
         </div>
-        <div class="row">
+        <div class="row g-4 align-items-center">
             <div class="col-lg-5 mb-5 mb-lg-0">
-                <div class="contact-info">
-                    <div class="mb-4">
-                        <div class="contact-icon mb-3">
+                <div class="contact-info bg-white p-4 rounded-3 shadow-sm">
+                    <div class="mb-4 d-flex align-items-center">
+                        <div class="contact-icon me-3">
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
-                        <h5>Endereço</h5>
-                        <p>Rua Sgt. Pedro Nazaré R. Machado, 820</p>
+                        <div>
+                            <h5 class="fw-bold mb-1">Endereço</h5>
+                            <p class="mb-0">Rua Sgt. Pedro Nazaré R. Machado, 820</p>
+                        </div>
                     </div>
-                    <div class="mb-4">
-                        <div class="contact-icon mb-3">
+                    <div class="mb-4 d-flex align-items-center">
+                        <div class="contact-icon me-3">
                             <i class="fas fa-phone-alt"></i>
                         </div>
-                        <h5>Telefone</h5>
-                        <p>(83) 99328-3219</p>
+                        <div>
+                            <h5 class="fw-bold mb-1">Telefone</h5>
+                            <p class="mb-0">(83) 99328-3219</p>
+                        </div>
                     </div>
-                    <div>
-                        <div class="contact-icon mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="contact-icon me-3">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        <h5>Email</h5>
-                        <p>suporte@agendai.com.br</p>
+                        <div>
+                            <h5 class="fw-bold mb-1">Email</h5>
+                            <p class="mb-0">suporte@agendai.com.br</p>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-7">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4">
+                <div class="card border-0 shadow">
+                    <div class="card-body p-4 p-lg-5">
                         <form id="contactForm">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="name" required>
+                                    <input type="text" class="form-control form-control-lg" id="name" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" required>
+                                    <input type="email" class="form-control form-control-lg" id="email" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="subject" class="form-label">Assunto</label>
-                                    <input type="text" class="form-control" id="subject" required>
+                                    <input type="text" class="form-control form-control-lg" id="subject" required>
                                 </div>
                                 <div class="col-12">
                                     <label for="message" class="form-label">Mensagem</label>
-                                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                                    <textarea class="form-control form-control-lg" id="message" rows="5" required></textarea>
                                 </div>
-                                <div class="col-12">
+                                <div class="col-12 mt-4">
                                     <div class="d-grid">
-                                        <button type="submit" class="btn btn-primary btn-lg">Enviar Mensagem</button>
+                                        <button type="submit" class="btn btn-primary btn-lg">
+                                            <i class="fas fa-paper-plane me-2"></i> Enviar Mensagem
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -281,46 +289,69 @@
 <!-- Footer -->
 <footer class="py-5 text-white" style="background: linear-gradient(135deg, var(--primary-dark), var(--secondary));">
     <div class="container px-4">
-        <div class="row g-4">
-            <div class="col-lg-4 mb-4 mb-lg-0 text-center">
-                <div class="d-flex justify-content-center mb-3">
-                    <img src="/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" style="max-width: 80px;">
+        <div class="row g-4 justify-content-between">
+            <!-- Logo e descrição -->
+            <div class="col-lg-4 mb-5 mb-lg-0">
+                <div class="text-center text-lg-start">
+                    <img src="/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="mb-3" style="max-width: 80px;">
+                    <p>Sistema Inteligente de Agendamento que simplifica a vida do seu negócio e dos seus clientes.</p>
+                    <div class="d-flex mt-4 gap-3 justify-content-center justify-content-lg-start">
+                        <a href="https://www.facebook.com/" target="_blank" class="text-white me-1 social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.twitter.com/" target="_blank" class="text-white me-1 social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.instagram.com/agendai_oficial?igsh=emQzbmRwZ3RhdXEy" target="_blank" class="text-white me-1 social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/" target="_blank" class="text-white social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
                 </div>
-                <p class="text-center">Sistema Inteligente de Agendamento que simplifica a vida do seu negócio e dos seus clientes.</p>
-                <p class="mb-0 small text-center">© 2025. Todos os direitos reservados.</p>
             </div>
+            
+            <!-- Links Úteis -->
             <div class="col-md-3 col-lg-2 mb-4 mb-md-0">
-                <h5 class="mb-3 fw-bold">Links</h5>
+                <h5 class="mb-4 fw-bold border-bottom pb-2">Links</h5>
                 <ul class="list-unstyled footer-links">
-                    <li class="mb-2"><a href="#top" class="text-white-50 text-decoration-none">Início</a></li>
-                    <li class="mb-2"><a href="#features" class="text-white-50 text-decoration-none">Recursos</a></li>
-                    <li class="mb-2"><a href="#pricing" class="text-white-50 text-decoration-none">Planos</a></li>
-                    <li class="mb-2"><a href="#contact" class="text-white-50 text-decoration-none">Contato</a></li>
-                    <li class="mb-2"><a href="#/terms" class="text-white text-decoration-none fw-bold" data-link>Termos de Serviço</a></li>
-                    <li class="mb-2"><a href="#/privacy" class="text-white text-decoration-none fw-bold" data-link>Política de Privacidade</a></li>
+                    <li class="mb-2"><a href="#top" class="text-white-50 text-decoration-none footer-link"><i class="fas fa-chevron-right me-1 small"></i> Início</a></li>
+                    <li class="mb-2"><a href="#features" class="text-white-50 text-decoration-none footer-link"><i class="fas fa-chevron-right me-1 small"></i> Recursos</a></li>
+                    <li class="mb-2"><a href="#pricing" class="text-white-50 text-decoration-none footer-link"><i class="fas fa-chevron-right me-1 small"></i> Planos</a></li>
+                    <li class="mb-2"><a href="#contact" class="text-white-50 text-decoration-none footer-link"><i class="fas fa-chevron-right me-1 small"></i> Contato</a></li>
+                    <li class="mb-2"><a href="#/terms" class="text-white text-decoration-none fw-bold footer-link" data-link><i class="fas fa-file-alt me-1"></i> Termos de Serviço</a></li>
+                    <li class="mb-2"><a href="#/privacy" class="text-white text-decoration-none fw-bold footer-link" data-link><i class="fas fa-shield-alt me-1"></i> Política de Privacidade</a></li>
                 </ul>
             </div>
-            <div class="col-md-3 col-lg-3 mb-4 mb-md-0">
-                <h5 class="mb-3 fw-bold">Contato</h5>
-                <ul class="list-unstyled text-white-50">
-                    <li class="mb-2"><i class="fas fa-envelope me-2"></i> suporte@agendai.com.br</li>
-                    <li class="mb-2"><i class="fas fa-phone me-2"></i> (83) 99328-3219</li>
-                    <li><i class="fas fa-map-marker-alt me-2"></i> Rua Sgt. Pedro Nazaré R. Machado, 820</li>
+            
+            <!-- Informações de Contato -->
+            <div class="col-md-4 col-lg-3 mb-4 mb-md-0">
+                <h5 class="mb-4 fw-bold border-bottom pb-2">Contato</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-3 d-flex align-items-center">
+                        <span class="contact-icon-sm me-3"><i class="fas fa-envelope"></i></span>
+                        <span>suporte@agendai.com.br</span>
+                    </li>
+                    <li class="mb-3 d-flex align-items-center">
+                        <span class="contact-icon-sm me-3"><i class="fas fa-phone"></i></span>
+                        <span>(83) 99328-3219</span>
+                    </li>
+                    <li class="d-flex align-items-center">
+                        <span class="contact-icon-sm me-3"><i class="fas fa-map-marker-alt"></i></span>
+                        <span>Rua Sgt. Pedro Nazaré R. Machado, 820</span>
+                    </li>
                 </ul>
             </div>
-            <div class="col-md-6 col-lg-3">
-                <h5 class="mb-3 fw-bold">Cadastre-se</h5>
-                <p class="text-white-50">Receba novidades e promoções</p>
+            
+            <!-- Newsletter -->
+            <div class="col-md-5 col-lg-3">
+                <h5 class="mb-4 fw-bold border-bottom pb-2">Newsletter</h5>
+                <p class="text-white-50 mb-3">Receba novidades e promoções exclusivas</p>
                 <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="Seu email">
-                    <button class="btn btn-light" type="button">Enviar</button>
+                    <input type="email" class="form-control" placeholder="Seu email" aria-label="Seu email">
+                    <button class="btn btn-primary" type="button">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
                 </div>
-                <div class="d-flex mt-3">
-                    <a href="https://www.facebook.com/" target="_blank" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.twitter.com/" target="_blank" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.instagram.com/agendai_oficial?igsh=emQzbmRwZ3RhdXEy" target="_blank" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.linkedin.com/" target="_blank" class="text-white"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+            </div>
+        </div>
+        <hr class="my-4 border-light opacity-25">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="mb-0 small">© 2025 AgendAI. Todos os direitos reservados.</p>
             </div>
         </div>
     </div>
@@ -458,14 +489,14 @@
     }
     
     /* Estilos para links do rodapé */
-    .footer-section-link, .footer-home-link {
-        cursor: pointer;
-        transition: color 0.3s ease;
+    .footer-link {
+        transition: all 0.3s ease;
+        display: inline-block;
     }
     
-    .footer-section-link:hover, .footer-home-link:hover {
+    .footer-link:hover {
         color: white !important;
-        text-decoration: underline !important;
+        transform: translateX(5px);
     }
     
     /* Ícones de contato */
@@ -479,6 +510,37 @@
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
         color: white;
         font-size: 24px;
+    }
+    
+    /* Ícones de contato menores para o footer */
+    .contact-icon-sm {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Ícones sociais */
+    .social-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .social-icon:hover {
+        background: var(--primary-light);
+        transform: translateY(-3px);
     }
 </style>
 
