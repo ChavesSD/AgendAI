@@ -1,0 +1,1005 @@
+<!-- View de Gestão de Usuários para o Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-primary" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Administrador
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Perfil</a>
+                                <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configurações</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Users Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Gestão de Usuários</h2>
+                    <p class="text-muted">Cadastre e gerencie os usuários que terão acesso ao sistema AgendAI.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="fas fa-plus me-1"></i> Novo Usuário
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filterName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="filterName" placeholder="Nome do usuário">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="filterEmail" placeholder="Email">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterCompany" class="form-label">Empresa</label>
+                            <select class="form-select" id="filterCompany">
+                                <option value="">Todas</option>
+                                <!-- Empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterRole" class="form-label">Função</label>
+                            <select class="form-select" id="filterRole">
+                                <option value="">Todas</option>
+                                <option value="admin">Administrador</option>
+                                <option value="manager">Gerente</option>
+                                <option value="staff">Funcionário</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="clearFiltersBtn">
+                                <i class="fas fa-eraser me-1"></i> Limpar
+                            </button>
+                            <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                                <i class="fas fa-search me-1"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Usuários Cadastrados</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Opções:</div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-excel me-2"></i> Exportar Excel</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-2"></i> Exportar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-sync-alt me-2"></i> Atualizar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Empresa</th>
+                                    <th>Função</th>
+                                    <th>Status</th>
+                                    <th>Data de Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1001</td>
+                                    <td>João Silva</td>
+                                    <td>joao.silva@belezatotal.com.br</td>
+                                    <td>Salão Beleza Total</td>
+                                    <td><span class="badge bg-primary">Administrador</span></td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>15/04/2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-user" data-id="1001" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-user" data-id="1001" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="1001" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1002</td>
+                                    <td>Maria Oliveira</td>
+                                    <td>maria@semprebela.com.br</td>
+                                    <td>Estética Sempre Bela</td>
+                                    <td><span class="badge bg-info">Gerente</span></td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>20/05/2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-user" data-id="1002" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-user" data-id="1002" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="1002" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1003</td>
+                                    <td>Pedro Santos</td>
+                                    <td>pedro@moderncut.com.br</td>
+                                    <td>Barbearia Modern Cut</td>
+                                    <td><span class="badge bg-secondary">Funcionário</span></td>
+                                    <td><span class="badge bg-warning text-dark">Pendente</span></td>
+                                    <td>25/06/2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-user" data-id="1003" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-user" data-id="1003" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="1003" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1004</td>
+                                    <td>Ana Souza</td>
+                                    <td>ana@renascer.com.br</td>
+                                    <td>Clínica Estética Renascer</td>
+                                    <td><span class="badge bg-primary">Administrador</span></td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>10/07/2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-user" data-id="1004" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-user" data-id="1004" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="1004" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>1005</td>
+                                    <td>Carlos Ferreira</td>
+                                    <td>carlos@admin.agendai.com.br</td>
+                                    <td>AgendAI (Sistema)</td>
+                                    <td><span class="badge bg-danger">Super Admin</span></td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>01/01/2023</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-user" data-id="1005" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-user" data-id="1005" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-user" data-id="1005" title="Excluir" disabled>
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Usuário -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addUserModalLabel">Novo Usuário</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="userName" class="form-label">Nome Completo*</label>
+                            <input type="text" class="form-control" id="userName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="userEmail" class="form-label">Email*</label>
+                            <input type="email" class="form-control" id="userEmail" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="userPassword" class="form-label">Senha*</label>
+                            <input type="password" class="form-control" id="userPassword" required>
+                            <div class="form-text">Mínimo de 8 caracteres, com letras e números</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="userConfirmPassword" class="form-label">Confirmar Senha*</label>
+                            <input type="password" class="form-control" id="userConfirmPassword" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="userCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="userCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- As empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="userRole" class="form-label">Função*</label>
+                            <select class="form-select" id="userRole" required>
+                                <option value="">Selecione uma função</option>
+                                <option value="admin">Administrador</option>
+                                <option value="manager">Gerente</option>
+                                <option value="staff">Funcionário</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="userPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="userPhone" placeholder="(99) 99999-9999">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="userStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="userStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="pending">Pendente</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="userNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="userNotes" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Permissões do Usuário</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permViewDashboard">
+                                    <label class="form-check-label" for="permViewDashboard">Visualizar Dashboard</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permManageAppointments">
+                                    <label class="form-check-label" for="permManageAppointments">Gerenciar Agendamentos</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permManageClients">
+                                    <label class="form-check-label" for="permManageClients">Gerenciar Clientes</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permManageServices">
+                                    <label class="form-check-label" for="permManageServices">Gerenciar Serviços</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permViewReports">
+                                    <label class="form-check-label" for="permViewReports">Visualizar Relatórios</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="permManageSettings">
+                                    <label class="form-check-label" for="permManageSettings">Gerenciar Configurações</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveUserBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Usuário -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editUserModalLabel">Editar Usuário</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" value="">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editUserName" class="form-label">Nome Completo*</label>
+                            <input type="text" class="form-control" id="editUserName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editUserEmail" class="form-label">Email*</label>
+                            <input type="email" class="form-control" id="editUserEmail" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editUserPassword" class="form-label">Nova Senha</label>
+                            <input type="password" class="form-control" id="editUserPassword">
+                            <div class="form-text">Deixe em branco para manter a senha atual</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editUserConfirmPassword" class="form-label">Confirmar Nova Senha</label>
+                            <input type="password" class="form-control" id="editUserConfirmPassword">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editUserCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="editUserCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- As empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editUserRole" class="form-label">Função*</label>
+                            <select class="form-select" id="editUserRole" required>
+                                <option value="">Selecione uma função</option>
+                                <option value="admin">Administrador</option>
+                                <option value="manager">Gerente</option>
+                                <option value="staff">Funcionário</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editUserPhone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="editUserPhone" placeholder="(99) 99999-9999">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editUserStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="editUserStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="pending">Pendente</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editUserNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="editUserNotes" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Permissões do Usuário</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermViewDashboard">
+                                    <label class="form-check-label" for="editPermViewDashboard">Visualizar Dashboard</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermManageAppointments">
+                                    <label class="form-check-label" for="editPermManageAppointments">Gerenciar Agendamentos</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermManageClients">
+                                    <label class="form-check-label" for="editPermManageClients">Gerenciar Clientes</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermManageServices">
+                                    <label class="form-check-label" for="editPermManageServices">Gerenciar Serviços</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermViewReports">
+                                    <label class="form-check-label" for="editPermViewReports">Visualizar Relatórios</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editPermManageSettings">
+                                    <label class="form-check-label" for="editPermManageSettings">Gerenciar Configurações</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="updateUserBtn">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados dos usuários (simulação do banco de dados)
+    let users = [
+        {
+            id: 1001,
+            name: "João Silva",
+            email: "joao.silva@belezatotal.com.br",
+            password: "senha123", // Em um sistema real, isso seria um hash
+            companyId: 1001,
+            companyName: "Salão Beleza Total",
+            role: "admin",
+            status: "active",
+            phone: "(83) 99999-1111",
+            createdAt: "15/04/2023",
+            notes: "Usuário administrador da empresa",
+            permissions: {
+                viewDashboard: true,
+                manageAppointments: true,
+                manageClients: true,
+                manageServices: true,
+                viewReports: true,
+                manageSettings: true
+            }
+        },
+        {
+            id: 1002,
+            name: "Maria Oliveira",
+            email: "maria@semprebela.com.br",
+            password: "senha123",
+            companyId: 1002,
+            companyName: "Estética Sempre Bela",
+            role: "manager",
+            status: "active",
+            phone: "(83) 99999-2222",
+            createdAt: "20/05/2023",
+            notes: "Gerente da empresa",
+            permissions: {
+                viewDashboard: true,
+                manageAppointments: true,
+                manageClients: true,
+                manageServices: true,
+                viewReports: true,
+                manageSettings: false
+            }
+        },
+        {
+            id: 1003,
+            name: "Pedro Santos",
+            email: "pedro@moderncut.com.br",
+            password: "senha123",
+            companyId: 1003,
+            companyName: "Barbearia Modern Cut",
+            role: "staff",
+            status: "pending",
+            phone: "(83) 99999-3333",
+            createdAt: "25/06/2023",
+            notes: "Funcionário com acesso limitado",
+            permissions: {
+                viewDashboard: true,
+                manageAppointments: true,
+                manageClients: false,
+                manageServices: false,
+                viewReports: false,
+                manageSettings: false
+            }
+        },
+        {
+            id: 1004,
+            name: "Ana Souza",
+            email: "ana@renascer.com.br",
+            password: "senha123",
+            companyId: 1004,
+            companyName: "Clínica Estética Renascer",
+            role: "admin",
+            status: "active",
+            phone: "(83) 99999-4444",
+            createdAt: "10/07/2023",
+            notes: "Administradora com todos os acessos",
+            permissions: {
+                viewDashboard: true,
+                manageAppointments: true,
+                manageClients: true,
+                manageServices: true,
+                viewReports: true,
+                manageSettings: true
+            }
+        },
+        {
+            id: 1005,
+            name: "Carlos Ferreira",
+            email: "carlos@admin.agendai.com.br",
+            password: "admin123",
+            companyId: 0,
+            companyName: "AgendAI (Sistema)",
+            role: "superadmin",
+            status: "active",
+            phone: "(83) 99999-5555",
+            createdAt: "01/01/2023",
+            notes: "Super administrador do sistema",
+            permissions: {
+                viewDashboard: true,
+                manageAppointments: true,
+                manageClients: true,
+                manageServices: true,
+                viewReports: true,
+                manageSettings: true
+            }
+        }
+    ];
+
+    // Dados simulados de empresas
+    let companies = [
+        { id: 1001, name: "Salão Beleza Total", status: "active" },
+        { id: 1002, name: "Estética Sempre Bela", status: "active" },
+        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+        { id: 1004, name: "Clínica Estética Renascer", status: "active" },
+        { id: 0, name: "AgendAI (Sistema)", status: "active" }
+    ];
+
+    // Inicialização da página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle sidebar
+        document.getElementById('sidebarToggle')?.addEventListener('click', function() {
+            document.getElementById('wrapper').classList.toggle('toggled');
+        });
+        
+        // Configuração do logout
+        document.getElementById('logout-button')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Em uma SPA, usamos o App.logout definido no app.js
+            if (typeof App !== 'undefined' && App.logout) {
+                App.logout();
+            } else {
+                window.location.href = '#/login';
+            }
+        });
+
+        // Inicialização da página de usuários
+        initUsersPage();
+    });
+
+    // Função principal de inicialização
+    function initUsersPage() {
+        console.log('Página de usuários inicializada!');
+        
+        // Carregar empresas nos selects
+        loadCompanies();
+        
+        // Configurar eventos
+        setupEventListeners();
+        
+        // Tentar carregar usuários do localStorage
+        loadUsersFromStorage();
+    }
+
+    // Carregar empresas nos selects
+    function loadCompanies() {
+        const selects = [
+            document.getElementById('filterCompany'),
+            document.getElementById('userCompany'),
+            document.getElementById('editUserCompany')
+        ];
+        
+        // Tentar obter empresas do localStorage
+        let storedCompanies = [];
+        try {
+            const companiesData = localStorage.getItem('agendai_companies');
+            if (companiesData) {
+                storedCompanies = JSON.parse(companiesData);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar empresas do localStorage:', error);
+        }
+        
+        // Se não houver empresas no localStorage, usar as empresas simuladas
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar as empresas como opções
+            companiesToUse.forEach(company => {
+                if (company.status !== 'inactive') {
+                    const option = document.createElement('option');
+                    option.value = company.id;
+                    option.textContent = company.name;
+                    select.appendChild(option);
+                }
+            });
+        });
+        
+        console.log('Empresas carregadas nos selects.');
+    }
+
+    // Carregar usuários do localStorage
+    function loadUsersFromStorage() {
+        try {
+            const storedUsers = localStorage.getItem('agendai_users');
+            if (storedUsers) {
+                users = JSON.parse(storedUsers);
+                console.log('Usuários carregados do localStorage:', users.length);
+            } else {
+                // Salvar os usuários padrão no localStorage
+                saveUsersToStorage();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar usuários do localStorage:', error);
+        }
+    }
+
+    // Salvar usuários no localStorage
+    function saveUsersToStorage() {
+        try {
+            localStorage.setItem('agendai_users', JSON.stringify(users));
+            console.log('Usuários salvos no localStorage:', users.length);
+        } catch (error) {
+            console.error('Erro ao salvar usuários no localStorage:', error);
+        }
+    }
+
+    // Configurar listeners de eventos
+    function setupEventListeners() {
+        // Configurar botões de ações na tabela
+        document.querySelectorAll('.view-user').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = parseInt(this.getAttribute('data-id'));
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    alert(`Visualizando usuário: ${user.name}\nEmail: ${user.email}\nEmpresa: ${user.companyName}`);
+                    // Em uma implementação real, você abriria um modal com mais detalhes
+                }
+            });
+        });
+        
+        document.querySelectorAll('.edit-user').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = parseInt(this.getAttribute('data-id'));
+                loadUserForEditing(userId);
+            });
+        });
+        
+        document.querySelectorAll('.delete-user').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const userId = parseInt(this.getAttribute('data-id'));
+                deleteUser(userId);
+            });
+        });
+        
+        // Configurar botões de filtro
+        document.getElementById('clearFiltersBtn')?.addEventListener('click', function() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterEmail').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterRole').value = '';
+        });
+        
+        document.getElementById('applyFiltersBtn')?.addEventListener('click', function() {
+            const name = document.getElementById('filterName').value.toLowerCase();
+            const email = document.getElementById('filterEmail').value.toLowerCase();
+            const company = document.getElementById('filterCompany').value;
+            const role = document.getElementById('filterRole').value;
+            
+            alert(`Filtros aplicados: Nome: ${name}, Email: ${email}, Empresa: ${company}, Função: ${role}`);
+            // Em uma implementação real, você filtraria a tabela de usuários
+        });
+        
+        // Configurar botão de salvar no modal de novo usuário
+        document.getElementById('saveUserBtn')?.addEventListener('click', saveUser);
+        
+        // Configurar botão de atualizar no modal de edição
+        document.getElementById('updateUserBtn')?.addEventListener('click', updateUser);
+    }
+
+    // Função para salvar um novo usuário
+    function saveUser() {
+        const form = document.getElementById('userForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Verificar se as senhas coincidem
+        const password = document.getElementById('userPassword').value;
+        const confirmPassword = document.getElementById('userConfirmPassword').value;
+        
+        if (password !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+        
+        // Verificar se o email já existe
+        const email = document.getElementById('userEmail').value.toLowerCase();
+        if (users.some(u => u.email.toLowerCase() === email)) {
+            alert('Este email já está sendo utilizado por outro usuário!');
+            return;
+        }
+        
+        // Obter a empresa selecionada
+        const companyId = parseInt(document.getElementById('userCompany').value);
+        const companySelect = document.getElementById('userCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        // Gerar um novo ID (em um sistema real, isso seria gerado pelo backend)
+        const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1001;
+        
+        // Criar o novo usuário
+        const newUser = {
+            id: newId,
+            name: document.getElementById('userName').value,
+            email: email,
+            password: password,
+            companyId: companyId,
+            companyName: companyName,
+            role: document.getElementById('userRole').value,
+            status: document.getElementById('userStatus').value,
+            phone: document.getElementById('userPhone').value,
+            createdAt: new Date().toLocaleDateString('pt-BR'),
+            notes: document.getElementById('userNotes').value,
+            permissions: {
+                viewDashboard: document.getElementById('permViewDashboard').checked,
+                manageAppointments: document.getElementById('permManageAppointments').checked,
+                manageClients: document.getElementById('permManageClients').checked,
+                manageServices: document.getElementById('permManageServices').checked,
+                viewReports: document.getElementById('permViewReports').checked,
+                manageSettings: document.getElementById('permManageSettings').checked
+            }
+        };
+        
+        // Adicionar o usuário à lista
+        users.push(newUser);
+        
+        // Salvar no localStorage
+        saveUsersToStorage();
+        
+        // Atualizar a tabela (em uma implementação real, você recarregaria os dados da tabela)
+        alert(`Usuário ${newUser.name} cadastrado com sucesso!`);
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+        modal.hide();
+        
+        // Limpar o formulário
+        form.reset();
+    }
+
+    // Função para carregar um usuário para edição
+    function loadUserForEditing(userId) {
+        const user = users.find(u => u.id === userId);
+        if (!user) {
+            alert('Usuário não encontrado!');
+            return;
+        }
+        
+        // Preencher o formulário com os dados do usuário
+        document.getElementById('editUserId').value = user.id;
+        document.getElementById('editUserName').value = user.name;
+        document.getElementById('editUserEmail').value = user.email;
+        document.getElementById('editUserCompany').value = user.companyId;
+        document.getElementById('editUserRole').value = user.role;
+        document.getElementById('editUserPhone').value = user.phone;
+        document.getElementById('editUserStatus').value = user.status;
+        document.getElementById('editUserNotes').value = user.notes;
+        
+        // Definir as permissões
+        document.getElementById('editPermViewDashboard').checked = user.permissions.viewDashboard;
+        document.getElementById('editPermManageAppointments').checked = user.permissions.manageAppointments;
+        document.getElementById('editPermManageClients').checked = user.permissions.manageClients;
+        document.getElementById('editPermManageServices').checked = user.permissions.manageServices;
+        document.getElementById('editPermViewReports').checked = user.permissions.viewReports;
+        document.getElementById('editPermManageSettings').checked = user.permissions.manageSettings;
+        
+        // Limpar campos de senha, pois eles são opcionais na edição
+        document.getElementById('editUserPassword').value = '';
+        document.getElementById('editUserConfirmPassword').value = '';
+        
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        modal.show();
+    }
+
+    // Função para atualizar um usuário
+    function updateUser() {
+        const form = document.getElementById('editUserForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const userId = parseInt(document.getElementById('editUserId').value);
+        const userIndex = users.findIndex(u => u.id === userId);
+        
+        if (userIndex === -1) {
+            alert('Usuário não encontrado!');
+            return;
+        }
+        
+        // Verificar senhas, se fornecidas
+        const password = document.getElementById('editUserPassword').value;
+        const confirmPassword = document.getElementById('editUserConfirmPassword').value;
+        
+        if (password && password !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+        
+        // Verificar se o email já existe (exceto para o usuário atual)
+        const email = document.getElementById('editUserEmail').value.toLowerCase();
+        if (users.some(u => u.id !== userId && u.email.toLowerCase() === email)) {
+            alert('Este email já está sendo utilizado por outro usuário!');
+            return;
+        }
+        
+        // Obter a empresa selecionada
+        const companyId = parseInt(document.getElementById('editUserCompany').value);
+        const companySelect = document.getElementById('editUserCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        // Atualizar o usuário
+        const updatedUser = {
+            ...users[userIndex],
+            name: document.getElementById('editUserName').value,
+            email: email,
+            companyId: companyId,
+            companyName: companyName,
+            role: document.getElementById('editUserRole').value,
+            status: document.getElementById('editUserStatus').value,
+            phone: document.getElementById('editUserPhone').value,
+            notes: document.getElementById('editUserNotes').value,
+            permissions: {
+                viewDashboard: document.getElementById('editPermViewDashboard').checked,
+                manageAppointments: document.getElementById('editPermManageAppointments').checked,
+                manageClients: document.getElementById('editPermManageClients').checked,
+                manageServices: document.getElementById('editPermManageServices').checked,
+                viewReports: document.getElementById('editPermViewReports').checked,
+                manageSettings: document.getElementById('editPermManageSettings').checked
+            }
+        };
+        
+        // Atualizar a senha apenas se fornecida
+        if (password) {
+            updatedUser.password = password;
+        }
+        
+        // Atualizar o usuário na lista
+        users[userIndex] = updatedUser;
+        
+        // Salvar no localStorage
+        saveUsersToStorage();
+        
+        // Atualizar a tabela
+        alert(`Usuário ${updatedUser.name} atualizado com sucesso!`);
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+        modal.hide();
+    }
+
+    // Função para excluir um usuário
+    function deleteUser(userId) {
+        // Verificar se é o super admin (não permitir excluir)
+        if (userId === 1005) {
+            alert('Não é possível excluir o super admin do sistema!');
+            return;
+        }
+        
+        if (!confirm(`Tem certeza que deseja excluir este usuário?`)) {
+            return;
+        }
+        
+        const userIndex = users.findIndex(u => u.id === userId);
+        if (userIndex === -1) {
+            alert('Usuário não encontrado!');
+            return;
+        }
+        
+        const user = users[userIndex];
+        
+        // Remover da lista
+        users.splice(userIndex, 1);
+        
+        // Salvar no localStorage
+        saveUsersToStorage();
+        
+        // Atualizar a tabela
+        alert(`Usuário ${user.name} excluído com sucesso!`);
+    }
+</script> 

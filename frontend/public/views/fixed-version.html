@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgendAI - Versão Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #3a86ff;
+            text-align: center;
+        }
+        .test-button {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #3a86ff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .test-button:hover {
+            background-color: #2667cc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AgendAI - Página de Teste</h1>
+        <p>Esta é uma versão simplificada da página para testar o carregamento.</p>
+        
+        <button id="testButton" class="test-button">Testar JavaScript</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('testButton').addEventListener('click', function() {
+            document.getElementById('result').innerHTML = '<p>JavaScript está funcionando corretamente!</p>';
+        });
+        
+        // Log para confirmar que a página carregou
+        console.log('Página de teste carregada com sucesso');
+    </script>
+</body>
+</html> 
