@@ -1,0 +1,179 @@
+/**
+ * Estilos para o Calendário do AgendAI
+ */
+
+/* Estilos gerais do calendário */
+.calendar-container {
+    margin-bottom: 1.5rem;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Visualização diária */
+.timeline {
+    margin-top: 1rem;
+}
+
+.hour-row {
+    display: flex;
+    min-height: 60px;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.hour-label {
+    width: 80px;
+    padding: 8px;
+    text-align: right;
+    color: #858796;
+    font-weight: 500;
+}
+
+.hour-slot {
+    flex: 1;
+    padding: 8px;
+    position: relative;
+}
+
+.hour-slot.empty {
+    background-color: #f8f9fc;
+}
+
+.appointment-card {
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 5px;
+}
+
+.appointment-card .time {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.appointment-card .title {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.appointment-card .client,
+.appointment-card .professional {
+    font-size: 0.9rem;
+}
+
+.appointment-card .actions {
+    margin-top: 10px;
+}
+
+/* Visualização semanal */
+.week-view .table td {
+    height: 80px;
+    vertical-align: top;
+    padding: 5px;
+}
+
+.week-view .table th {
+    text-align: center;
+    background-color: #f8f9fc;
+}
+
+/* Visualização mensal */
+.month-view .table td {
+    height: 120px;
+    width: 14.28%;
+    vertical-align: top;
+    padding: 5px;
+}
+
+.month-view .table th {
+    text-align: center;
+    background-color: #f8f9fc;
+}
+
+.appointment-pill {
+    margin-top: 5px;
+    padding: 2px 5px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: white;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Indicadores de status */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.status-pending {
+    background-color: #f6c23e;
+}
+
+.status-confirmed {
+    background-color: #4e73df;
+}
+
+.status-completed {
+    background-color: #1cc88a;
+}
+
+.status-cancelled {
+    background-color: #e74a3b;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+    .hour-label {
+        width: 60px;
+    }
+    
+    .appointment-card {
+        padding: 5px;
+    }
+    
+    .appointment-card .title {
+        font-size: 0.9rem;
+    }
+    
+    .appointment-card .client,
+    .appointment-card .professional {
+        font-size: 0.8rem;
+    }
+    
+    .week-view .table td,
+    .month-view .table td {
+        height: 100px;
+    }
+}
+
+/* Estilos de interação */
+.calendar-day:hover {
+    background-color: rgba(78, 115, 223, 0.05);
+    cursor: pointer;
+}
+
+.appointment-card:hover {
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+/* Tema escuro (para futura implementação) */
+.dark-mode .hour-slot.empty {
+    background-color: #1e1e2d;
+}
+
+.dark-mode .table th {
+    background-color: #1e1e2d;
+} 
