@@ -1,0 +1,447 @@
+<!-- View de Serviços da Empresa -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/company" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/company/calendar" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Calendário
+            </a>
+            <a href="#/company/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-check me-2"></i> Agendamentos
+            </a>
+            <a href="#/company/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/company/services" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/company/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Clientes
+            </a>
+            <a href="#relatorios" class="list-group-item list-group-item-action">
+                <i class="fas fa-chart-line me-2"></i> Relatórios
+            </a>
+            <a href="#plano" class="list-group-item list-group-item-action">
+                <i class="fas fa-tag me-2"></i> Meu Plano
+            </a>
+            <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Empresa Demo
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#/company/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Conteúdo -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Serviços</h2>
+                    <p class="text-muted">Gerencie os serviços disponíveis na sua empresa e atribua profissionais.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" id="add-service-btn">
+                        <i class="fas fa-plus me-1"></i> Novo Serviço
+                    </button>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lista de Serviços</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Duração</th>
+                                    <th>Preço</th>
+                                    <th>Categoria</th>
+                                    <th>Profissionais</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="services-table-body">
+                                <!-- Serviços serão inseridos aqui via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar/Editar Serviço -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="serviceModalLabel">Novo Serviço</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm">
+                    <input type="hidden" id="service-id">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="service-name" class="form-label">Nome do Serviço</label>
+                            <input type="text" class="form-control" id="service-name" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="service-category" class="form-label">Categoria</label>
+                            <select class="form-select" id="service-category" required>
+                                <option value="">Selecione...</option>
+                                <option value="Cabelo">Cabelo</option>
+                                <option value="Barba">Barba</option>
+                                <option value="Manicure/Pedicure">Manicure/Pedicure</option>
+                                <option value="Depilação">Depilação</option>
+                                <option value="Estética">Estética</option>
+                                <option value="Massagem">Massagem</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="service-duration" class="form-label">Duração (min)</label>
+                            <input type="number" class="form-control" id="service-duration" min="5" step="5" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="service-price" class="form-label">Preço (R$)</label>
+                            <input type="number" class="form-control" id="service-price" min="0" step="0.01" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="service-status" class="form-label">Status</label>
+                            <select class="form-select" id="service-status">
+                                <option value="ativo">Ativo</option>
+                                <option value="inativo">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="service-description" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="service-description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profissionais habilitados</label>
+                        <div class="d-flex flex-wrap" id="service-professionals">
+                            <!-- Checkboxes dos profissionais serão inseridos aqui via JS -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveService">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+    }
+    .badge-status {
+        border-radius: 12px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .badge-status.ativo {
+        background-color: #1cc88a;
+        color: #fff;
+    }
+    .badge-status.inativo {
+        background-color: #e74a3b;
+        color: #fff;
+    }
+    .professional-badge {
+        background-color: #4e73df;
+        color: white;
+        border-radius: 20px;
+        padding: 4px 8px;
+        margin: 2px;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+    .professional-check {
+        margin: 10px;
+        min-width: 200px;
+    }
+</style>
+
+<script>
+// Dados simulados
+let professionals = [
+    {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro'},
+    {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista'},
+    {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora'},
+    {id: 4, nome: 'Joana Santos', especialidade: 'Manicure'}
+];
+
+let services = [
+    {
+        id: 1, 
+        nome: 'Corte de Cabelo - Masculino', 
+        duracao: 30, 
+        preco: 50.00, 
+        categoria: 'Cabelo', 
+        descricao: 'Corte masculino com tesoura ou máquina', 
+        status: 'ativo',
+        profissionais: [1, 2]
+    },
+    {
+        id: 2, 
+        nome: 'Corte de Cabelo - Feminino', 
+        duracao: 60, 
+        preco: 80.00, 
+        categoria: 'Cabelo', 
+        descricao: 'Corte feminino com modelagem', 
+        status: 'ativo',
+        profissionais: [2]
+    },
+    {
+        id: 3, 
+        nome: 'Barba', 
+        duracao: 30, 
+        preco: 35.00, 
+        categoria: 'Barba', 
+        descricao: 'Aparar e modelar barba com navalha', 
+        status: 'ativo',
+        profissionais: [1]
+    },
+    {
+        id: 4, 
+        nome: 'Manicure', 
+        duracao: 45, 
+        preco: 40.00, 
+        categoria: 'Manicure/Pedicure', 
+        descricao: 'Cutilagem e esmaltagem', 
+        status: 'ativo',
+        profissionais: [4]
+    },
+    {
+        id: 5, 
+        nome: 'Depilação - Perna Completa', 
+        duracao: 60, 
+        preco: 80.00, 
+        categoria: 'Depilação', 
+        descricao: 'Depilação com cera quente', 
+        status: 'ativo',
+        profissionais: [3]
+    }
+];
+
+// Renderizar lista de serviços
+function renderServices() {
+    const tbody = document.getElementById('services-table-body');
+    tbody.innerHTML = '';
+    
+    services.forEach(service => {
+        // Criar uma string com os badges dos profissionais
+        let profissionaisBadges = '';
+        service.profissionais.forEach(profId => {
+            const prof = professionals.find(p => p.id === profId);
+            if (prof) {
+                profissionaisBadges += `<span class="professional-badge">${prof.nome}</span> `;
+            }
+        });
+        
+        // Formatar preço como moeda brasileira
+        const precoFormatado = service.preco.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        });
+        
+        // Formatar duração
+        const duracaoFormatada = service.duracao + ' min';
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${service.nome}</td>
+            <td>${duracaoFormatada}</td>
+            <td>${precoFormatado}</td>
+            <td>${service.categoria}</td>
+            <td>${profissionaisBadges || 'Nenhum'}</td>
+            <td><span class="badge-status ${service.status}">${service.status.charAt(0).toUpperCase() + service.status.slice(1)}</span></td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editService(${service.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteService(${service.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Renderizar checkboxes de profissionais no modal
+function renderProfessionalCheckboxes(selectedProfessionals = []) {
+    const container = document.getElementById('service-professionals');
+    container.innerHTML = '';
+    
+    professionals.forEach(prof => {
+        const isChecked = selectedProfessionals.includes(prof.id);
+        
+        const div = document.createElement('div');
+        div.className = 'professional-check form-check';
+        div.innerHTML = `
+            <input class="form-check-input" type="checkbox" value="${prof.id}" id="prof-${prof.id}" ${isChecked ? 'checked' : ''}>
+            <label class="form-check-label" for="prof-${prof.id}">
+                ${prof.nome} <small class="text-muted">(${prof.especialidade})</small>
+            </label>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Resetar formulário
+function resetServiceForm() {
+    document.getElementById('service-id').value = '';
+    document.getElementById('service-name').value = '';
+    document.getElementById('service-duration').value = '';
+    document.getElementById('service-price').value = '';
+    document.getElementById('service-category').value = '';
+    document.getElementById('service-description').value = '';
+    document.getElementById('service-status').value = 'ativo';
+    renderProfessionalCheckboxes([]);
+}
+
+// Editar serviço
+function editService(id) {
+    const service = services.find(s => s.id === id);
+    if (!service) return;
+    
+    document.getElementById('service-id').value = service.id;
+    document.getElementById('service-name').value = service.nome;
+    document.getElementById('service-duration').value = service.duracao;
+    document.getElementById('service-price').value = service.preco;
+    document.getElementById('service-category').value = service.categoria;
+    document.getElementById('service-description').value = service.descricao;
+    document.getElementById('service-status').value = service.status;
+    
+    renderProfessionalCheckboxes(service.profissionais);
+    
+    document.getElementById('serviceModalLabel').textContent = 'Editar Serviço';
+    const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
+    modal.show();
+}
+
+// Excluir serviço
+function deleteService(id) {
+    if (confirm('Deseja realmente excluir este serviço?')) {
+        services = services.filter(s => s.id !== id);
+        renderServices();
+    }
+}
+
+// Obter profissionais selecionados do formulário
+function getSelectedProfessionals() {
+    const checkboxes = document.querySelectorAll('#service-professionals input[type="checkbox"]:checked');
+    return Array.from(checkboxes).map(cb => parseInt(cb.value));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Renderizar serviços iniciais
+    renderServices();
+    
+    // Botão para adicionar novo serviço
+    document.getElementById('add-service-btn').addEventListener('click', function() {
+        resetServiceForm();
+        document.getElementById('serviceModalLabel').textContent = 'Novo Serviço';
+        const modal = new bootstrap.Modal(document.getElementById('serviceModal'));
+        modal.show();
+    });
+    
+    // Botão para salvar serviço
+    document.getElementById('saveService').addEventListener('click', function() {
+        const id = document.getElementById('service-id').value;
+        const nome = document.getElementById('service-name').value;
+        const duracao = parseInt(document.getElementById('service-duration').value);
+        const preco = parseFloat(document.getElementById('service-price').value);
+        const categoria = document.getElementById('service-category').value;
+        const descricao = document.getElementById('service-description').value;
+        const status = document.getElementById('service-status').value;
+        const profissionais = getSelectedProfessionals();
+        
+        if (!nome || !duracao || isNaN(preco) || !categoria) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return;
+        }
+        
+        if (id) {
+            // Atualizar serviço existente
+            const service = services.find(s => s.id == id);
+            if (service) {
+                service.nome = nome;
+                service.duracao = duracao;
+                service.preco = preco;
+                service.categoria = categoria;
+                service.descricao = descricao;
+                service.status = status;
+                service.profissionais = profissionais;
+            }
+        } else {
+            // Adicionar novo serviço
+            const newId = services.length ? Math.max(...services.map(s => s.id)) + 1 : 1;
+            services.push({
+                id: newId,
+                nome,
+                duracao,
+                preco,
+                categoria,
+                descricao,
+                status,
+                profissionais
+            });
+        }
+        
+        renderServices();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('serviceModal'));
+        modal.hide();
+    });
+    
+    // Logout
+    document.getElementById('logout-button')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof App !== 'undefined' && App.logout) {
+            App.logout();
+        } else {
+            window.location.href = '#/login';
+        }
+    });
+});
+</script> 

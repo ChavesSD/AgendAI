@@ -14,7 +14,7 @@ const App = {
                 'admin-clients.html', 'admin-appointments.html', 'admin-reports.html', 
                 'admin-settings.html'],
     routes: {
-        '/': 'marketing.html',
+        '/': 'login.html',
         '/login': 'login.html',
         'login': 'login.html',
         '/terms': 'terms.html',
@@ -34,7 +34,17 @@ const App = {
         '/admin/reports': 'admin-reports.html',
         '/admin/settings': 'admin-settings.html',
         '/company': 'company-dashboard.html',
-        'company': 'company-dashboard.html'
+        'company': 'company-dashboard.html',
+        '/company/calendar': 'company-calendar.html',
+        '/company-calendar': 'company-calendar.html',
+        '/company/appointments': 'company-appointments.html',
+        '/company-appointments': 'company-appointments.html',
+        '/company/professionals': 'company-professionals.html',
+        '/company-professionals': 'company-professionals.html',
+        '/company/services': 'company-services.html',
+        '/company-services': 'company-services.html',
+        '/company/clients': 'company-clients.html',
+        '/company-clients': 'company-clients.html'
     },
     
     // Inicialização da aplicação
@@ -236,96 +246,69 @@ const App = {
     
     // Roteador da aplicação
     router() {
-        // Obtém o hash da URL atual
+        console.log('Router iniciado...');
+        
+        // Obtém a rota a partir do hash da URL
         let hash = window.location.hash;
         console.log('Hash atual:', hash);
         
-        // Se o hash estiver vazio, use a página inicial
-        if (!hash || hash === '#') {
-            hash = '#/';
-        }
-        
-        // Remove o # do início
-        let route = hash.substring(1);
-        
-        // Caso especial para configurações
-        if (hash.includes('settings')) {
-            route = '/admin/settings';
-            console.log('Rota de configurações detectada, usando:', route);
-        }
-        
-        // Verifica se a rota existe
-        if (!this.routes[route]) {
-            console.log('Rota não encontrada:', route);
-            // Tenta outras variações da rota
-            if (route.startsWith('/') && route.length > 1) {
-                const alternativeRoute = route.substring(1);
-                if (this.routes[alternativeRoute]) {
-                    route = alternativeRoute;
-                }
-            } else if (!route.startsWith('/')) {
-                const alternativeRoute = '/' + route;
-                if (this.routes[alternativeRoute]) {
-                    route = alternativeRoute;
-                }
-            }
-            
-            // Verifica se é uma rota de administrador com formato alternativo
-            if (route.includes('admin')) {
-                // Normaliza as rotas de admin
-                let adminRoute = route;
-                
-                // Padroniza formato /admin/rota
-                if (adminRoute.startsWith('admin/')) {
-                    adminRoute = '/' + adminRoute;
-                } else if (adminRoute.startsWith('admin-')) {
-                    adminRoute = '/admin/' + adminRoute.substring(6);
-                }
-                
-                if (this.routes[adminRoute]) {
-                    route = adminRoute;
-                    console.log('Redirecionando para rota administrativa:', route);
-                } else {
-                    // Tentativa adicional para rotas admin
-                    console.log('Tentando normalizar rota admin:', adminRoute);
-                    
-                    // Extrai a parte final da rota (depois da última barra)
-                    const parts = adminRoute.split('/');
-                    const lastPart = parts[parts.length - 1];
-                    
-                    // Tenta diferentes formatos para a rota
-                    const possibleRoutes = [
-                        `/admin/${lastPart}`,
-                        `admin/${lastPart}`,
-                        `/admin-${lastPart}`,
-                        `admin-${lastPart}`
-                    ];
-                    
-                    for (const possibleRoute of possibleRoutes) {
-                        console.log(`Tentando possível rota: ${possibleRoute}`);
-                        if (this.routes[possibleRoute]) {
-                            route = possibleRoute;
-                            console.log('Rota alternativa encontrada:', route);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        
-        console.log('Rota final:', route, 'View path:', this.routes[route]);
-        
-        // Verificação adicional para configurações
-        if (route.includes('settings') || hash.includes('settings')) {
-            console.log('Forçando rota de configurações');
-            route = '/admin/settings';
-            // Carrega a view correspondente para configurações
-            this.loadView('admin-settings.html');
+        // Se não houver hash, redireciona para a página inicial
+        if (!hash) {
+            console.log('Sem hash, redirecionando para a página inicial');
+            window.location.hash = '#/login';
             return;
         }
         
+        // Remove o # inicial
+        let route = hash.substring(1);
+        
+        // Corrige rotas malformadas
+        if (!route.startsWith('/')) {
+            route = '/' + route;
+        }
+        
+        console.log('Rota processada:', route);
+        
+        // Verifica se a rota existe
+        if (!this.routes[route]) {
+            console.log('Rota não encontrada, verificando alternativas...');
+            
+            // Tenta encontrar variações da rota
+            const variationsToTry = [
+                route,
+                route.toLowerCase(),
+                route.replace(/^\/+/, '/'),
+                route.replace(/\/+$/, ''),
+                route.replace(/^\/+/, '/').replace(/\/+$/, '')
+            ];
+            
+            // Se a rota termina com uma barra, tenta também sem a barra
+            if (route.endsWith('/')) {
+                variationsToTry.push(route.slice(0, -1));
+            }
+            
+            // Tentar cada variação
+            for (const variation of variationsToTry) {
+                console.log('Tentando variação:', variation);
+                if (this.routes[variation]) {
+                    console.log('Rota alternativa encontrada:', variation);
+                    route = variation;
+                    break;
+                }
+            }
+        }
+        
         // Carrega a view correspondente
-        const viewPath = this.routes[route] || 'marketing.html';
+        let viewPath = this.routes[route];
+        if (!viewPath) {
+            console.error(`Rota não encontrada: ${route}`);
+            viewPath = 'login.html';
+        }
+        
+        // Verificar se a rota é para uma página de admin
+        const isAdminPage = this.adminViews.includes(viewPath);
+        const isSettingsPage = viewPath === 'admin-settings.html';
+        
         this.currentRoute = route;
         this.loadView(viewPath);
     },
@@ -334,6 +317,13 @@ const App = {
     async loadView(viewPath) {
         try {
             console.log('Carregando página:', viewPath);
+            
+            // Se alguém tentar carregar marketing.html, redireciona para login
+            if (viewPath === 'marketing.html') {
+                console.log('Redirecionando de marketing.html para login.html');
+                window.location.hash = '#/login';
+                return;
+            }
             
             // Caso especial para a página de configurações
             const isSettingsPage = viewPath === 'admin-settings.html';
@@ -535,11 +525,6 @@ const App = {
                 alert('Email ou senha incorretos. Tente as credenciais de teste mostradas abaixo do formulário.');
             }
         });
-    },
-    
-    // Carrega a página de marketing
-    loadMarketingPage() {
-        this.loadView('marketing.html');
     }
 };
 

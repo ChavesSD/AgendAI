@@ -1,0 +1,562 @@
+<!-- View de Clientes da Empresa -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/company" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/company/calendar" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Calendário
+            </a>
+            <a href="#/company/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-check me-2"></i> Agendamentos
+            </a>
+            <a href="#/company/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/company/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/company/clients" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-users me-2"></i> Clientes
+            </a>
+            <a href="#relatorios" class="list-group-item list-group-item-action">
+                <i class="fas fa-chart-line me-2"></i> Relatórios
+            </a>
+            <a href="#plano" class="list-group-item list-group-item-action">
+                <i class="fas fa-tag me-2"></i> Meu Plano
+            </a>
+            <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Empresa Demo
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#/company/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Conteúdo -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Clientes</h2>
+                    <p class="text-muted">Gerencie os dados dos seus clientes cadastrados.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" id="add-client-btn">
+                        <i class="fas fa-plus me-1"></i> Novo Cliente
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros e pesquisa -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Buscar clientes..." id="search-client">
+                        <button class="btn btn-outline-primary" type="button" id="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filter-status">
+                        <option value="todos">Todos os status</option>
+                        <option value="ativo">Ativos</option>
+                        <option value="inativo">Inativos</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Lista de Clientes</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>Último Agendamento</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-table-body">
+                                <!-- Clientes serão inseridos aqui via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar/Editar Cliente -->
+<div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientModalLabel">Novo Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="clientForm">
+                    <input type="hidden" id="client-id">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="client-name" class="form-label">Nome Completo</label>
+                            <input type="text" class="form-control" id="client-name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="client-email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="client-email" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="client-phone" class="form-label">Telefone</label>
+                            <input type="tel" class="form-control" id="client-phone" required placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="client-cpf" class="form-label">CPF</label>
+                            <input type="text" class="form-control" id="client-cpf" placeholder="000.000.000-00">
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <label for="client-address" class="form-label">Endereço</label>
+                            <input type="text" class="form-control" id="client-address">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="client-birthdate" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="client-birthdate">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="client-notes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="client-notes" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="client-status" class="form-label">Status</label>
+                        <select class="form-select" id="client-status">
+                            <option value="ativo">Ativo</option>
+                            <option value="inativo">Inativo</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveClient">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para visualizar histórico de agendamentos do cliente -->
+<div class="modal fade" id="clientHistoryModal" tabindex="-1" aria-labelledby="clientHistoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientHistoryModalLabel">Histórico do Cliente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="client-info mb-4">
+                    <h5 id="history-client-name">Nome do Cliente</h5>
+                    <p class="text-muted mb-0" id="history-client-contact">contato@email.com | (00) 00000-0000</p>
+                </div>
+                
+                <h6 class="mb-3">Agendamentos</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Serviço</th>
+                                <th>Profissional</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="client-history-table">
+                            <!-- Histórico será inserido aqui via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+    }
+    .badge-status {
+        border-radius: 12px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    .badge-status.ativo {
+        background-color: #1cc88a;
+        color: #fff;
+    }
+    .badge-status.inativo {
+        background-color: #e74a3b;
+        color: #fff;
+    }
+    .alert-auto-created {
+        background-color: #f8f9fc;
+        border-left: 3px solid #4e73df;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        font-size: 0.85rem;
+    }
+</style>
+
+<script>
+// Dados simulados
+let clients = [
+    {
+        id: 1,
+        nome: 'João Silva',
+        email: 'joao.silva@email.com',
+        telefone: '(11) 98765-4321',
+        cpf: '123.456.789-00',
+        endereco: 'Rua das Flores, 123',
+        dataNascimento: '1985-07-15',
+        observacoes: 'Cliente preferencial',
+        status: 'ativo',
+        ultimoAgendamento: '2023-10-15',
+        historico: [
+            {data: '2023-10-15', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'concluído'},
+            {data: '2023-09-20', servico: 'Barba', profissional: 'Ricardo Silva', status: 'concluído'},
+            {data: '2023-08-05', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'concluído'}
+        ]
+    },
+    {
+        id: 2,
+        nome: 'Maria Oliveira',
+        email: 'maria.oliveira@email.com',
+        telefone: '(11) 91234-5678',
+        cpf: '987.654.321-00',
+        endereco: 'Av. Paulista, 1000',
+        dataNascimento: '1990-03-22',
+        observacoes: 'Prefere atendimento no final da tarde',
+        status: 'ativo',
+        ultimoAgendamento: '2023-10-10',
+        historico: [
+            {data: '2023-10-10', servico: 'Corte de Cabelo - Feminino', profissional: 'Carla Almeida', status: 'concluído'},
+            {data: '2023-09-15', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'}
+        ]
+    },
+    {
+        id: 3,
+        nome: 'Carlos Pereira',
+        email: 'carlos.pereira@email.com',
+        telefone: '(11) 97777-8888',
+        cpf: '456.789.123-00',
+        endereco: 'Rua Augusta, 500',
+        dataNascimento: '1978-12-05',
+        observacoes: '',
+        status: 'inativo',
+        ultimoAgendamento: '2023-08-20',
+        historico: [
+            {data: '2023-08-20', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'cancelado'},
+            {data: '2023-07-10', servico: 'Barba', profissional: 'Ricardo Silva', status: 'concluído'}
+        ]
+    },
+    {
+        id: 4,
+        nome: 'Ana Souza',
+        email: 'ana.souza@email.com',
+        telefone: '(11) 95555-6666',
+        cpf: '789.123.456-00',
+        endereco: 'Rua Oscar Freire, 300',
+        dataNascimento: '1995-05-30',
+        observacoes: 'Cliente indicada por Maria Oliveira',
+        status: 'ativo',
+        ultimoAgendamento: '2023-10-12',
+        historico: [
+            {data: '2023-10-12', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'},
+            {data: '2023-10-12', servico: 'Depilação - Perna Completa', profissional: 'Paula Rocha', status: 'concluído'},
+            {data: '2023-09-05', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'}
+        ]
+    }
+];
+
+// Renderizar lista de clientes
+function renderClients() {
+    const tbody = document.getElementById('clients-table-body');
+    tbody.innerHTML = '';
+    
+    // Aplicar filtros
+    const searchTerm = document.getElementById('search-client').value.toLowerCase();
+    const statusFilter = document.getElementById('filter-status').value;
+    
+    const filteredClients = clients.filter(client => {
+        // Filtrar por busca
+        const matchesSearch = !searchTerm || 
+            client.nome.toLowerCase().includes(searchTerm) ||
+            client.email.toLowerCase().includes(searchTerm) ||
+            client.telefone.includes(searchTerm);
+        
+        // Filtrar por status
+        const matchesStatus = statusFilter === 'todos' || client.status === statusFilter;
+        
+        return matchesSearch && matchesStatus;
+    });
+    
+    filteredClients.forEach(client => {
+        const tr = document.createElement('tr');
+        
+        // Formatar data do último agendamento
+        let ultimoAgendamentoFormatado = 'Nenhum';
+        if (client.ultimoAgendamento) {
+            const data = new Date(client.ultimoAgendamento);
+            ultimoAgendamentoFormatado = data.toLocaleDateString('pt-BR');
+        }
+        
+        tr.innerHTML = `
+            <td>${client.nome}</td>
+            <td>${client.email}</td>
+            <td>${client.telefone}</td>
+            <td>${ultimoAgendamentoFormatado}</td>
+            <td><span class="badge-status ${client.status}">${client.status.charAt(0).toUpperCase() + client.status.slice(1)}</span></td>
+            <td class="text-end">
+                <button class="btn btn-sm btn-outline-info me-1" onclick="viewClientHistory(${client.id})"><i class="fas fa-history"></i></button>
+                <button class="btn btn-sm btn-outline-primary me-1" onclick="editClient(${client.id})"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteClient(${client.id})"><i class="fas fa-trash"></i></button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Resetar formulário
+function resetClientForm() {
+    document.getElementById('client-id').value = '';
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-email').value = '';
+    document.getElementById('client-phone').value = '';
+    document.getElementById('client-cpf').value = '';
+    document.getElementById('client-address').value = '';
+    document.getElementById('client-birthdate').value = '';
+    document.getElementById('client-notes').value = '';
+    document.getElementById('client-status').value = 'ativo';
+    
+    // Remover mensagem de cliente automático se existir
+    const alertElement = document.querySelector('.alert-auto-created');
+    if (alertElement) {
+        alertElement.remove();
+    }
+}
+
+// Editar cliente
+function editClient(id) {
+    const client = clients.find(c => c.id === id);
+    if (!client) return;
+    
+    document.getElementById('client-id').value = client.id;
+    document.getElementById('client-name').value = client.nome;
+    document.getElementById('client-email').value = client.email;
+    document.getElementById('client-phone').value = client.telefone;
+    document.getElementById('client-cpf').value = client.cpf || '';
+    document.getElementById('client-address').value = client.endereco || '';
+    document.getElementById('client-birthdate').value = client.dataNascimento || '';
+    document.getElementById('client-notes').value = client.observacoes || '';
+    document.getElementById('client-status').value = client.status;
+    
+    document.getElementById('clientModalLabel').textContent = 'Editar Cliente';
+    const modal = new bootstrap.Modal(document.getElementById('clientModal'));
+    modal.show();
+}
+
+// Visualizar histórico do cliente
+function viewClientHistory(id) {
+    const client = clients.find(c => c.id === id);
+    if (!client) return;
+    
+    document.getElementById('history-client-name').textContent = client.nome;
+    document.getElementById('history-client-contact').textContent = `${client.email} | ${client.telefone}`;
+    
+    const tbody = document.getElementById('client-history-table');
+    tbody.innerHTML = '';
+    
+    if (client.historico && client.historico.length > 0) {
+        client.historico.forEach(agendamento => {
+            const tr = document.createElement('tr');
+            
+            // Formatar data
+            const data = new Date(agendamento.data);
+            const dataFormatada = data.toLocaleDateString('pt-BR');
+            
+            // Definir classe do status
+            let statusClass = '';
+            switch(agendamento.status) {
+                case 'concluído':
+                    statusClass = 'text-success';
+                    break;
+                case 'cancelado':
+                    statusClass = 'text-danger';
+                    break;
+                case 'pendente':
+                    statusClass = 'text-warning';
+                    break;
+                default:
+                    statusClass = 'text-primary';
+            }
+            
+            tr.innerHTML = `
+                <td>${dataFormatada}</td>
+                <td>${agendamento.servico}</td>
+                <td>${agendamento.profissional}</td>
+                <td><span class="${statusClass}">${agendamento.status.charAt(0).toUpperCase() + agendamento.status.slice(1)}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } else {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">Nenhum agendamento registrado</td></tr>';
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('clientHistoryModal'));
+    modal.show();
+}
+
+// Excluir cliente
+function deleteClient(id) {
+    if (confirm('Deseja realmente excluir este cliente?')) {
+        clients = clients.filter(c => c.id !== id);
+        renderClients();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Renderizar clientes iniciais
+    renderClients();
+    
+    // Botão para adicionar novo cliente
+    document.getElementById('add-client-btn').addEventListener('click', function() {
+        resetClientForm();
+        document.getElementById('clientModalLabel').textContent = 'Novo Cliente';
+        const modal = new bootstrap.Modal(document.getElementById('clientModal'));
+        modal.show();
+    });
+    
+    // Botão para salvar cliente
+    document.getElementById('saveClient').addEventListener('click', function() {
+        const id = document.getElementById('client-id').value;
+        const nome = document.getElementById('client-name').value;
+        const email = document.getElementById('client-email').value;
+        const telefone = document.getElementById('client-phone').value;
+        const cpf = document.getElementById('client-cpf').value;
+        const endereco = document.getElementById('client-address').value;
+        const dataNascimento = document.getElementById('client-birthdate').value;
+        const observacoes = document.getElementById('client-notes').value;
+        const status = document.getElementById('client-status').value;
+        
+        if (!nome || !email || !telefone) {
+            alert('Por favor, preencha todos os campos obrigatórios!');
+            return;
+        }
+        
+        if (id) {
+            // Atualizar cliente existente
+            const client = clients.find(c => c.id == id);
+            if (client) {
+                client.nome = nome;
+                client.email = email;
+                client.telefone = telefone;
+                client.cpf = cpf;
+                client.endereco = endereco;
+                client.dataNascimento = dataNascimento;
+                client.observacoes = observacoes;
+                client.status = status;
+            }
+        } else {
+            // Adicionar novo cliente
+            const newId = clients.length ? Math.max(...clients.map(c => c.id)) + 1 : 1;
+            const hoje = new Date().toISOString().split('T')[0];
+            
+            clients.push({
+                id: newId,
+                nome,
+                email,
+                telefone,
+                cpf,
+                endereco,
+                dataNascimento,
+                observacoes,
+                status,
+                ultimoAgendamento: null,
+                historico: []
+            });
+        }
+        
+        renderClients();
+        const modal = bootstrap.Modal.getInstance(document.getElementById('clientModal'));
+        modal.hide();
+    });
+    
+    // Busca e filtros
+    document.getElementById('search-button').addEventListener('click', function() {
+        renderClients();
+    });
+    
+    document.getElementById('search-client').addEventListener('keyup', function(e) {
+        if (e.key === 'Enter') {
+            renderClients();
+        }
+    });
+    
+    document.getElementById('filter-status').addEventListener('change', function() {
+        renderClients();
+    });
+    
+    // Logout
+    document.getElementById('logout-button')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (typeof App !== 'undefined' && App.logout) {
+            App.logout();
+        } else {
+            window.location.href = '#/login';
+        }
+    });
+});
+</script> 
