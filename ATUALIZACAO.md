@@ -22,6 +22,18 @@
    - Criação de arquivos README para o projeto, frontend e backend
    - Documentação da estrutura, configuração e execução do projeto
 
+5. **Organização modular do frontend**:
+   - Estruturação em diretórios separados (views/admin, views/company, views/shared, views/public)
+   - Organização do JavaScript em componentes, serviços e utilitários
+   - Padronização da interface e layout
+   - Remoção de arquivos duplicados
+
+6. **Correções na Interface**:
+   - Corrigido problema de visualização de gráficos no dashboard
+   - Padronizado o botão de logout em todas as telas administrativas
+   - Corrigidas as URLs de redirecionamento após logout
+   - Corrigido problema de arquivos duplicados nas pastas views
+
 ## O que falta fazer:
 
 1. **Implementação completa da API Backend**:
@@ -32,16 +44,37 @@
 2. **Integração Frontend-Backend**:
    - Atualizar as views para consumir dados da API ao invés de localStorage
    - Implementar funções para chamadas à API em cada seção do aplicativo
+   - Melhorar o gerenciamento de estado global da aplicação
 
 3. **Funcionalidades adicionais**:
    - Sistema de notificações para lembretes de agendamentos
    - Integração com serviços de email para envio de confirmações
    - Implementação de dashboard com estatísticas em tempo real
+   - Implementar busca avançada de horários disponíveis
 
 4. **Refinamentos**:
    - Testes de segurança e performance
    - Melhorias de UX/UI
    - Otimização para dispositivos móveis
+   - Implementação de animações de transição entre views
+
+5. **Melhorias técnicas pendentes**:
+   - Implementar um sistema de bundling (como Webpack ou Vite) para o frontend
+   - Adicionar testes automatizados
+   - Configurar CI/CD para deploy contínuo
+   - Melhorar os logs e sistema de monitoramento de erros
+
+## Melhorias recentes
+
+1. **Reorganização de arquivos**:
+   - Removidos arquivos duplicados nas pastas views
+   - Atualizado sistema de roteamento para usar estrutura de pastas organizada
+   - Corrigidos todos os caminhos de arquivos no carregamento dinâmico
+
+2. **Correções de navegação**:
+   - Substituídas as URLs hardcoded (http://localhost:3001) por URLs relativas (/)
+   - Melhorada a lógica de carregamento de views com tratamento de erros
+   - Corrigido redirecionamento após logout
 
 ## Próximos passos
 

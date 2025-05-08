@@ -337,18 +337,23 @@ const App = {
         this.state.currentView = viewName;
         console.log(`LoadView - Carregando view: ${viewName}`);
         
-        // Ajustar o nome da view para remover 'admin/' ou 'company/' se presente
-        // Isso garante que carregaremos o arquivo correto da pasta views
-        let adjustedViewName = viewName;
-        if (viewName.startsWith('admin/')) {
-            adjustedViewName = 'admin-' + viewName.substring(6); // Remove 'admin/' e adiciona 'admin-'
-        } else if (viewName.startsWith('company/')) {
-            adjustedViewName = 'company-' + viewName.substring(8); // Remove 'company/' e adiciona 'company-'
+        // Determinar o caminho correto para a view baseado no nome
+        let viewPath;
+        
+        if (viewName.startsWith('admin-')) {
+            // Para views de admin, buscar na pasta admin
+            const adminViewName = viewName.replace('admin-', '');
+            viewPath = `/public/views/admin/admin-${adminViewName}.html`;
+        } else if (viewName.startsWith('company-')) {
+            // Para views de empresa, buscar na pasta company
+            const companyViewName = viewName.replace('company-', '');
+            viewPath = `/public/views/company/company-${companyViewName}.html`;
+        } else {
+            // Para outras views (login, terms, privacy, etc.)
+            viewPath = `/public/views/${viewName}.html`;
         }
         
-        // Buscar o conteúdo da view
-        const viewUrl = `/public/views/${adjustedViewName}.html`;
-        console.log(`Buscando view em: ${viewUrl}`);
+        console.log(`Buscando view em: ${viewPath}`);
         
         // Adicionar uma mensagem de carregamento para o usuário
         this.contentEl.innerHTML = `
@@ -362,7 +367,7 @@ const App = {
             </div>
         `;
 
-        fetch(viewUrl)
+        fetch(viewPath)
             .then(response => {
                 if (!response.ok) {
                     console.error(`Erro HTTP ao carregar view: ${response.status}`);
@@ -541,7 +546,13 @@ const App = {
             if (companiesByPlanChart) {
                 try {
                     console.log('Gráfico de empresas por planos inicializado');
-                    new Chart(companiesByPlanChart, {
+                    
+                    // Destruir o gráfico existente se houver
+                    if (window.companiesByPlanChartInstance) {
+                        window.companiesByPlanChartInstance.destroy();
+                    }
+                    
+                    window.companiesByPlanChartInstance = new Chart(companiesByPlanChart, {
                         type: 'doughnut',
                         data: {
                             labels: ["Básico", "Intermediário", "Avançado"],
@@ -568,11 +579,17 @@ const App = {
             }
             
             // Gráfico de empresas cadastradas por mês
-            const companiesByMonthChart = document.getElementById('companiesByMonthChart');
+            const companiesByMonthChart = document.getElementById('companiesMonthlyChart');
             if (companiesByMonthChart) {
                 try {
                     console.log('Gráfico de empresas por mês inicializado');
-                    new Chart(companiesByMonthChart, {
+                    
+                    // Destruir o gráfico existente se houver
+                    if (window.companiesByMonthChartInstance) {
+                        window.companiesByMonthChartInstance.destroy();
+                    }
+                    
+                    window.companiesByMonthChartInstance = new Chart(companiesByMonthChart, {
                         type: 'line',
                         data: {
                             labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
@@ -634,7 +651,12 @@ const App = {
                 const servicesCtx = document.getElementById('servicesChart');
                 if (servicesCtx) {
                     try {
-                        new Chart(servicesCtx, {
+                        // Destruir o gráfico existente se houver
+                        if (window.servicesChartInstance) {
+                            window.servicesChartInstance.destroy();
+                        }
+                        
+                        window.servicesChartInstance = new Chart(servicesCtx, {
                             type: 'doughnut',
                             data: {
                                 labels: ["Corte de Cabelo", "Manicure", "Coloração", "Barba", "Depilação"],
@@ -665,7 +687,12 @@ const App = {
                 const weeklyAppointmentsCtx = document.getElementById('weeklyAppointmentsChart');
                 if (weeklyAppointmentsCtx) {
                     try {
-                        new Chart(weeklyAppointmentsCtx, {
+                        // Destruir o gráfico existente se houver
+                        if (window.weeklyAppointmentsChartInstance) {
+                            window.weeklyAppointmentsChartInstance.destroy();
+                        }
+                        
+                        window.weeklyAppointmentsChartInstance = new Chart(weeklyAppointmentsCtx, {
                             type: 'line',
                             data: {
                                 labels: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
@@ -856,7 +883,7 @@ const App = {
         this.state.userData = null;
         
         // Navegar para a página inicial
-        window.location.href = 'http://localhost:3001/';
+        window.location.href = '/';
         
         // Forçar reload da página para limpar qualquer estado remanescente
         setTimeout(() => {

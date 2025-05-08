@@ -2,6 +2,10 @@
  * AgendAI - Gráficos do Dashboard Administrativo
  */
 
+// Armazenar referências para os gráficos
+let companiesByPlanChartInstance = null;
+let companiesMonthlyChartInstance = null;
+
 // Inicialização dos gráficos do dashboard
 function initDashboardCharts() {
     console.log('Iniciando gráficos do Dashboard Admin...');
@@ -13,10 +17,21 @@ function initDashboardCharts() {
             return;
         }
         
+        // Destruir gráficos existentes antes de criar novos
+        if (companiesByPlanChartInstance) {
+            companiesByPlanChartInstance.destroy();
+            companiesByPlanChartInstance = null;
+        }
+        
+        if (companiesMonthlyChartInstance) {
+            companiesMonthlyChartInstance.destroy();
+            companiesMonthlyChartInstance = null;
+        }
+        
         // Gráfico de Empresas por Planos
         const planChartEl = document.getElementById('companiesByPlanChart');
         if (planChartEl) {
-            new Chart(planChartEl, {
+            companiesByPlanChartInstance = new Chart(planChartEl, {
                 type: 'doughnut',
                 data: {
                     labels: ['Básico', 'Intermediário', 'Avançado', 'Trial'],
@@ -43,7 +58,7 @@ function initDashboardCharts() {
         // Gráfico de Empresas Cadastradas por Mês
         const monthlyChartEl = document.getElementById('companiesMonthlyChart');
         if (monthlyChartEl) {
-            new Chart(monthlyChartEl, {
+            companiesMonthlyChartInstance = new Chart(monthlyChartEl, {
                 type: 'line',
                 data: {
                     labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],

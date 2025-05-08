@@ -50,15 +50,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Administrador
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#/admin/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <button class="dropdown-item" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</button>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -648,7 +643,7 @@
             console.log('Dados de autenticação removidos do localStorage');
             
             // Redirecionar para a página de login
-            window.location.href = 'http://localhost:3001/';
+            window.location.href = '/';
             console.log('Redirecionando para a página inicial');
         });
 
