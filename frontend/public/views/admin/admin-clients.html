@@ -1,0 +1,1223 @@
+<!-- View de Gestão de Clientes para o Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="#/admin/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> Administrador
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#/admin/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Clients Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Gestão de Clientes</h2>
+                    <p class="text-muted">Cadastre e gerencie os clientes das empresas cadastradas no sistema.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-success me-2" data-bs-toggle="modal" data-bs-target="#importClientsModal">
+                        <i class="fas fa-file-excel me-1"></i> Importar Planilha
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClientModal">
+                        <i class="fas fa-plus me-1"></i> Novo Cliente
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filterName" class="form-label">Nome/Email</label>
+                            <input type="text" class="form-control" id="filterName" placeholder="Nome ou email do cliente">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterCompany" class="form-label">Empresa</label>
+                            <select class="form-select" id="filterCompany">
+                                <option value="">Todas</option>
+                                <!-- Empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterStatus" class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Todos</option>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterDate" class="form-label">Data de cadastro</label>
+                            <input type="date" class="form-control" id="filterDate">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="clearFiltersBtn">
+                                <i class="fas fa-eraser me-1"></i> Limpar
+                            </button>
+                            <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                                <i class="fas fa-search me-1"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Clients Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Clientes Cadastrados</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Opções:</div>
+                            <a class="dropdown-item" href="#" id="exportExcelBtn"><i class="fas fa-file-excel me-2"></i> Exportar Excel</a>
+                            <a class="dropdown-item" href="#" id="exportPdfBtn"><i class="fas fa-file-pdf me-2"></i> Exportar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="refreshTableBtn"><i class="fas fa-sync-alt me-2"></i> Atualizar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="clientsTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Email</th>
+                                    <th>Telefone</th>
+                                    <th>Empresa</th>
+                                    <th>Status</th>
+                                    <th>Data de Cadastro</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Cliente -->
+<div class="modal fade" id="addClientModal" tabindex="-1" aria-labelledby="addClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addClientModalLabel">Novo Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="clientForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="clientName" class="form-label">Nome Completo*</label>
+                            <input type="text" class="form-control" id="clientName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="clientEmail" class="form-label">Email*</label>
+                            <input type="email" class="form-control" id="clientEmail" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="clientPhone" class="form-label">Telefone*</label>
+                            <input type="tel" class="form-control" id="clientPhone" placeholder="(99) 99999-9999" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="clientCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="clientCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- As empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="clientDocument" class="form-label">CPF/CNPJ</label>
+                            <input type="text" class="form-control" id="clientDocument" placeholder="Somente números">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="clientStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="clientStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="clientBirthdate" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="clientBirthdate">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="clientGender" class="form-label">Gênero</label>
+                            <select class="form-select" id="clientGender">
+                                <option value="">Selecione</option>
+                                <option value="male">Masculino</option>
+                                <option value="female">Feminino</option>
+                                <option value="other">Outro</option>
+                                <option value="not_informed">Prefiro não informar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientAddress" class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="clientAddress" placeholder="Rua, número, bairro">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="clientCity" class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="clientCity">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="clientState" class="form-label">Estado</label>
+                            <input type="text" class="form-control" id="clientState" maxlength="2">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="clientZipcode" class="form-label">CEP</label>
+                            <input type="text" class="form-control" id="clientZipcode" placeholder="99999-999">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="clientNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="clientNotes" rows="3" placeholder="Informações adicionais sobre o cliente"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="clientOptIn">
+                            <label class="form-check-label" for="clientOptIn">
+                                Cliente aceitou receber comunicações de marketing
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveClientBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Cliente -->
+<div class="modal fade" id="editClientModal" tabindex="-1" aria-labelledby="editClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editClientModalLabel">Editar Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editClientForm">
+                    <input type="hidden" id="editClientId" value="">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editClientName" class="form-label">Nome Completo*</label>
+                            <input type="text" class="form-control" id="editClientName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editClientEmail" class="form-label">Email*</label>
+                            <input type="email" class="form-control" id="editClientEmail" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editClientPhone" class="form-label">Telefone*</label>
+                            <input type="tel" class="form-control" id="editClientPhone" placeholder="(99) 99999-9999" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editClientCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="editClientCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- As empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editClientDocument" class="form-label">CPF/CNPJ</label>
+                            <input type="text" class="form-control" id="editClientDocument" placeholder="Somente números">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editClientStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="editClientStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editClientBirthdate" class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-control" id="editClientBirthdate">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editClientGender" class="form-label">Gênero</label>
+                            <select class="form-select" id="editClientGender">
+                                <option value="">Selecione</option>
+                                <option value="male">Masculino</option>
+                                <option value="female">Feminino</option>
+                                <option value="other">Outro</option>
+                                <option value="not_informed">Prefiro não informar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientAddress" class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="editClientAddress" placeholder="Rua, número, bairro">
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="editClientCity" class="form-label">Cidade</label>
+                            <input type="text" class="form-control" id="editClientCity">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editClientState" class="form-label">Estado</label>
+                            <input type="text" class="form-control" id="editClientState" maxlength="2">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editClientZipcode" class="form-label">CEP</label>
+                            <input type="text" class="form-control" id="editClientZipcode" placeholder="99999-999">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editClientNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="editClientNotes" rows="3" placeholder="Informações adicionais sobre o cliente"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editClientOptIn">
+                            <label class="form-check-label" for="editClientOptIn">
+                                Cliente aceitou receber comunicações de marketing
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="updateClientBtn">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Importar Clientes -->
+<div class="modal fade" id="importClientsModal" tabindex="-1" aria-labelledby="importClientsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="importClientsModalLabel">Importar Clientes</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="importForm">
+                    <div class="mb-3">
+                        <label for="importCompany" class="form-label">Empresa*</label>
+                        <select class="form-select" id="importCompany" required>
+                            <option value="">Selecione uma empresa</option>
+                            <!-- As empresas serão carregadas dinamicamente -->
+                        </select>
+                        <div class="form-text">Todos os clientes importados serão associados a esta empresa.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Arquivo Excel*</label>
+                        <input type="file" class="form-control" id="importFile" accept=".xlsx, .xls, .csv" required>
+                        <div class="form-text">Formatos aceitos: .xlsx, .xls, .csv</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="hasHeader" checked>
+                            <label class="form-check-label" for="hasHeader">
+                                A primeira linha contém cabeçalhos
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <h6>Modelo de Planilha</h6>
+                        <p class="small mb-2">A planilha deve conter as seguintes colunas (na ordem):</p>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nome*</th>
+                                        <th>Email*</th>
+                                        <th>Telefone*</th>
+                                        <th>CPF/CNPJ</th>
+                                        <th>Endereço</th>
+                                        <th>Cidade</th>
+                                        <th>Estado</th>
+                                        <th>CEP</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <p class="small mt-2">* Campos obrigatórios</p>
+                        <div class="text-center">
+                            <a href="#" class="btn btn-sm btn-outline-primary" id="downloadTemplateBtn">
+                                <i class="fas fa-download me-1"></i> Baixar modelo de planilha
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="startImportBtn">Importar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Excluir Cliente -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteClientModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir o cliente <strong id="deleteClientName"></strong>?</p>
+                <p>Esta ação não pode ser desfeita.</p>
+                <input type="hidden" id="deleteClientId" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Progresso de Importação -->
+<div class="modal fade" id="importProgressModal" tabindex="-1" aria-labelledby="importProgressModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="importProgressModalLabel">Importando Clientes</h5>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <h5 id="importStatus">Processando registros...</h5>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="importProgressBar" role="progressbar" style="width: 0%"></div>
+                </div>
+                <p id="importProgressText">0 de 0 registros processados</p>
+                <div class="alert alert-info" id="importResultInfo" style="display: none;">
+                    <p class="mb-1"><strong>Registros processados:</strong> <span id="totalProcessed">0</span></p>
+                    <p class="mb-1"><strong>Registros importados:</strong> <span id="totalImported">0</span></p>
+                    <p class="mb-1"><strong>Registros com erro:</strong> <span id="totalErrors">0</span></p>
+                </div>
+            </div>
+            <div class="modal-footer" style="display: none;" id="importProgressFooter">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-primary" id="viewErrorsBtn">Ver Erros</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados dos clientes (simulação do banco de dados)
+    let clients = [
+        {
+            id: 1001,
+            name: "Carlos Silva",
+            email: "carlos.silva@email.com",
+            phone: "(83) 99999-1111",
+            companyId: 1001,
+            companyName: "Salão Beleza Total",
+            document: "12345678900",
+            status: "active",
+            birthdate: "1985-05-15",
+            gender: "male",
+            address: "Rua das Flores, 123",
+            city: "João Pessoa",
+            state: "PB",
+            zipcode: "58000-000",
+            notes: "Cliente fiel desde 2020",
+            optIn: true,
+            createdAt: "10/01/2023"
+        },
+        {
+            id: 1002,
+            name: "Ana Oliveira",
+            email: "ana.oliveira@email.com",
+            phone: "(83) 99999-2222",
+            companyId: 1001,
+            companyName: "Salão Beleza Total",
+            document: "98765432100",
+            status: "active",
+            birthdate: "1990-08-22",
+            gender: "female",
+            address: "Av. Principal, 456",
+            city: "João Pessoa",
+            state: "PB",
+            zipcode: "58000-000",
+            notes: "",
+            optIn: true,
+            createdAt: "15/02/2023"
+        },
+        {
+            id: 1003,
+            name: "Pedro Santos",
+            email: "pedro.santos@email.com",
+            phone: "(83) 99999-3333",
+            companyId: 1003,
+            companyName: "Barbearia Modern Cut",
+            document: "45678912300",
+            status: "active",
+            birthdate: "1988-12-10",
+            gender: "male",
+            address: "Rua dos Barbeiros, 789",
+            city: "Campina Grande",
+            state: "PB",
+            zipcode: "58100-000",
+            notes: "Prefere atendimento aos sábados",
+            optIn: false,
+            createdAt: "20/03/2023"
+        },
+        {
+            id: 1004,
+            name: "Mariana Costa",
+            email: "mariana.costa@email.com",
+            phone: "(83) 99999-4444",
+            companyId: 1002,
+            companyName: "Estética Sempre Bela",
+            document: "78912345600",
+            status: "inactive",
+            birthdate: "1995-04-18",
+            gender: "female",
+            address: "Av. das Acácias, 321",
+            city: "João Pessoa",
+            state: "PB",
+            zipcode: "58000-000",
+            notes: "",
+            optIn: true,
+            createdAt: "05/04/2023"
+        },
+        {
+            id: 1005,
+            name: "João Ferreira",
+            email: "joao.ferreira@email.com",
+            phone: "(83) 99999-5555",
+            companyId: 1003,
+            companyName: "Barbearia Modern Cut",
+            document: "12345678901",
+            status: "active",
+            birthdate: "1982-11-30",
+            gender: "male",
+            address: "Rua dos Pinheiros, 654",
+            city: "Campina Grande",
+            state: "PB",
+            zipcode: "58100-000",
+            notes: "Cliente VIP",
+            optIn: true,
+            createdAt: "10/05/2023"
+        },
+        {
+            id: 1006,
+            name: "Juliana Lima",
+            email: "juliana.lima@email.com",
+            phone: "(83) 99999-6666",
+            companyId: 1004,
+            companyName: "Clínica Estética Renascer",
+            document: "98765432101",
+            status: "active",
+            birthdate: "1992-07-25",
+            gender: "female",
+            address: "Rua das Palmeiras, 987",
+            city: "João Pessoa",
+            state: "PB",
+            zipcode: "58000-000",
+            notes: "Alérgica a alguns produtos",
+            optIn: false,
+            createdAt: "15/06/2023"
+        }
+    ];
+
+    // Dados simulados de empresas
+    let companies = [
+        { id: 1001, name: "Salão Beleza Total", status: "active" },
+        { id: 1002, name: "Estética Sempre Bela", status: "active" },
+        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+        { id: 1004, name: "Clínica Estética Renascer", status: "active" }
+    ];
+
+    // Inicialização da página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuração do logout
+        document.getElementById('logout-button')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Botão de logout clicado');
+            
+            // Limpar localStorage diretamente
+            localStorage.removeItem('agendai_auth');
+            console.log('Dados de autenticação removidos do localStorage');
+            
+            // Redirecionar para a página de login
+            window.location.href = 'http://localhost:3001/';
+            console.log('Redirecionando para a página inicial');
+        });
+
+        // Inicialização da página de clientes
+        initClientsPage();
+    });
+
+    // Função principal de inicialização
+    function initClientsPage() {
+        console.log('Página de clientes inicializada!');
+        
+        // Carregar empresas nos selects
+        loadCompanies();
+        
+        // Preencher a tabela com dados
+        populateClientsTable();
+        
+        // Configurar eventos
+        setupEventListeners();
+        
+        // Tentar carregar clientes do localStorage
+        loadFromStorage();
+    }
+
+    // Carregar clientes do localStorage
+    function loadFromStorage() {
+        try {
+            // Carregar clientes
+            const storedClients = localStorage.getItem('agendai_clients');
+            if (storedClients) {
+                clients = JSON.parse(storedClients);
+                console.log('Clientes carregados do localStorage:', clients.length);
+                populateClientsTable();
+            } else {
+                // Salvar os clientes padrão no localStorage
+                saveClientsToStorage();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar dados do localStorage:', error);
+        }
+    }
+
+    // Salvar clientes no localStorage
+    function saveClientsToStorage() {
+        try {
+            localStorage.setItem('agendai_clients', JSON.stringify(clients));
+            console.log('Clientes salvos no localStorage:', clients.length);
+        } catch (error) {
+            console.error('Erro ao salvar clientes no localStorage:', error);
+        }
+    }
+
+    // Carregar empresas nos selects
+    function loadCompanies() {
+        const selects = [
+            document.getElementById('filterCompany'),
+            document.getElementById('clientCompany'),
+            document.getElementById('editClientCompany'),
+            document.getElementById('importCompany')
+        ];
+        
+        // Tentar obter empresas do localStorage
+        let storedCompanies = [];
+        try {
+            const companiesData = localStorage.getItem('agendai_companies');
+            if (companiesData) {
+                storedCompanies = JSON.parse(companiesData);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar empresas do localStorage:', error);
+        }
+        
+        // Se não houver empresas no localStorage, usar as empresas simuladas
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar as empresas como opções
+            companiesToUse.forEach(company => {
+                if (company.status !== 'inactive') {
+                    const option = document.createElement('option');
+                    option.value = company.id;
+                    option.textContent = company.name;
+                    select.appendChild(option);
+                }
+            });
+        });
+        
+        console.log('Empresas carregadas nos selects.');
+    }
+
+    // Preencher a tabela de clientes
+    function populateClientsTable() {
+        const tableBody = document.querySelector('#clientsTable tbody');
+        if (!tableBody) return;
+        
+        // Limpar a tabela
+        tableBody.innerHTML = '';
+        
+        // Filtros (se existirem)
+        const filterName = document.getElementById('filterName')?.value.toLowerCase() || '';
+        const filterCompany = document.getElementById('filterCompany')?.value || '';
+        const filterStatus = document.getElementById('filterStatus')?.value || '';
+        const filterDate = document.getElementById('filterDate')?.value || '';
+        
+        // Filtrar os clientes
+        let filteredClients = clients;
+        
+        if (filterName) {
+            filteredClients = filteredClients.filter(client => 
+                client.name.toLowerCase().includes(filterName) || 
+                client.email.toLowerCase().includes(filterName)
+            );
+        }
+        
+        if (filterCompany) {
+            filteredClients = filteredClients.filter(client => 
+                client.companyId.toString() === filterCompany
+            );
+        }
+        
+        if (filterStatus) {
+            filteredClients = filteredClients.filter(client => 
+                client.status === filterStatus
+            );
+        }
+        
+        if (filterDate) {
+            // Converter para formato brasileiro DD/MM/YYYY para comparação
+            const parts = filterDate.split('-');
+            const filterDateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+            filteredClients = filteredClients.filter(client => 
+                client.createdAt === filterDateFormatted
+            );
+        }
+        
+        // Adicionar os clientes à tabela
+        filteredClients.forEach(client => {
+            // Formatar o status
+            let statusBadge = '';
+            switch (client.status) {
+                case 'active':
+                    statusBadge = '<span class="badge bg-success">Ativo</span>';
+                    break;
+                case 'inactive':
+                    statusBadge = '<span class="badge bg-danger">Inativo</span>';
+                    break;
+                default:
+                    statusBadge = '<span class="badge bg-secondary">Indefinido</span>';
+            }
+            
+            // Criar a linha da tabela
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${client.id}</td>
+                <td>${client.name}</td>
+                <td>${client.email}</td>
+                <td>${client.phone}</td>
+                <td>${client.companyName}</td>
+                <td>${statusBadge}</td>
+                <td>${client.createdAt}</td>
+                <td>
+                    <button class="btn btn-sm btn-info view-client" data-id="${client.id}" title="Visualizar">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary edit-client" data-id="${client.id}" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-client" data-id="${client.id}" title="Excluir">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        });
+        
+        // Adicionar eventos aos botões de ação
+        setupTableActionButtons();
+        
+        console.log('Tabela de clientes populada com', filteredClients.length, 'registros.');
+    }
+
+    // Configurar os botões de ação na tabela
+    function setupTableActionButtons() {
+        // Botões de visualizar
+        document.querySelectorAll('.view-client').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                viewClient(id);
+            });
+        });
+        
+        // Botões de editar
+        document.querySelectorAll('.edit-client').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                loadClientForEditing(id);
+            });
+        });
+        
+        // Botões de excluir
+        document.querySelectorAll('.delete-client').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                showDeleteConfirmation(id);
+            });
+        });
+    }
+
+    // Visualizar detalhes do cliente
+    function viewClient(id) {
+        const client = clients.find(c => c.id === id);
+        if (client) {
+            // Em uma implementação real, você abriria um modal com mais detalhes
+            alert(`Visualizando cliente: ${client.name}\nEmail: ${client.email}\nTelefone: ${client.phone}\nEmpresa: ${client.companyName}`);
+        }
+    }
+
+    // Mostrar confirmação de exclusão
+    function showDeleteConfirmation(id) {
+        const client = clients.find(c => c.id === id);
+        if (!client) {
+            alert('Cliente não encontrado!');
+            return;
+        }
+        
+        document.getElementById('deleteClientId').value = client.id;
+        document.getElementById('deleteClientName').textContent = client.name;
+        
+        const modal = new bootstrap.Modal(document.getElementById('deleteClientModal'));
+        modal.show();
+    }
+
+    // Configurar listeners de eventos
+    function setupEventListeners() {
+        // Botões de filtro
+        document.getElementById('clearFiltersBtn')?.addEventListener('click', function() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterStatus').value = '';
+            document.getElementById('filterDate').value = '';
+            populateClientsTable();
+        });
+        
+        document.getElementById('applyFiltersBtn')?.addEventListener('click', function() {
+            populateClientsTable();
+        });
+        
+        // Botão para salvar novo cliente
+        document.getElementById('saveClientBtn')?.addEventListener('click', saveClient);
+        
+        // Botão para atualizar cliente
+        document.getElementById('updateClientBtn')?.addEventListener('click', updateClient);
+        
+        // Botão para confirmar exclusão
+        document.getElementById('confirmDeleteBtn')?.addEventListener('click', deleteClient);
+        
+        // Botão para exportar Excel
+        document.getElementById('exportExcelBtn')?.addEventListener('click', function() {
+            alert('Função de exportar para Excel será implementada aqui.');
+        });
+        
+        // Botão para exportar PDF
+        document.getElementById('exportPdfBtn')?.addEventListener('click', function() {
+            alert('Função de exportar para PDF será implementada aqui.');
+        });
+        
+        // Botão para atualizar tabela
+        document.getElementById('refreshTableBtn')?.addEventListener('click', function() {
+            populateClientsTable();
+        });
+        
+        // Botão para baixar modelo de planilha
+        document.getElementById('downloadTemplateBtn')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Esta função geraria e baixaria um arquivo Excel de modelo para importação.');
+        });
+        
+        // Botão para iniciar importação
+        document.getElementById('startImportBtn')?.addEventListener('click', startImportProcess);
+    }
+
+    // Salvar um novo cliente
+    function saveClient() {
+        const form = document.getElementById('clientForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Obter a empresa selecionada
+        const companyId = parseInt(document.getElementById('clientCompany').value);
+        const companySelect = document.getElementById('clientCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        // Gerar um novo ID (em um sistema real, isso seria gerado pelo backend)
+        const newId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1001;
+        
+        // Criar o novo cliente
+        const newClient = {
+            id: newId,
+            name: document.getElementById('clientName').value,
+            email: document.getElementById('clientEmail').value,
+            phone: document.getElementById('clientPhone').value,
+            companyId: companyId,
+            companyName: companyName,
+            document: document.getElementById('clientDocument').value,
+            status: document.getElementById('clientStatus').value,
+            birthdate: document.getElementById('clientBirthdate').value,
+            gender: document.getElementById('clientGender').value,
+            address: document.getElementById('clientAddress').value,
+            city: document.getElementById('clientCity').value,
+            state: document.getElementById('clientState').value,
+            zipcode: document.getElementById('clientZipcode').value,
+            notes: document.getElementById('clientNotes').value,
+            optIn: document.getElementById('clientOptIn').checked,
+            createdAt: new Date().toLocaleDateString('pt-BR')
+        };
+        
+        // Adicionar o cliente à lista
+        clients.push(newClient);
+        
+        // Salvar no localStorage
+        saveClientsToStorage();
+        
+        // Atualizar a tabela
+        populateClientsTable();
+        
+        // Mostrar mensagem de sucesso
+        alert(`Cliente ${newClient.name} cadastrado com sucesso!`);
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addClientModal'));
+        modal.hide();
+        
+        // Limpar o formulário
+        form.reset();
+    }
+
+    // Carregar um cliente para edição
+    function loadClientForEditing(id) {
+        const client = clients.find(c => c.id === id);
+        if (!client) {
+            alert('Cliente não encontrado!');
+            return;
+        }
+        
+        // Preencher o formulário com os dados do cliente
+        document.getElementById('editClientId').value = client.id;
+        document.getElementById('editClientName').value = client.name;
+        document.getElementById('editClientEmail').value = client.email;
+        document.getElementById('editClientPhone').value = client.phone;
+        document.getElementById('editClientCompany').value = client.companyId;
+        document.getElementById('editClientDocument').value = client.document;
+        document.getElementById('editClientStatus').value = client.status;
+        document.getElementById('editClientBirthdate').value = client.birthdate;
+        document.getElementById('editClientGender').value = client.gender;
+        document.getElementById('editClientAddress').value = client.address;
+        document.getElementById('editClientCity').value = client.city;
+        document.getElementById('editClientState').value = client.state;
+        document.getElementById('editClientZipcode').value = client.zipcode;
+        document.getElementById('editClientNotes').value = client.notes;
+        document.getElementById('editClientOptIn').checked = client.optIn;
+        
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('editClientModal'));
+        modal.show();
+    }
+
+    // Atualizar um cliente
+    function updateClient() {
+        const form = document.getElementById('editClientForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const clientId = parseInt(document.getElementById('editClientId').value);
+        const clientIndex = clients.findIndex(c => c.id === clientId);
+        
+        if (clientIndex === -1) {
+            alert('Cliente não encontrado!');
+            return;
+        }
+        
+        // Obter a empresa selecionada
+        const companyId = parseInt(document.getElementById('editClientCompany').value);
+        const companySelect = document.getElementById('editClientCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        // Atualizar o cliente
+        const updatedClient = {
+            ...clients[clientIndex],
+            name: document.getElementById('editClientName').value,
+            email: document.getElementById('editClientEmail').value,
+            phone: document.getElementById('editClientPhone').value,
+            companyId: companyId,
+            companyName: companyName,
+            document: document.getElementById('editClientDocument').value,
+            status: document.getElementById('editClientStatus').value,
+            birthdate: document.getElementById('editClientBirthdate').value,
+            gender: document.getElementById('editClientGender').value,
+            address: document.getElementById('editClientAddress').value,
+            city: document.getElementById('editClientCity').value,
+            state: document.getElementById('editClientState').value,
+            zipcode: document.getElementById('editClientZipcode').value,
+            notes: document.getElementById('editClientNotes').value,
+            optIn: document.getElementById('editClientOptIn').checked
+        };
+        
+        // Atualizar o cliente na lista
+        clients[clientIndex] = updatedClient;
+        
+        // Salvar no localStorage
+        saveClientsToStorage();
+        
+        // Atualizar a tabela
+        populateClientsTable();
+        
+        // Mostrar mensagem de sucesso
+        alert(`Cliente ${updatedClient.name} atualizado com sucesso!`);
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editClientModal'));
+        modal.hide();
+    }
+
+    // Excluir um cliente
+    function deleteClient() {
+        const clientId = parseInt(document.getElementById('deleteClientId').value);
+        const clientIndex = clients.findIndex(c => c.id === clientId);
+        
+        if (clientIndex === -1) {
+            alert('Cliente não encontrado!');
+            return;
+        }
+        
+        const client = clients[clientIndex];
+        
+        // Remover da lista
+        clients.splice(clientIndex, 1);
+        
+        // Salvar no localStorage
+        saveClientsToStorage();
+        
+        // Atualizar a tabela
+        populateClientsTable();
+        
+        // Mostrar mensagem de sucesso
+        alert(`Cliente ${client.name} excluído com sucesso!`);
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteClientModal'));
+        modal.hide();
+    }
+
+    // Simular processo de importação de clientes
+    function startImportProcess() {
+        const form = document.getElementById('importForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Verificar se um arquivo foi selecionado
+        const fileInput = document.getElementById('importFile');
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert('Selecione um arquivo para importar!');
+            return;
+        }
+        
+        // Obter a empresa selecionada
+        const companyId = parseInt(document.getElementById('importCompany').value);
+        const companySelect = document.getElementById('importCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        // Fechar o modal de importação
+        const importModal = bootstrap.Modal.getInstance(document.getElementById('importClientsModal'));
+        importModal.hide();
+        
+        // Mostrar o modal de progresso
+        const progressModal = new bootstrap.Modal(document.getElementById('importProgressModal'));
+        progressModal.show();
+        
+        // Simular o processamento
+        let totalRecords = Math.floor(Math.random() * 50) + 20; // Entre 20 e 70 registros
+        let processedRecords = 0;
+        let importedRecords = 0;
+        let errorRecords = 0;
+        
+        const updateProgress = () => {
+            processedRecords++;
+            const progress = Math.floor((processedRecords / totalRecords) * 100);
+            
+            // Atualizar barra de progresso
+            document.getElementById('importProgressBar').style.width = `${progress}%`;
+            document.getElementById('importProgressText').textContent = `${processedRecords} de ${totalRecords} registros processados`;
+            
+            // Simular sucesso ou erro para cada registro
+            if (Math.random() > 0.1) { // 90% de chance de sucesso
+                importedRecords++;
+            } else {
+                errorRecords++;
+            }
+            
+            // Verificar se terminou
+            if (processedRecords >= totalRecords) {
+                document.getElementById('importStatus').textContent = 'Importação concluída!';
+                document.getElementById('totalProcessed').textContent = processedRecords;
+                document.getElementById('totalImported').textContent = importedRecords;
+                document.getElementById('totalErrors').textContent = errorRecords;
+                document.getElementById('importResultInfo').style.display = 'block';
+                document.getElementById('importProgressFooter').style.display = 'flex';
+                
+                // Adicionar os clientes importados ao sistema
+                if (importedRecords > 0) {
+                    // Adicionar clientes fictícios
+                    for (let i = 0; i < importedRecords; i++) {
+                        const newId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1001;
+                        const newClient = {
+                            id: newId,
+                            name: `Cliente Importado ${i+1}`,
+                            email: `cliente.importado${i+1}@email.com`,
+                            phone: `(83) 98${Math.floor(Math.random() * 900) + 100}-${Math.floor(Math.random() * 9000) + 1000}`,
+                            companyId: companyId,
+                            companyName: companyName,
+                            document: "",
+                            status: "active",
+                            birthdate: "",
+                            gender: "",
+                            address: "",
+                            city: "",
+                            state: "",
+                            zipcode: "",
+                            notes: "Cliente importado via planilha",
+                            optIn: false,
+                            createdAt: new Date().toLocaleDateString('pt-BR')
+                        };
+                        clients.push(newClient);
+                    }
+                    
+                    // Salvar no localStorage
+                    saveClientsToStorage();
+                    
+                    // Atualizar a tabela
+                    populateClientsTable();
+                }
+            }
+        };
+        
+        // Simular processamento de cada registro
+        let interval = setInterval(() => {
+            updateProgress();
+            if (processedRecords >= totalRecords) {
+                clearInterval(interval);
+            }
+        }, 100);
+        
+        // Botão para ver erros
+        document.getElementById('viewErrorsBtn')?.addEventListener('click', function() {
+            alert(`Lista de ${errorRecords} erros encontrados durante a importação. Em uma implementação real, isso mostraria detalhes de cada erro.`);
+        });
+    }
+</script> 

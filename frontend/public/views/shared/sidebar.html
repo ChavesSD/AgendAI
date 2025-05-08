@@ -1,0 +1,164 @@
+<!-- Menu Lateral -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-inner">
+        <!-- Admin Menu -->
+        <div class="sidebar-menu admin-menu">
+            <h5 class="sidebar-title">Dashboard Admin</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="#/admin/dashboard" class="nav-link" data-link>
+                        <i class="fas fa-tachometer-alt sidebar-icon"></i>
+                        <span class="sidebar-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/companies" class="nav-link" data-link>
+                        <i class="fas fa-building sidebar-icon"></i>
+                        <span class="sidebar-text">Empresas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/plans" class="nav-link" data-link>
+                        <i class="fas fa-clipboard-list sidebar-icon"></i>
+                        <span class="sidebar-text">Planos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/users" class="nav-link" data-link>
+                        <i class="fas fa-users sidebar-icon"></i>
+                        <span class="sidebar-text">Usuários</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/appointments" class="nav-link" data-link>
+                        <i class="fas fa-calendar-check sidebar-icon"></i>
+                        <span class="sidebar-text">Agendamentos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/services" class="nav-link" data-link>
+                        <i class="fas fa-briefcase sidebar-icon"></i>
+                        <span class="sidebar-text">Serviços</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/professionals" class="nav-link" data-link>
+                        <i class="fas fa-user-tie sidebar-icon"></i>
+                        <span class="sidebar-text">Profissionais</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/clients" class="nav-link" data-link>
+                        <i class="fas fa-user-friends sidebar-icon"></i>
+                        <span class="sidebar-text">Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/reports" class="nav-link" data-link>
+                        <i class="fas fa-chart-bar sidebar-icon"></i>
+                        <span class="sidebar-text">Relatórios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/admin/settings" class="nav-link" data-link>
+                        <i class="fas fa-cog sidebar-icon"></i>
+                        <span class="sidebar-text">Configurações</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Empresa Menu -->
+        <div class="sidebar-menu company-menu">
+            <h5 class="sidebar-title">Dashboard Empresa</h5>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="#/company/dashboard" class="nav-link" data-link>
+                        <i class="fas fa-tachometer-alt sidebar-icon"></i>
+                        <span class="sidebar-text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/scheduling" class="nav-link" data-link>
+                        <i class="fas fa-calendar-alt sidebar-icon"></i>
+                        <span class="sidebar-text">Agendamento</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/appointments" class="nav-link" data-link>
+                        <i class="fas fa-calendar-check sidebar-icon"></i>
+                        <span class="sidebar-text">Compromissos</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/calendar" class="nav-link" data-link>
+                        <i class="fas fa-calendar sidebar-icon"></i>
+                        <span class="sidebar-text">Calendário</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/services" class="nav-link" data-link>
+                        <i class="fas fa-briefcase sidebar-icon"></i>
+                        <span class="sidebar-text">Serviços</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/professionals" class="nav-link" data-link>
+                        <i class="fas fa-user-tie sidebar-icon"></i>
+                        <span class="sidebar-text">Profissionais</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/clients" class="nav-link" data-link>
+                        <i class="fas fa-user-friends sidebar-icon"></i>
+                        <span class="sidebar-text">Clientes</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/reports" class="nav-link" data-link>
+                        <i class="fas fa-chart-bar sidebar-icon"></i>
+                        <span class="sidebar-text">Relatórios</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/plan" class="nav-link" data-link>
+                        <i class="fas fa-clipboard-list sidebar-icon"></i>
+                        <span class="sidebar-text">Meu Plano</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#/company/settings" class="nav-link" data-link>
+                        <i class="fas fa-cog sidebar-icon"></i>
+                        <span class="sidebar-text">Configurações</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</aside>
+
+<script>
+    // Mostrar/esconder menus com base no tipo de usuário
+    document.addEventListener('DOMContentLoaded', function() {
+        const adminMenu = document.querySelector('.admin-menu');
+        const companyMenu = document.querySelector('.company-menu');
+        
+        try {
+            const authData = localStorage.getItem('agendai_auth');
+            
+            if (authData) {
+                const auth = JSON.parse(authData);
+                
+                if (auth.userType === 'admin') {
+                    if (adminMenu) adminMenu.style.display = 'block';
+                    if (companyMenu) companyMenu.style.display = 'none';
+                } else if (auth.userType === 'company') {
+                    if (adminMenu) adminMenu.style.display = 'none';
+                    if (companyMenu) companyMenu.style.display = 'block';
+                }
+            }
+        } catch (error) {
+            console.error('Erro ao determinar tipo de usuário:', error);
+        }
+    });
+</script> 

@@ -1,0 +1,825 @@
+<!-- View de Gestão de Planos para o Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="#/admin/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Plans Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Gestão de Planos</h2>
+                    <p class="text-muted">Configure os planos de contratação disponíveis no AgendAI.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlanModal">
+                        <i class="fas fa-plus me-1"></i> Novo Plano
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Plans Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-primary text-white">
+                            <h6 class="m-0 font-weight-bold">Plano Básico</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <h2 class="card-price text-primary">R$ 50,00<span class="period">/mês</span></h2>
+                            </div>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Agendamentos
+                                    <span class="badge bg-primary rounded-pill">50</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Profissionais
+                                    <span class="badge bg-primary rounded-pill">2</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Serviços
+                                    <span class="badge bg-primary rounded-pill">10</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Relatórios
+                                    <span class="badge bg-danger rounded-pill">Não</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Notificações por Email
+                                    <span class="badge bg-success rounded-pill">Sim</span>
+                                </li>
+                            </ul>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-primary edit-plan" data-id="1" data-bs-toggle="modal" data-bs-target="#editPlanModal">
+                                    <i class="fas fa-edit me-1"></i> Editar Plano
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow mb-4 border-primary">
+                        <div class="card-header py-3 bg-primary text-white">
+                            <h6 class="m-0 font-weight-bold">Plano Intermediário</h6>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                Popular
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <h2 class="card-price text-primary">R$ 70,00<span class="period">/mês</span></h2>
+                            </div>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Agendamentos
+                                    <span class="badge bg-primary rounded-pill">150</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Profissionais
+                                    <span class="badge bg-primary rounded-pill">5</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Serviços
+                                    <span class="badge bg-primary rounded-pill">25</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Relatórios
+                                    <span class="badge bg-success rounded-pill">Básicos</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Notificações por Email e SMS
+                                    <span class="badge bg-success rounded-pill">Sim</span>
+                                </li>
+                            </ul>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-primary edit-plan" data-id="2" data-bs-toggle="modal" data-bs-target="#editPlanModal">
+                                    <i class="fas fa-edit me-1"></i> Editar Plano
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 bg-primary text-white">
+                            <h6 class="m-0 font-weight-bold">Plano Avançado</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-4">
+                                <h2 class="card-price text-primary">R$ 100,00<span class="period">/mês</span></h2>
+                            </div>
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Agendamentos
+                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Profissionais
+                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Serviços
+                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Relatórios
+                                    <span class="badge bg-success rounded-pill">Completos</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Notificações Completas
+                                    <span class="badge bg-success rounded-pill">Sim</span>
+                                </li>
+                            </ul>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-primary edit-plan" data-id="3" data-bs-toggle="modal" data-bs-target="#editPlanModal">
+                                    <i class="fas fa-edit me-1"></i> Editar Plano
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Plans Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Planos Cadastrados</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Opções:</div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-excel me-2"></i> Exportar Excel</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-2"></i> Exportar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-sync-alt me-2"></i> Atualizar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="plansTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Preço (R$)</th>
+                                    <th>Agendamentos</th>
+                                    <th>Profissionais</th>
+                                    <th>Serviços</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Básico</td>
+                                    <td>R$ 50,00</td>
+                                    <td>50</td>
+                                    <td>2</td>
+                                    <td>10</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger delete-plan" data-id="1" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Intermediário</td>
+                                    <td>R$ 70,00</td>
+                                    <td>150</td>
+                                    <td>5</td>
+                                    <td>25</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger delete-plan" data-id="2" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Avançado</td>
+                                    <td>R$ 100,00</td>
+                                    <td>Ilimitado</td>
+                                    <td>Ilimitado</td>
+                                    <td>Ilimitado</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-danger delete-plan" data-id="3" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Plano -->
+<div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addPlanModalLabel">Novo Plano</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="planForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="planName" class="form-label">Nome do Plano*</label>
+                            <input type="text" class="form-control" id="planName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="planPrice" class="form-label">Preço (R$)*</label>
+                            <input type="number" class="form-control" id="planPrice" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="planAppointments" class="form-label">Limite de Agendamentos*</label>
+                            <input type="number" class="form-control" id="planAppointments" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="planProfessionals" class="form-label">Limite de Profissionais*</label>
+                            <input type="number" class="form-control" id="planProfessionals" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="planServices" class="form-label">Limite de Serviços*</label>
+                            <input type="number" class="form-control" id="planServices" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="planStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="planStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="planHighlight" class="form-label">Destaque*</label>
+                            <select class="form-select" id="planHighlight" required>
+                                <option value="none">Sem Destaque</option>
+                                <option value="popular">Popular</option>
+                                <option value="recommended">Recomendado</option>
+                                <option value="best-value">Melhor Custo-Benefício</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="planDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="planDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Recursos Incluídos</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureReports">
+                                    <label class="form-check-label" for="featureReports">Relatórios Avançados</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureEmailNotifications">
+                                    <label class="form-check-label" for="featureEmailNotifications">Notificações por Email</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureSmsNotifications">
+                                    <label class="form-check-label" for="featureSmsNotifications">Notificações por SMS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureWhatsAppNotifications">
+                                    <label class="form-check-label" for="featureWhatsAppNotifications">Notificações por WhatsApp</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureCustomization">
+                                    <label class="form-check-label" for="featureCustomization">Personalização Avançada</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="featureAPI">
+                                    <label class="form-check-label" for="featureAPI">Acesso à API</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="savePlanBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Plano -->
+<div class="modal fade" id="editPlanModal" tabindex="-1" aria-labelledby="editPlanModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editPlanModalLabel">Editar Plano</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPlanForm">
+                    <input type="hidden" id="editPlanId" value="">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editPlanName" class="form-label">Nome do Plano*</label>
+                            <input type="text" class="form-control" id="editPlanName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editPlanPrice" class="form-label">Preço (R$)*</label>
+                            <input type="number" class="form-control" id="editPlanPrice" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="editPlanAppointments" class="form-label">Limite de Agendamentos*</label>
+                            <input type="number" class="form-control" id="editPlanAppointments" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editPlanProfessionals" class="form-label">Limite de Profissionais*</label>
+                            <input type="number" class="form-control" id="editPlanProfessionals" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editPlanServices" class="form-label">Limite de Serviços*</label>
+                            <input type="number" class="form-control" id="editPlanServices" min="0" required>
+                            <div class="form-text">0 para ilimitado</div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editPlanStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="editPlanStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editPlanHighlight" class="form-label">Destaque*</label>
+                            <select class="form-select" id="editPlanHighlight" required>
+                                <option value="none">Sem Destaque</option>
+                                <option value="popular">Popular</option>
+                                <option value="recommended">Recomendado</option>
+                                <option value="best-value">Melhor Custo-Benefício</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPlanDescription" class="form-label">Descrição</label>
+                        <textarea class="form-control" id="editPlanDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Recursos Incluídos</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureReports">
+                                    <label class="form-check-label" for="editFeatureReports">Relatórios Avançados</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureEmailNotifications">
+                                    <label class="form-check-label" for="editFeatureEmailNotifications">Notificações por Email</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureSmsNotifications">
+                                    <label class="form-check-label" for="editFeatureSmsNotifications">Notificações por SMS</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureWhatsAppNotifications">
+                                    <label class="form-check-label" for="editFeatureWhatsAppNotifications">Notificações por WhatsApp</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureCustomization">
+                                    <label class="form-check-label" for="editFeatureCustomization">Personalização Avançada</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="editFeatureAPI">
+                                    <label class="form-check-label" for="editFeatureAPI">Acesso à API</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="updatePlanBtn">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Planos em formato de objeto para fácil acesso
+    let plans = [
+        {
+            id: 1,
+            name: "Básico",
+            price: 50.00,
+            appointments: 50,
+            professionals: 2,
+            services: 10,
+            status: "active",
+            highlight: "none",
+            description: "Plano básico ideal para pequenos negócios começarem a usar o sistema de agendamento.",
+            features: {
+                reports: false,
+                emailNotifications: true,
+                smsNotifications: false,
+                whatsAppNotifications: false,
+                customization: false,
+                api: false
+            }
+        },
+        {
+            id: 2,
+            name: "Intermediário",
+            price: 70.00,
+            appointments: 150,
+            professionals: 5,
+            services: 25,
+            status: "active",
+            highlight: "popular",
+            description: "Plano intermediário com mais recursos e capacidade para negócios em crescimento.",
+            features: {
+                reports: true,
+                emailNotifications: true,
+                smsNotifications: true,
+                whatsAppNotifications: false,
+                customization: false,
+                api: false
+            }
+        },
+        {
+            id: 3,
+            name: "Avançado",
+            price: 100.00,
+            appointments: 0, // 0 = ilimitado
+            professionals: 0, // 0 = ilimitado
+            services: 0, // 0 = ilimitado
+            status: "active",
+            highlight: "none",
+            description: "Plano avançado com recursos ilimitados para grandes empresas.",
+            features: {
+                reports: true,
+                emailNotifications: true,
+                smsNotifications: true,
+                whatsAppNotifications: true,
+                customization: true,
+                api: true
+            }
+        }
+    ];
+
+    // Logout
+    document.getElementById('logout-button')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Botão de logout clicado');
+            
+        // Limpar localStorage diretamente
+        localStorage.removeItem('agendai_auth');
+        console.log('Dados de autenticação removidos do localStorage');
+        
+        // Redirecionar para a página de login
+        window.location.href = 'http://localhost:3001/';
+        console.log('Redirecionando para a página inicial');
+    });
+
+    // Inicialização da página de planos
+    function initPlansPage() {
+        console.log('Página de planos inicializada!');
+        setupEventListeners();
+        updatePlansInOtherPages();
+    }
+
+    // Configurar escutadores de eventos
+    function setupEventListeners() {
+        // Configurar botões de ações na tabela
+        document.querySelectorAll('.view-plan').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const planId = parseInt(this.getAttribute('data-id'));
+                const plan = plans.find(p => p.id === planId);
+                if (plan) {
+                    alert(`Visualizando plano: ${plan.name}\nPreço: R$ ${plan.price.toFixed(2)}`);
+                }
+            });
+        });
+        
+        document.querySelectorAll('.edit-plan').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const planId = parseInt(this.getAttribute('data-id'));
+                loadPlanForEditing(planId);
+            });
+        });
+        
+        document.querySelectorAll('.delete-plan').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const planId = parseInt(this.getAttribute('data-id'));
+                if (confirm(`Deseja realmente excluir o plano ID: ${planId}?`)) {
+                    deletePlan(planId);
+                }
+            });
+        });
+        
+        // Configurar botão de salvar no modal de novo plano
+        document.getElementById('savePlanBtn')?.addEventListener('click', function() {
+            savePlan();
+        });
+        
+        // Configurar botão de atualizar no modal de edição
+        document.getElementById('updatePlanBtn')?.addEventListener('click', function() {
+            updatePlan();
+        });
+    }
+
+    // Carregar plano para edição
+    function loadPlanForEditing(planId) {
+        const plan = plans.find(p => p.id === planId);
+        if (!plan) return;
+        
+        document.getElementById('editPlanId').value = plan.id;
+        document.getElementById('editPlanName').value = plan.name;
+        document.getElementById('editPlanPrice').value = plan.price;
+        document.getElementById('editPlanAppointments').value = plan.appointments;
+        document.getElementById('editPlanProfessionals').value = plan.professionals;
+        document.getElementById('editPlanServices').value = plan.services;
+        document.getElementById('editPlanStatus').value = plan.status;
+        document.getElementById('editPlanHighlight').value = plan.highlight;
+        document.getElementById('editPlanDescription').value = plan.description;
+        
+        // Configurar checkboxes de recursos
+        document.getElementById('editFeatureReports').checked = plan.features.reports;
+        document.getElementById('editFeatureEmailNotifications').checked = plan.features.emailNotifications;
+        document.getElementById('editFeatureSmsNotifications').checked = plan.features.smsNotifications;
+        document.getElementById('editFeatureWhatsAppNotifications').checked = plan.features.whatsAppNotifications;
+        document.getElementById('editFeatureCustomization').checked = plan.features.customization;
+        document.getElementById('editFeatureAPI').checked = plan.features.api;
+    }
+
+    // Salvar novo plano
+    function savePlan() {
+        const form = document.getElementById('planForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const newId = plans.length > 0 ? Math.max(...plans.map(p => p.id)) + 1 : 1;
+        
+        const newPlan = {
+            id: newId,
+            name: document.getElementById('planName').value,
+            price: parseFloat(document.getElementById('planPrice').value),
+            appointments: parseInt(document.getElementById('planAppointments').value),
+            professionals: parseInt(document.getElementById('planProfessionals').value),
+            services: parseInt(document.getElementById('planServices').value),
+            status: document.getElementById('planStatus').value,
+            highlight: document.getElementById('planHighlight').value,
+            description: document.getElementById('planDescription').value,
+            features: {
+                reports: document.getElementById('featureReports').checked,
+                emailNotifications: document.getElementById('featureEmailNotifications').checked,
+                smsNotifications: document.getElementById('featureSmsNotifications').checked,
+                whatsAppNotifications: document.getElementById('featureWhatsAppNotifications').checked,
+                customization: document.getElementById('featureCustomization').checked,
+                api: document.getElementById('featureAPI').checked
+            }
+        };
+        
+        // Adicionar o novo plano à lista
+        plans.push(newPlan);
+        
+        // Atualizar a UI
+        refreshPlansUI();
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addPlanModal'));
+        modal.hide();
+        
+        // Limpar o formulário
+        form.reset();
+        
+        // Mostrar feedback
+        alert('Plano criado com sucesso!');
+    }
+
+    // Atualizar plano existente
+    function updatePlan() {
+        const form = document.getElementById('editPlanForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const planId = parseInt(document.getElementById('editPlanId').value);
+        const planIndex = plans.findIndex(p => p.id === planId);
+        
+        if (planIndex === -1) return;
+        
+        const updatedPlan = {
+            id: planId,
+            name: document.getElementById('editPlanName').value,
+            price: parseFloat(document.getElementById('editPlanPrice').value),
+            appointments: parseInt(document.getElementById('editPlanAppointments').value),
+            professionals: parseInt(document.getElementById('editPlanProfessionals').value),
+            services: parseInt(document.getElementById('editPlanServices').value),
+            status: document.getElementById('editPlanStatus').value,
+            highlight: document.getElementById('editPlanHighlight').value,
+            description: document.getElementById('editPlanDescription').value,
+            features: {
+                reports: document.getElementById('editFeatureReports').checked,
+                emailNotifications: document.getElementById('editFeatureEmailNotifications').checked,
+                smsNotifications: document.getElementById('editFeatureSmsNotifications').checked,
+                whatsAppNotifications: document.getElementById('editFeatureWhatsAppNotifications').checked,
+                customization: document.getElementById('editFeatureCustomization').checked,
+                api: document.getElementById('editFeatureAPI').checked
+            }
+        };
+        
+        // Atualizar o plano na lista
+        plans[planIndex] = updatedPlan;
+        
+        // Atualizar a UI
+        refreshPlansUI();
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
+        modal.hide();
+        
+        // Mostrar feedback
+        alert('Plano atualizado com sucesso!');
+        
+        // Atualizar planos em outras páginas
+        updatePlansInOtherPages();
+    }
+
+    // Excluir plano
+    function deletePlan(planId) {
+        // Verificar se é um dos planos padrão (não permitir excluir os 3 primeiros)
+        if (planId <= 3) {
+            alert('Não é possível excluir planos padrão do sistema.');
+            return;
+        }
+        
+        const planIndex = plans.findIndex(p => p.id === planId);
+        if (planIndex === -1) return;
+        
+        // Remover o plano da lista
+        plans.splice(planIndex, 1);
+        
+        // Atualizar a UI
+        refreshPlansUI();
+        
+        // Mostrar feedback
+        alert('Plano excluído com sucesso!');
+        
+        // Atualizar planos em outras páginas
+        updatePlansInOtherPages();
+    }
+
+    // Atualizar a interface com os planos atuais
+    function refreshPlansUI() {
+        // Lógica para reconstruir os cards e a tabela de planos
+        console.log('UI atualizada com os planos:', plans);
+        
+        // Em uma implementação real, você atualizaria o DOM com os planos atuais
+        // Por simplicidade, aqui apenas simulamos isso com um log
+    }
+
+    // Atualizar planos em outras páginas
+    function updatePlansInOtherPages() {
+        // Armazenar os planos no localStorage para acessá-los em outras páginas
+        localStorage.setItem('agendai_plans', JSON.stringify(plans));
+        
+        // Disparar um evento personalizado para notificar outras páginas sobre a atualização
+        const event = new CustomEvent('plansUpdated', { detail: plans });
+        window.dispatchEvent(event);
+        
+        console.log('Planos atualizados para outras páginas:', plans);
+    }
+
+    // Configurar todos os links para navegação SPA
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar links com data-link
+        document.querySelectorAll('[data-link]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                
+                if (typeof App !== 'undefined' && App.navigate) {
+                    // Remover o # inicial se existir
+                    const path = href.startsWith('#') ? href.substring(1) : href;
+                    App.navigate(path);
+                } else {
+                    window.location.href = href;
+                }
+            });
+        });
+        
+        // Inicializar a página se estiver sendo carregada diretamente (fora do SPA)
+        if (typeof App === 'undefined' || !App.routes) {
+            initPlansPage();
+        }
+    });
+</script>
+
+<style>
+    /* Estilos para os cards de planos */
+    .card-price {
+        font-size: 2.5rem;
+        font-weight: 700;
+    }
+    
+    .card-price .period {
+        font-size: 1rem;
+        font-weight: 400;
+        color: #6c757d;
+    }
+    
+    .border-primary {
+        border-width: 2px !important;
+    }
+    
+    /* Posicionamento do badge de destaque */
+    .card-header {
+        position: relative;
+    }
+</style> 

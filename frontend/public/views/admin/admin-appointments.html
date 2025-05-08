@@ -1,0 +1,2121 @@
+<!-- View de Gestão de Agendamentos para o Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Remover qualquer modal de agendamentos em desenvolvimento -->
+    <script>
+        // Fechar qualquer alerta existente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Verificando alertas sobre agendamentos');
+            // Fechar qualquer modal com OK button
+            setTimeout(function() {
+                const okButton = document.querySelector('.modal button.btn:contains("OK")');
+                if (okButton) {
+                    console.log('Encontrado botão OK, clicando nele');
+                    okButton.click();
+                }
+                
+                // Procurar por modal com texto sobre desenvolvimento
+                const modalElements = document.querySelectorAll('.modal');
+                modalElements.forEach(modal => {
+                    const modalText = modal.textContent || '';
+                    if (modalText.includes('desenvolvimento')) {
+                        console.log('Encontrado modal sobre desenvolvimento, fechando');
+                        const modalInstance = bootstrap.Modal.getInstance(modal);
+                        if (modalInstance) modalInstance.hide();
+                        else modal.classList.remove('show');
+                        
+                        // Remover backdrop
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) backdrop.remove();
+                        
+                        // Remover classes que bloqueiam scroll
+                        document.body.classList.remove('modal-open');
+                        document.body.style.overflow = '';
+                        document.body.style.paddingRight = '';
+                    }
+                });
+            }, 300);
+        });
+    </script>
+    
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="#/admin/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Appointments Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Gestão de Agendamentos</h2>
+                    <p class="text-muted">Gerencie todos os agendamentos realizados nas empresas cadastradas no sistema.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-success me-2" id="exportAppointmentsBtn">
+                        <i class="fas fa-file-excel me-1"></i> Exportar
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAppointmentModal">
+                        <i class="fas fa-plus me-1"></i> Novo Agendamento
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filterClient" class="form-label">Cliente</label>
+                            <input type="text" class="form-control" id="filterClient" placeholder="Nome ou email do cliente">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterCompany" class="form-label">Empresa</label>
+                            <select class="form-select" id="filterCompany">
+                                <option value="">Todas</option>
+                                <!-- Empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterService" class="form-label">Serviço</label>
+                            <select class="form-select" id="filterService">
+                                <option value="">Todos</option>
+                                <!-- Serviços serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterProfessional" class="form-label">Profissional</label>
+                            <select class="form-select" id="filterProfessional">
+                                <option value="">Todos</option>
+                                <!-- Profissionais serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filterStartDate" class="form-label">Data Inicial</label>
+                            <input type="date" class="form-control" id="filterStartDate">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterEndDate" class="form-label">Data Final</label>
+                            <input type="date" class="form-control" id="filterEndDate">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterStatus" class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Todos</option>
+                                <option value="scheduled">Agendado</option>
+                                <option value="confirmed">Confirmado</option>
+                                <option value="completed">Concluído</option>
+                                <option value="canceled">Cancelado</option>
+                                <option value="noshow">Não Compareceu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3 d-flex align-items-end">
+                            <div class="btn-group w-100">
+                                <button type="button" class="btn btn-secondary" id="todayFilterBtn">
+                                    Hoje
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="tomorrowFilterBtn">
+                                    Amanhã
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="weekFilterBtn">
+                                    Semana
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="clearFiltersBtn">
+                                <i class="fas fa-eraser me-1"></i> Limpar
+                            </button>
+                            <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                                <i class="fas fa-search me-1"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Appointments Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Agendamentos</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Opções:</div>
+                            <a class="dropdown-item" href="#" id="exportExcelBtn"><i class="fas fa-file-excel me-2"></i> Exportar Excel</a>
+                            <a class="dropdown-item" href="#" id="exportPdfBtn"><i class="fas fa-file-pdf me-2"></i> Exportar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="refreshTableBtn"><i class="fas fa-sync-alt me-2"></i> Atualizar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="appointmentsTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Data</th>
+                                    <th>Horário</th>
+                                    <th>Cliente</th>
+                                    <th>Serviço</th>
+                                    <th>Profissional</th>
+                                    <th>Empresa</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Dados serão carregados dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            <!-- Status Summary Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Agendados</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="scheduledCount">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Concluídos</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="completedCount">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Cancelados</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="canceledCount">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-ban fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-danger shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                        Não Compareceu</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="noshowCount">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-times fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Agendamento -->
+<div class="modal fade" id="addAppointmentModal" tabindex="-1" aria-labelledby="addAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addAppointmentModalLabel">Novo Agendamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="appointmentCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="appointmentCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- Empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="appointmentClient" class="form-label">Cliente*</label>
+                            <select class="form-select" id="appointmentClient" required>
+                                <option value="">Selecione um cliente</option>
+                                <!-- Clientes serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="appointmentService" class="form-label">Serviço*</label>
+                            <select class="form-select" id="appointmentService" required>
+                                <option value="">Selecione um serviço</option>
+                                <!-- Serviços serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="appointmentProfessional" class="form-label">Profissional*</label>
+                            <select class="form-select" id="appointmentProfessional" required>
+                                <option value="">Selecione um profissional</option>
+                                <!-- Profissionais serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="appointmentDate" class="form-label">Data*</label>
+                            <input type="date" class="form-control" id="appointmentDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="appointmentTime" class="form-label">Horário*</label>
+                            <select class="form-select" id="appointmentTime" required>
+                                <option value="">Selecione um horário</option>
+                                <!-- Horários serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="appointmentStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="appointmentStatus" required>
+                                <option value="scheduled">Agendado</option>
+                                <option value="confirmed">Confirmado</option>
+                                <option value="completed">Concluído</option>
+                                <option value="canceled">Cancelado</option>
+                                <option value="noshow">Não Compareceu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="appointmentSource" class="form-label">Origem</label>
+                            <select class="form-select" id="appointmentSource">
+                                <option value="app">Aplicativo</option>
+                                <option value="website">Website</option>
+                                <option value="phone">Telefone</option>
+                                <option value="presential">Presencial</option>
+                                <option value="admin">Administrativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="appointmentNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="appointmentNotes" rows="3" placeholder="Informações adicionais sobre o agendamento"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="sendNotification" checked>
+                            <label class="form-check-label" for="sendNotification">
+                                Enviar notificação para o cliente
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveAppointmentBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Agendamento -->
+<div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="editAppointmentModalLabel">Editar Agendamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAppointmentForm">
+                    <input type="hidden" id="editAppointmentId" value="">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editAppointmentCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="editAppointmentCompany" required>
+                                <option value="">Selecione uma empresa</option>
+                                <!-- Empresas serão carregadas dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAppointmentClient" class="form-label">Cliente*</label>
+                            <select class="form-select" id="editAppointmentClient" required>
+                                <option value="">Selecione um cliente</option>
+                                <!-- Clientes serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editAppointmentService" class="form-label">Serviço*</label>
+                            <select class="form-select" id="editAppointmentService" required>
+                                <option value="">Selecione um serviço</option>
+                                <!-- Serviços serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAppointmentProfessional" class="form-label">Profissional*</label>
+                            <select class="form-select" id="editAppointmentProfessional" required>
+                                <option value="">Selecione um profissional</option>
+                                <!-- Profissionais serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editAppointmentDate" class="form-label">Data*</label>
+                            <input type="date" class="form-control" id="editAppointmentDate" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAppointmentTime" class="form-label">Horário*</label>
+                            <select class="form-select" id="editAppointmentTime" required>
+                                <option value="">Selecione um horário</option>
+                                <!-- Horários serão carregados dinamicamente -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editAppointmentStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="editAppointmentStatus" required>
+                                <option value="scheduled">Agendado</option>
+                                <option value="confirmed">Confirmado</option>
+                                <option value="completed">Concluído</option>
+                                <option value="canceled">Cancelado</option>
+                                <option value="noshow">Não Compareceu</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAppointmentSource" class="form-label">Origem</label>
+                            <select class="form-select" id="editAppointmentSource">
+                                <option value="app">Aplicativo</option>
+                                <option value="website">Website</option>
+                                <option value="phone">Telefone</option>
+                                <option value="presential">Presencial</option>
+                                <option value="admin">Administrativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editAppointmentNotes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="editAppointmentNotes" rows="3" placeholder="Informações adicionais sobre o agendamento"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editSendNotification" checked>
+                            <label class="form-check-label" for="editSendNotification">
+                                Enviar notificação para o cliente
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="updateAppointmentBtn">Atualizar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Visualizar Detalhes do Agendamento -->
+<div class="modal fade" id="viewAppointmentModal" tabindex="-1" aria-labelledby="viewAppointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="viewAppointmentModalLabel">Detalhes do Agendamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Informações do Agendamento</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold">ID:</td>
+                                <td id="viewAppointmentId"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Data:</td>
+                                <td id="viewAppointmentDate"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Horário:</td>
+                                <td id="viewAppointmentTime"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Status:</td>
+                                <td id="viewAppointmentStatus"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Origem:</td>
+                                <td id="viewAppointmentSource"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Data de Criação:</td>
+                                <td id="viewAppointmentCreatedAt"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Informações do Serviço</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold">Empresa:</td>
+                                <td id="viewAppointmentCompany"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Serviço:</td>
+                                <td id="viewAppointmentService"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Profissional:</td>
+                                <td id="viewAppointmentProfessional"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Duração:</td>
+                                <td id="viewAppointmentDuration"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Preço:</td>
+                                <td id="viewAppointmentPrice"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Informações do Cliente</h6>
+                        <table class="table table-sm">
+                            <tr>
+                                <td class="fw-bold">Nome:</td>
+                                <td id="viewClientName"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Email:</td>
+                                <td id="viewClientEmail"></td>
+                            </tr>
+                            <tr>
+                                <td class="fw-bold">Telefone:</td>
+                                <td id="viewClientPhone"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">Observações</h6>
+                        <p id="viewAppointmentNotes" class="border p-2 rounded" style="min-height: 80px;"></p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <h6 class="fw-bold">Histórico</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped" id="appointmentHistoryTable">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Evento</th>
+                                        <th>Usuário</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Histórico será carregado dinamicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                <button type="button" class="btn btn-success me-2" id="confirmAppointmentBtn">
+                    <i class="fas fa-check me-1"></i> Confirmar
+                </button>
+                <button type="button" class="btn btn-danger me-2" id="cancelAppointmentBtn">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" id="editDetailAppointmentBtn">
+                    <i class="fas fa-edit me-1"></i> Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação para Cancelar Agendamento -->
+<div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="cancelConfirmationModalLabel">Confirmar Cancelamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja cancelar o agendamento?</p>
+                <p>Esta ação não pode ser desfeita.</p>
+                <div class="mb-3">
+                    <label for="cancelReason" class="form-label">Motivo do Cancelamento</label>
+                    <select class="form-select" id="cancelReason">
+                        <option value="client_request">Solicitação do Cliente</option>
+                        <option value="professional_unavailable">Profissional Indisponível</option>
+                        <option value="duplicate">Agendamento Duplicado</option>
+                        <option value="rescheduled">Reagendado</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="otherReasonContainer" style="display: none;">
+                    <label for="otherCancelReason" class="form-label">Especifique o Motivo</label>
+                    <input type="text" class="form-control" id="otherCancelReason" placeholder="Informe o motivo do cancelamento">
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notifyClientCancel" checked>
+                    <label class="form-check-label" for="notifyClientCancel">
+                        Notificar o cliente sobre o cancelamento
+                    </label>
+                </div>
+                <input type="hidden" id="cancelAppointmentId" value="">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                <button type="button" class="btn btn-danger" id="confirmCancelBtn">Confirmar Cancelamento</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dados dos agendamentos (simulação do banco de dados)
+    let appointments = [
+        {
+            id: 5001,
+            clientId: 1001,
+            clientName: "Carlos Silva",
+            clientEmail: "carlos.silva@email.com",
+            clientPhone: "(83) 99999-1111",
+            companyId: 1001,
+            companyName: "Salão Beleza Total",
+            serviceId: 2001,
+            serviceName: "Corte de Cabelo Masculino",
+            serviceDuration: "30 min",
+            servicePrice: "R$ 50,00",
+            professionalId: 1002,
+            professionalName: "João Barbosa",
+            date: "2023-11-15",
+            time: "14:30",
+            status: "completed",
+            source: "app",
+            notes: "Cliente solicitou um corte específico, mostrou foto de referência",
+            createdAt: "10/11/2023",
+            history: [
+                { timestamp: "10/11/2023 10:15", event: "Agendamento criado", user: "Cliente (App)" },
+                { timestamp: "10/11/2023 10:20", event: "Confirmação enviada por email", user: "Sistema" },
+                { timestamp: "15/11/2023 14:35", event: "Check-in realizado", user: "Recepção" },
+                { timestamp: "15/11/2023 15:05", event: "Serviço concluído", user: "João Barbosa" }
+            ]
+        },
+        {
+            id: 5002,
+            clientId: 1002,
+            clientName: "Ana Oliveira",
+            clientEmail: "ana.oliveira@email.com",
+            clientPhone: "(83) 99999-2222",
+            companyId: 1001,
+            companyName: "Salão Beleza Total",
+            serviceId: 2003,
+            serviceName: "Coloração + Hidratação",
+            serviceDuration: "120 min",
+            servicePrice: "R$ 180,00",
+            professionalId: 1001,
+            professionalName: "Ana Silva",
+            date: "2023-11-18",
+            time: "10:00",
+            status: "confirmed",
+            source: "website",
+            notes: "Cliente pediu para preparar o produto antes do horário para otimizar o tempo",
+            createdAt: "05/11/2023",
+            history: [
+                { timestamp: "05/11/2023 16:40", event: "Agendamento criado", user: "Cliente (Website)" },
+                { timestamp: "05/11/2023 16:45", event: "Confirmação enviada por email", user: "Sistema" },
+                { timestamp: "15/11/2023 09:10", event: "Lembrete enviado por SMS", user: "Sistema" },
+                { timestamp: "15/11/2023 15:30", event: "Agendamento confirmado por telefone", user: "Recepção" }
+            ]
+        },
+        {
+            id: 5003,
+            clientId: 1003,
+            clientName: "Pedro Santos",
+            clientEmail: "pedro.santos@email.com",
+            clientPhone: "(83) 99999-3333",
+            companyId: 1003,
+            companyName: "Barbearia Modern Cut",
+            serviceId: 2001,
+            serviceName: "Corte de Cabelo Masculino",
+            serviceDuration: "30 min",
+            servicePrice: "R$ 50,00",
+            professionalId: 1006,
+            professionalName: "Paulo Mendes",
+            date: "2023-11-19",
+            time: "11:30",
+            status: "scheduled",
+            source: "phone",
+            notes: "",
+            createdAt: "12/11/2023",
+            history: [
+                { timestamp: "12/11/2023 09:15", event: "Agendamento criado por telefone", user: "Recepção" },
+                { timestamp: "12/11/2023 09:20", event: "Confirmação enviada por email", user: "Sistema" }
+            ]
+        },
+        {
+            id: 5004,
+            clientId: 1004,
+            clientName: "Mariana Costa",
+            clientEmail: "mariana.costa@email.com",
+            clientPhone: "(83) 99999-4444",
+            companyId: 1002,
+            companyName: "Estética Sempre Bela",
+            serviceId: 2005,
+            serviceName: "Depilação Completa",
+            serviceDuration: "90 min",
+            servicePrice: "R$ 150,00",
+            professionalId: 1003,
+            professionalName: "Carla Ferreira",
+            date: "2023-11-15",
+            time: "09:00",
+            status: "canceled",
+            source: "app",
+            notes: "Cancelado a pedido da cliente",
+            createdAt: "08/11/2023",
+            history: [
+                { timestamp: "08/11/2023 14:30", event: "Agendamento criado", user: "Cliente (App)" },
+                { timestamp: "08/11/2023 14:35", event: "Confirmação enviada por email", user: "Sistema" },
+                { timestamp: "14/11/2023 18:20", event: "Cancelamento solicitado pelo cliente", user: "Cliente (App)" },
+                { timestamp: "14/11/2023 18:25", event: "Notificação de cancelamento enviada", user: "Sistema" }
+            ]
+        },
+        {
+            id: 5005,
+            clientId: 1005,
+            clientName: "João Ferreira",
+            clientEmail: "joao.ferreira@email.com",
+            clientPhone: "(83) 99999-5555",
+            companyId: 1003,
+            companyName: "Barbearia Modern Cut",
+            serviceId: 2001,
+            serviceName: "Corte de Cabelo Masculino",
+            serviceDuration: "30 min",
+            servicePrice: "R$ 50,00",
+            professionalId: 1002,
+            professionalName: "João Barbosa",
+            date: "2023-11-16",
+            time: "16:00",
+            status: "noshow",
+            source: "website",
+            notes: "Cliente não compareceu e não avisou",
+            createdAt: "10/11/2023",
+            history: [
+                { timestamp: "10/11/2023 10:15", event: "Agendamento criado", user: "Cliente (Website)" },
+                { timestamp: "10/11/2023 10:20", event: "Confirmação enviada por email", user: "Sistema" },
+                { timestamp: "15/11/2023 20:00", event: "Lembrete enviado por SMS", user: "Sistema" },
+                { timestamp: "16/11/2023 16:15", event: "Cliente não compareceu", user: "João Barbosa" }
+            ]
+        },
+        {
+            id: 5006,
+            clientId: 1006,
+            clientName: "Juliana Lima",
+            clientEmail: "juliana.lima@email.com",
+            clientPhone: "(83) 99999-6666",
+            companyId: 1004,
+            companyName: "Clínica Estética Renascer",
+            serviceId: 2004,
+            serviceName: "Limpeza de Pele",
+            serviceDuration: "60 min",
+            servicePrice: "R$ 120,00",
+            professionalId: 1004,
+            professionalName: "Lucas Oliveira",
+            date: "2023-11-20",
+            time: "14:00",
+            status: "scheduled",
+            source: "presential",
+            notes: "Cliente tem pele sensível, tomar cuidado com produtos usados",
+            createdAt: "15/11/2023",
+            history: [
+                { timestamp: "15/11/2023 11:30", event: "Agendamento criado presencialmente", user: "Recepção" },
+                { timestamp: "15/11/2023 11:35", event: "Confirmação enviada por email", user: "Sistema" }
+            ]
+        }
+    ];
+
+    // Dados simulados de empresas
+    let companies = [
+        { id: 1001, name: "Salão Beleza Total", status: "active" },
+        { id: 1002, name: "Estética Sempre Bela", status: "active" },
+        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+        { id: 1004, name: "Clínica Estética Renascer", status: "active" }
+    ];
+
+    // Dados simulados de serviços
+    let services = [
+        { id: 2001, name: "Corte de Cabelo Masculino", companyId: 1003, duration: "30 min", price: "R$ 50,00" },
+        { id: 2002, name: "Manicure Completa", companyId: 1005, duration: "45 min", price: "R$ 40,00" },
+        { id: 2003, name: "Coloração + Hidratação", companyId: 1001, duration: "120 min", price: "R$ 180,00" },
+        { id: 2004, name: "Limpeza de Pele", companyId: 1004, duration: "60 min", price: "R$ 120,00" },
+        { id: 2005, name: "Depilação Completa", companyId: 1002, duration: "90 min", price: "R$ 150,00" }
+    ];
+
+    // Dados simulados de profissionais
+    let professionals = [
+        { id: 1001, name: "Ana Silva", companyId: 1001 },
+        { id: 1002, name: "João Barbosa", companyId: 1003 },
+        { id: 1003, name: "Carla Ferreira", companyId: 1002 },
+        { id: 1004, name: "Lucas Oliveira", companyId: 1004 },
+        { id: 1005, name: "Mariana Santos", companyId: 1001 },
+        { id: 1006, name: "Paulo Mendes", companyId: 1003 }
+    ];
+
+    // Dados simulados de clientes
+    let clients = [
+        { id: 1001, name: "Carlos Silva", email: "carlos.silva@email.com", phone: "(83) 99999-1111" },
+        { id: 1002, name: "Ana Oliveira", email: "ana.oliveira@email.com", phone: "(83) 99999-2222" },
+        { id: 1003, name: "Pedro Santos", email: "pedro.santos@email.com", phone: "(83) 99999-3333" },
+        { id: 1004, name: "Mariana Costa", email: "mariana.costa@email.com", phone: "(83) 99999-4444" },
+        { id: 1005, name: "João Ferreira", email: "joao.ferreira@email.com", phone: "(83) 99999-5555" },
+        { id: 1006, name: "Juliana Lima", email: "juliana.lima@email.com", phone: "(83) 99999-6666" }
+    ];
+
+    // Inicialização da página
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar e manipular o modal de desenvolvimento
+        setTimeout(function() {
+            const modalDialog = document.querySelector('.modal.show');
+            if (modalDialog) {
+                const modalText = modalDialog.textContent || '';
+                if (modalText.includes('desenvolvimento')) {
+                    console.log('Modal de desenvolvimento detectado');
+                    
+                    // Encontrar o botão OK e clicá-lo para fechar o modal
+                    const okButton = modalDialog.querySelector('button.btn');
+                    if (okButton) {
+                        console.log('Clicando no botão OK');
+                        okButton.click();
+                    }
+                }
+            }
+            
+            // Inicializar a página normalmente após fechar o modal
+            initAppointmentsPage();
+        }, 100);
+        
+        // Remover qualquer alerta que possa aparecer
+        const alertText = document.querySelector('.alert')?.textContent || '';
+        if (alertText.includes('desenvolvimento')) {
+            console.log('Removendo alerta sobre desenvolvimento');
+            document.querySelector('.alert')?.parentElement?.parentElement?.remove();
+        }
+        
+        // Fechar qualquer modal de alerta
+        const modalElement = document.querySelector('#localhost\\:8080');
+        if (modalElement) {
+            console.log('Removendo modal de alerta');
+            modalElement.remove();
+        }
+        
+        // Configuração do logout
+        document.getElementById('logout-button')?.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Botão de logout clicado');
+                
+            // Limpar localStorage diretamente
+            localStorage.removeItem('agendai_auth');
+            console.log('Dados de autenticação removidos do localStorage');
+            
+            // Redirecionar para a página de login
+            window.location.href = 'http://localhost:3001/';
+            console.log('Redirecionando para a página inicial');
+        });
+
+        // Inicialização da página de agendamentos
+        initAppointmentsPage();
+    });
+
+    // Função principal de inicialização
+    function initAppointmentsPage() {
+        console.log('Página de agendamentos inicializada!');
+        
+        // Script de diagnóstico
+        try {
+            // Remover qualquer alerta ou notificação existente
+            const alertElement = document.querySelector('.alert-info');
+            if (alertElement) {
+                console.log('Removendo alerta existente:', alertElement.textContent);
+                alertElement.remove();
+            }
+            
+            const modalElement = document.querySelector('.modal.show');
+            if (modalElement) {
+                console.log('Fechando modal existente');
+                const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                if (bootstrapModal) bootstrapModal.hide();
+            }
+            
+            // Fechar qualquer alert do navegador que possa estar aparecendo
+            window.onbeforeunload = null;
+            
+            console.log('Diagnóstico completado');
+        } catch (error) {
+            console.error('Erro no diagnóstico:', error);
+        }
+        
+        // Carregar dados iniciais
+        loadFromStorage();
+        
+        // Carregar empresas nos selects
+        loadCompanies();
+        
+        // Carregar serviços, profissionais e clientes
+        loadServices();
+        loadProfessionals();
+        loadClients();
+        
+        // Preencher a tabela com dados
+        populateAppointmentsTable();
+        
+        // Atualizar os contadores de status
+        updateStatusCounts();
+        
+        // Configurar eventos
+        setupEventListeners();
+    }
+
+    // Carregar dados do localStorage
+    function loadFromStorage() {
+        try {
+            // Carregar agendamentos
+            const storedAppointments = localStorage.getItem('agendai_appointments');
+            if (storedAppointments) {
+                appointments = JSON.parse(storedAppointments);
+                console.log('Agendamentos carregados do localStorage:', appointments.length);
+            } else {
+                // Salvar os agendamentos padrão no localStorage
+                saveAppointmentsToStorage();
+            }
+            
+            // Carregar demais dados se necessário
+            // ...
+        } catch (error) {
+            console.error('Erro ao carregar dados do localStorage:', error);
+        }
+    }
+
+    // Salvar agendamentos no localStorage
+    function saveAppointmentsToStorage() {
+        try {
+            localStorage.setItem('agendai_appointments', JSON.stringify(appointments));
+            console.log('Agendamentos salvos no localStorage:', appointments.length);
+        } catch (error) {
+            console.error('Erro ao salvar agendamentos no localStorage:', error);
+        }
+    }
+
+    // Carregar empresas nos selects
+    function loadCompanies() {
+        const selects = [
+            document.getElementById('filterCompany'),
+            document.getElementById('appointmentCompany'),
+            document.getElementById('editAppointmentCompany')
+        ];
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar as empresas como opções
+            companies.forEach(company => {
+                if (company.status !== 'inactive') {
+                    const option = document.createElement('option');
+                    option.value = company.id;
+                    option.textContent = company.name;
+                    select.appendChild(option);
+                }
+            });
+        });
+        
+        console.log('Empresas carregadas nos selects.');
+    }
+
+    // Carregar serviços nos selects
+    function loadServices() {
+        const selects = [
+            document.getElementById('filterService'),
+            document.getElementById('appointmentService'),
+            document.getElementById('editAppointmentService')
+        ];
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar os serviços como opções
+            services.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.id;
+                option.textContent = service.name;
+                option.dataset.companyId = service.companyId;
+                select.appendChild(option);
+            });
+        });
+        
+        console.log('Serviços carregados nos selects.');
+    }
+
+    // Carregar profissionais nos selects
+    function loadProfessionals() {
+        const selects = [
+            document.getElementById('filterProfessional'),
+            document.getElementById('appointmentProfessional'),
+            document.getElementById('editAppointmentProfessional')
+        ];
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar os profissionais como opções
+            professionals.forEach(professional => {
+                const option = document.createElement('option');
+                option.value = professional.id;
+                option.textContent = professional.name;
+                option.dataset.companyId = professional.companyId;
+                select.appendChild(option);
+            });
+        });
+        
+        console.log('Profissionais carregados nos selects.');
+    }
+
+    // Carregar clientes nos selects
+    function loadClients() {
+        const selects = [
+            document.getElementById('appointmentClient'),
+            document.getElementById('editAppointmentClient')
+        ];
+        
+        // Preencher os selects
+        selects.forEach(select => {
+            if (!select) return;
+            
+            // Limpar opções atuais, exceto a primeira
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+            
+            // Adicionar os clientes como opções
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.id;
+                option.textContent = client.name;
+                select.appendChild(option);
+            });
+        });
+        
+        console.log('Clientes carregados nos selects.');
+    }
+
+    // Preencher a tabela de agendamentos
+    function populateAppointmentsTable() {
+        const tableBody = document.querySelector('#appointmentsTable tbody');
+        if (!tableBody) return;
+        
+        // Limpar a tabela
+        tableBody.innerHTML = '';
+        
+        // Filtros (se existirem)
+        const filterClient = document.getElementById('filterClient')?.value.toLowerCase() || '';
+        const filterCompany = document.getElementById('filterCompany')?.value || '';
+        const filterService = document.getElementById('filterService')?.value || '';
+        const filterProfessional = document.getElementById('filterProfessional')?.value || '';
+        const filterStartDate = document.getElementById('filterStartDate')?.value || '';
+        const filterEndDate = document.getElementById('filterEndDate')?.value || '';
+        const filterStatus = document.getElementById('filterStatus')?.value || '';
+        
+        // Filtrar os agendamentos
+        let filteredAppointments = appointments;
+        
+        if (filterClient) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.clientName.toLowerCase().includes(filterClient) || 
+                appointment.clientEmail.toLowerCase().includes(filterClient)
+            );
+        }
+        
+        if (filterCompany) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.companyId.toString() === filterCompany
+            );
+        }
+        
+        if (filterService) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.serviceId.toString() === filterService
+            );
+        }
+        
+        if (filterProfessional) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.professionalId.toString() === filterProfessional
+            );
+        }
+        
+        if (filterStartDate) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.date >= filterStartDate
+            );
+        }
+        
+        if (filterEndDate) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.date <= filterEndDate
+            );
+        }
+        
+        if (filterStatus) {
+            filteredAppointments = filteredAppointments.filter(appointment => 
+                appointment.status === filterStatus
+            );
+        }
+        
+        // Ordenar por data e hora (mais recentes primeiro)
+        filteredAppointments.sort((a, b) => {
+            if (a.date !== b.date) {
+                return a.date > b.date ? 1 : -1;
+            }
+            return a.time > b.time ? 1 : -1;
+        });
+        
+        // Adicionar os agendamentos à tabela
+        filteredAppointments.forEach(appointment => {
+            // Formatar a data (de YYYY-MM-DD para DD/MM/YYYY)
+            const dateParts = appointment.date.split('-');
+            const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+            
+            // Formatar o status
+            let statusBadge = '';
+            switch (appointment.status) {
+                case 'scheduled':
+                    statusBadge = '<span class="badge bg-primary">Agendado</span>';
+                    break;
+                case 'confirmed':
+                    statusBadge = '<span class="badge bg-info">Confirmado</span>';
+                    break;
+                case 'completed':
+                    statusBadge = '<span class="badge bg-success">Concluído</span>';
+                    break;
+                case 'canceled':
+                    statusBadge = '<span class="badge bg-warning text-dark">Cancelado</span>';
+                    break;
+                case 'noshow':
+                    statusBadge = '<span class="badge bg-danger">Não Compareceu</span>';
+                    break;
+                default:
+                    statusBadge = '<span class="badge bg-secondary">Indefinido</span>';
+            }
+            
+            // Criar a linha da tabela
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${appointment.id}</td>
+                <td>${formattedDate}</td>
+                <td>${appointment.time}</td>
+                <td>${appointment.clientName}</td>
+                <td>${appointment.serviceName}</td>
+                <td>${appointment.professionalName}</td>
+                <td>${appointment.companyName}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn btn-sm btn-info view-appointment" data-id="${appointment.id}" title="Visualizar">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button class="btn btn-sm btn-primary edit-appointment" data-id="${appointment.id}" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-success confirm-appointment" data-id="${appointment.id}" title="Confirmar" ${appointment.status !== 'scheduled' ? 'style="display:none;"' : ''}>
+                        <i class="fas fa-check"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger cancel-appointment" data-id="${appointment.id}" title="Cancelar" ${appointment.status === 'canceled' || appointment.status === 'completed' ? 'style="display:none;"' : ''}>
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+        });
+        
+        // Adicionar eventos aos botões de ação
+        setupTableActionButtons();
+        
+        console.log('Tabela de agendamentos populada com', filteredAppointments.length, 'registros.');
+    }
+    
+    // Atualizar contadores de status
+    function updateStatusCounts() {
+        const scheduledCount = appointments.filter(a => a.status === 'scheduled' || a.status === 'confirmed').length;
+        const completedCount = appointments.filter(a => a.status === 'completed').length;
+        const canceledCount = appointments.filter(a => a.status === 'canceled').length;
+        const noshowCount = appointments.filter(a => a.status === 'noshow').length;
+        
+        document.getElementById('scheduledCount').textContent = scheduledCount;
+        document.getElementById('completedCount').textContent = completedCount;
+        document.getElementById('canceledCount').textContent = canceledCount;
+        document.getElementById('noshowCount').textContent = noshowCount;
+    }
+    
+    // Configurar os botões de ação na tabela
+    function setupTableActionButtons() {
+        // Botões de visualizar
+        document.querySelectorAll('.view-appointment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                viewAppointment(id);
+            });
+        });
+        
+        // Botões de editar
+        document.querySelectorAll('.edit-appointment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                loadAppointmentForEditing(id);
+            });
+        });
+        
+        // Botões de confirmar
+        document.querySelectorAll('.confirm-appointment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                confirmAppointment(id);
+            });
+        });
+        
+        // Botões de cancelar
+        document.querySelectorAll('.cancel-appointment').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                showCancelConfirmation(id);
+            });
+        });
+    }
+
+    // Visualizar detalhes do agendamento
+    function viewAppointment(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        // Preencher os campos do modal
+        document.getElementById('viewAppointmentId').textContent = appointment.id;
+        
+        // Formatar a data (de YYYY-MM-DD para DD/MM/YYYY)
+        const dateParts = appointment.date.split('-');
+        const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+        document.getElementById('viewAppointmentDate').textContent = formattedDate;
+        
+        document.getElementById('viewAppointmentTime').textContent = appointment.time;
+        
+        // Formatar o status
+        let statusText = '';
+        switch (appointment.status) {
+            case 'scheduled':
+                statusText = '<span class="badge bg-primary">Agendado</span>';
+                break;
+            case 'confirmed':
+                statusText = '<span class="badge bg-info">Confirmado</span>';
+                break;
+            case 'completed':
+                statusText = '<span class="badge bg-success">Concluído</span>';
+                break;
+            case 'canceled':
+                statusText = '<span class="badge bg-warning text-dark">Cancelado</span>';
+                break;
+            case 'noshow':
+                statusText = '<span class="badge bg-danger">Não Compareceu</span>';
+                break;
+            default:
+                statusText = '<span class="badge bg-secondary">Indefinido</span>';
+        }
+        document.getElementById('viewAppointmentStatus').innerHTML = statusText;
+        
+        // Formatar a origem
+        let sourceText = '';
+        switch (appointment.source) {
+            case 'app':
+                sourceText = 'Aplicativo';
+                break;
+            case 'website':
+                sourceText = 'Website';
+                break;
+            case 'phone':
+                sourceText = 'Telefone';
+                break;
+            case 'presential':
+                sourceText = 'Presencial';
+                break;
+            case 'admin':
+                sourceText = 'Administrativo';
+                break;
+            default:
+                sourceText = 'Desconhecida';
+        }
+        document.getElementById('viewAppointmentSource').textContent = sourceText;
+        
+        document.getElementById('viewAppointmentCreatedAt').textContent = appointment.createdAt;
+        document.getElementById('viewAppointmentCompany').textContent = appointment.companyName;
+        document.getElementById('viewAppointmentService').textContent = appointment.serviceName;
+        document.getElementById('viewAppointmentProfessional').textContent = appointment.professionalName;
+        document.getElementById('viewAppointmentDuration').textContent = appointment.serviceDuration;
+        document.getElementById('viewAppointmentPrice').textContent = appointment.servicePrice;
+        document.getElementById('viewClientName').textContent = appointment.clientName;
+        document.getElementById('viewClientEmail').textContent = appointment.clientEmail;
+        document.getElementById('viewClientPhone').textContent = appointment.clientPhone;
+        document.getElementById('viewAppointmentNotes').textContent = appointment.notes || 'Nenhuma observação.';
+        
+        // Preencher histórico
+        const historyTableBody = document.querySelector('#appointmentHistoryTable tbody');
+        historyTableBody.innerHTML = '';
+        
+        if (appointment.history && appointment.history.length > 0) {
+            appointment.history.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.timestamp}</td>
+                    <td>${entry.event}</td>
+                    <td>${entry.user}</td>
+                `;
+                historyTableBody.appendChild(row);
+            });
+        } else {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="3" class="text-center">Nenhum histórico disponível.</td>
+            `;
+            historyTableBody.appendChild(row);
+        }
+        
+        // Configurar botões de ação baseados no status atual
+        const confirmBtn = document.getElementById('confirmAppointmentBtn');
+        const cancelBtn = document.getElementById('cancelAppointmentBtn');
+        
+        if (appointment.status === 'scheduled') {
+            confirmBtn.style.display = 'inline-block';
+            cancelBtn.style.display = 'inline-block';
+        } else if (appointment.status === 'confirmed') {
+            confirmBtn.style.display = 'none';
+            cancelBtn.style.display = 'inline-block';
+        } else {
+            confirmBtn.style.display = 'none';
+            cancelBtn.style.display = 'none';
+        }
+        
+        // Configurar eventos dos botões
+        confirmBtn.onclick = function() {
+            confirmAppointment(appointment.id);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('viewAppointmentModal'));
+            modal.hide();
+        };
+        
+        cancelBtn.onclick = function() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('viewAppointmentModal'));
+            modal.hide();
+            showCancelConfirmation(appointment.id);
+        };
+        
+        document.getElementById('editDetailAppointmentBtn').onclick = function() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('viewAppointmentModal'));
+            modal.hide();
+            loadAppointmentForEditing(appointment.id);
+        };
+        
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('viewAppointmentModal'));
+        modal.show();
+    }
+    
+    // Confirmar um agendamento
+    function confirmAppointment(id) {
+        const appointmentIndex = appointments.findIndex(a => a.id === id);
+        if (appointmentIndex === -1) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        // Atualizar status
+        appointments[appointmentIndex].status = 'confirmed';
+        
+        // Adicionar ao histórico
+        const now = new Date();
+        const timestamp = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        
+        if (!appointments[appointmentIndex].history) {
+            appointments[appointmentIndex].history = [];
+        }
+        
+        appointments[appointmentIndex].history.push({
+            timestamp: timestamp,
+            event: 'Agendamento confirmado',
+            user: 'Administrador'
+        });
+        
+        // Salvar no localStorage
+        saveAppointmentsToStorage();
+        
+        // Atualizar interface
+        populateAppointmentsTable();
+        updateStatusCounts();
+        
+        // Mostrar mensagem de sucesso
+        alert('Agendamento confirmado com sucesso!');
+    }
+    
+    // Mostrar modal de confirmação de cancelamento
+    function showCancelConfirmation(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        document.getElementById('cancelAppointmentId').value = appointment.id;
+        
+        // Resetar o formulário
+        document.getElementById('cancelReason').value = 'client_request';
+        document.getElementById('otherCancelReason').value = '';
+        document.getElementById('otherReasonContainer').style.display = 'none';
+        document.getElementById('notifyClientCancel').checked = true;
+        
+        // Configurar evento de alteração do motivo
+        document.getElementById('cancelReason').onchange = function() {
+            if (this.value === 'other') {
+                document.getElementById('otherReasonContainer').style.display = 'block';
+            } else {
+                document.getElementById('otherReasonContainer').style.display = 'none';
+            }
+        };
+        
+        // Configurar evento do botão de confirmação
+        document.getElementById('confirmCancelBtn').onclick = function() {
+            cancelAppointment(appointment.id);
+        };
+        
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('cancelConfirmationModal'));
+        modal.show();
+    }
+    
+    // Cancelar um agendamento
+    function cancelAppointment(id) {
+        const appointmentIndex = appointments.findIndex(a => a.id === id);
+        if (appointmentIndex === -1) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        // Obter motivo do cancelamento
+        const reasonSelect = document.getElementById('cancelReason');
+        let reason = reasonSelect.options[reasonSelect.selectedIndex].text;
+        
+        if (reasonSelect.value === 'other') {
+            const otherReason = document.getElementById('otherCancelReason').value;
+            if (!otherReason) {
+                alert('Por favor, especifique o motivo do cancelamento.');
+                return;
+            }
+            reason = otherReason;
+        }
+        
+        // Atualizar status
+        appointments[appointmentIndex].status = 'canceled';
+        
+        // Adicionar observação sobre o cancelamento
+        if (appointments[appointmentIndex].notes) {
+            appointments[appointmentIndex].notes += `\n\nCancelado: ${reason}`;
+        } else {
+            appointments[appointmentIndex].notes = `Cancelado: ${reason}`;
+        }
+        
+        // Adicionar ao histórico
+        const now = new Date();
+        const timestamp = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        
+        if (!appointments[appointmentIndex].history) {
+            appointments[appointmentIndex].history = [];
+        }
+        
+        appointments[appointmentIndex].history.push({
+            timestamp: timestamp,
+            event: `Agendamento cancelado. Motivo: ${reason}`,
+            user: 'Administrador'
+        });
+        
+        // Verificar se deve enviar notificação
+        const shouldNotify = document.getElementById('notifyClientCancel').checked;
+        if (shouldNotify) {
+            appointments[appointmentIndex].history.push({
+                timestamp: timestamp,
+                event: 'Notificação de cancelamento enviada ao cliente',
+                user: 'Sistema'
+            });
+        }
+        
+        // Salvar no localStorage
+        saveAppointmentsToStorage();
+        
+        // Atualizar interface
+        populateAppointmentsTable();
+        updateStatusCounts();
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('cancelConfirmationModal'));
+        modal.hide();
+        
+        // Mostrar mensagem de sucesso
+        alert('Agendamento cancelado com sucesso!');
+    }
+    
+    // Configurar listeners de eventos
+    function setupEventListeners() {
+        // Filtros rápidos de data
+        document.getElementById('todayFilterBtn')?.addEventListener('click', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('filterStartDate').value = today;
+            document.getElementById('filterEndDate').value = today;
+        });
+        
+        document.getElementById('tomorrowFilterBtn')?.addEventListener('click', function() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
+            document.getElementById('filterStartDate').value = tomorrowFormatted;
+            document.getElementById('filterEndDate').value = tomorrowFormatted;
+        });
+        
+        document.getElementById('weekFilterBtn')?.addEventListener('click', function() {
+            const today = new Date();
+            const nextWeek = new Date();
+            nextWeek.setDate(today.getDate() + 7);
+            
+            document.getElementById('filterStartDate').value = today.toISOString().split('T')[0];
+            document.getElementById('filterEndDate').value = nextWeek.toISOString().split('T')[0];
+        });
+        
+        // Botões de filtro
+        document.getElementById('clearFiltersBtn')?.addEventListener('click', function() {
+            document.getElementById('filterClient').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterService').value = '';
+            document.getElementById('filterProfessional').value = '';
+            document.getElementById('filterStartDate').value = '';
+            document.getElementById('filterEndDate').value = '';
+            document.getElementById('filterStatus').value = '';
+            populateAppointmentsTable();
+        });
+        
+        document.getElementById('applyFiltersBtn')?.addEventListener('click', function() {
+            populateAppointmentsTable();
+        });
+        
+        // Botão para salvar novo agendamento
+        document.getElementById('saveAppointmentBtn')?.addEventListener('click', saveAppointment);
+        
+        // Botão para atualizar agendamento
+        document.getElementById('updateAppointmentBtn')?.addEventListener('click', updateAppointment);
+        
+        // Botão para exportar agendamentos
+        document.getElementById('exportAppointmentsBtn')?.addEventListener('click', function() {
+            alert('Função de exportar agendamentos será implementada aqui.');
+        });
+        
+        // Botões de exportação
+        document.getElementById('exportExcelBtn')?.addEventListener('click', function() {
+            alert('Função de exportar para Excel será implementada aqui.');
+        });
+        
+        document.getElementById('exportPdfBtn')?.addEventListener('click', function() {
+            alert('Função de exportar para PDF será implementada aqui.');
+        });
+        
+        // Botão para atualizar tabela
+        document.getElementById('refreshTableBtn')?.addEventListener('click', function() {
+            populateAppointmentsTable();
+        });
+        
+        // Eventos para selects dependentes no modal de adição
+        document.getElementById('appointmentCompany')?.addEventListener('change', function() {
+            filterSelectByCompany('appointmentService', this.value);
+            filterSelectByCompany('appointmentProfessional', this.value);
+        });
+        
+        document.getElementById('appointmentDate')?.addEventListener('change', function() {
+            generateAvailableTimes();
+        });
+        
+        document.getElementById('appointmentProfessional')?.addEventListener('change', function() {
+            generateAvailableTimes();
+        });
+        
+        // Eventos para selects dependentes no modal de edição
+        document.getElementById('editAppointmentCompany')?.addEventListener('change', function() {
+            filterSelectByCompany('editAppointmentService', this.value);
+            filterSelectByCompany('editAppointmentProfessional', this.value);
+        });
+        
+        document.getElementById('editAppointmentDate')?.addEventListener('change', function() {
+            generateAvailableTimes('edit');
+        });
+        
+        document.getElementById('editAppointmentProfessional')?.addEventListener('change', function() {
+            generateAvailableTimes('edit');
+        });
+    }
+    
+    // Filtrar selects por empresa
+    function filterSelectByCompany(selectId, companyId) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        
+        // Salvar o valor atual
+        const currentValue = select.value;
+        
+        // Limpar opções, exceto a primeira
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Se não tiver uma empresa selecionada, não mostrar nenhuma opção
+        if (!companyId) return;
+        
+        // Adicionar apenas as opções da empresa selecionada
+        let options = [];
+        if (selectId.includes('Service')) {
+            options = services.filter(service => service.companyId.toString() === companyId);
+            options.forEach(service => {
+                const option = document.createElement('option');
+                option.value = service.id;
+                option.textContent = service.name;
+                select.appendChild(option);
+            });
+        } else if (selectId.includes('Professional')) {
+            options = professionals.filter(professional => professional.companyId.toString() === companyId);
+            options.forEach(professional => {
+                const option = document.createElement('option');
+                option.value = professional.id;
+                option.textContent = professional.name;
+                select.appendChild(option);
+            });
+        }
+        
+        // Tentar restaurar o valor atual se ainda estiver nas opções
+        if (currentValue) {
+            const optionExists = Array.from(select.options).some(option => option.value === currentValue);
+            if (optionExists) {
+                select.value = currentValue;
+            }
+        }
+    }
+    
+    // Gerar horários disponíveis
+    function generateAvailableTimes(mode = '') {
+        const prefix = mode === 'edit' ? 'edit' : '';
+        const dateInput = document.getElementById(`${prefix}AppointmentDate`);
+        const professionalSelect = document.getElementById(`${prefix}AppointmentProfessional`);
+        const timeSelect = document.getElementById(`${prefix}AppointmentTime`);
+        
+        if (!dateInput || !professionalSelect || !timeSelect) return;
+        
+        // Verificar se tem uma data e um profissional selecionado
+        if (!dateInput.value || !professionalSelect.value) {
+            // Limpar horários
+            while (timeSelect.options.length > 1) {
+                timeSelect.remove(1);
+            }
+            return;
+        }
+        
+        // Limpar horários atuais
+        while (timeSelect.options.length > 1) {
+            timeSelect.remove(1);
+        }
+        
+        // Em uma implementação real, aqui seria feita uma requisição para o backend
+        // para obter os horários disponíveis para o profissional na data selecionada
+        
+        // Simulação de horários disponíveis
+        const availableTimes = [
+            '08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', 
+            '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30'
+        ];
+        
+        // Pegar agendamentos existentes para a mesma data e profissional
+        const selectedDate = dateInput.value;
+        const selectedProfessionalId = parseInt(professionalSelect.value);
+        
+        const existingAppointments = appointments.filter(appointment => 
+            appointment.date === selectedDate && 
+            appointment.professionalId === selectedProfessionalId &&
+            appointment.status !== 'canceled'
+        );
+        
+        // Remover horários já agendados
+        const bookedTimes = existingAppointments.map(appointment => appointment.time);
+        const availableTimesFiltered = availableTimes.filter(time => !bookedTimes.includes(time));
+        
+        // Adicionar horários disponíveis ao select
+        availableTimesFiltered.forEach(time => {
+            const option = document.createElement('option');
+            option.value = time;
+            option.textContent = time;
+            timeSelect.appendChild(option);
+        });
+    }
+    
+    // Salvar um novo agendamento
+    function saveAppointment() {
+        const form = document.getElementById('appointmentForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        // Obter valores dos campos
+        const companyId = parseInt(document.getElementById('appointmentCompany').value);
+        const companySelect = document.getElementById('appointmentCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        const clientId = parseInt(document.getElementById('appointmentClient').value);
+        const clientSelect = document.getElementById('appointmentClient');
+        const clientName = clientSelect.options[clientSelect.selectedIndex].text;
+        
+        // Obter cliente completo
+        const client = clients.find(c => c.id === clientId);
+        
+        const serviceId = parseInt(document.getElementById('appointmentService').value);
+        const serviceSelect = document.getElementById('appointmentService');
+        const serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
+        
+        // Obter serviço completo
+        const service = services.find(s => s.id === serviceId);
+        
+        const professionalId = parseInt(document.getElementById('appointmentProfessional').value);
+        const professionalSelect = document.getElementById('appointmentProfessional');
+        const professionalName = professionalSelect.options[professionalSelect.selectedIndex].text;
+        
+        const date = document.getElementById('appointmentDate').value;
+        const time = document.getElementById('appointmentTime').value;
+        const status = document.getElementById('appointmentStatus').value;
+        const source = document.getElementById('appointmentSource').value;
+        const notes = document.getElementById('appointmentNotes').value;
+        const sendNotification = document.getElementById('sendNotification').checked;
+        
+        // Validar se não há agendamento na mesma data/hora para o mesmo profissional
+        const existingAppointment = appointments.find(a => 
+            a.date === date && 
+            a.time === time && 
+            a.professionalId === professionalId &&
+            a.status !== 'canceled'
+        );
+        
+        if (existingAppointment) {
+            alert('Já existe um agendamento para este profissional nesta data e horário.');
+            return;
+        }
+        
+        // Gerar um novo ID
+        const newId = appointments.length > 0 ? Math.max(...appointments.map(a => a.id)) + 1 : 5001;
+        
+        // Criar o novo agendamento
+        const now = new Date();
+        const timestamp = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        
+        const newAppointment = {
+            id: newId,
+            clientId: clientId,
+            clientName: clientName,
+            clientEmail: client ? client.email : '',
+            clientPhone: client ? client.phone : '',
+            companyId: companyId,
+            companyName: companyName,
+            serviceId: serviceId,
+            serviceName: serviceName,
+            serviceDuration: service ? service.duration : '',
+            servicePrice: service ? service.price : '',
+            professionalId: professionalId,
+            professionalName: professionalName,
+            date: date,
+            time: time,
+            status: status,
+            source: source,
+            notes: notes,
+            createdAt: now.toLocaleDateString('pt-BR'),
+            history: [
+                { 
+                    timestamp: timestamp, 
+                    event: 'Agendamento criado', 
+                    user: 'Administrador' 
+                }
+            ]
+        };
+        
+        // Adicionar evento de notificação ao histórico se selecionado
+        if (sendNotification) {
+            newAppointment.history.push({ 
+                timestamp: timestamp, 
+                event: 'Notificação enviada ao cliente', 
+                user: 'Sistema' 
+            });
+        }
+        
+        // Adicionar à lista de agendamentos
+        appointments.push(newAppointment);
+        
+        // Salvar no localStorage
+        saveAppointmentsToStorage();
+        
+        // Atualizar interface
+        populateAppointmentsTable();
+        updateStatusCounts();
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addAppointmentModal'));
+        modal.hide();
+        
+        // Resetar o formulário
+        form.reset();
+        
+        // Mostrar mensagem de sucesso
+        alert('Agendamento criado com sucesso!');
+    }
+    
+    // Carregar agendamento para edição
+    function loadAppointmentForEditing(id) {
+        const appointment = appointments.find(a => a.id === id);
+        if (!appointment) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        // Preencher campos do formulário
+        document.getElementById('editAppointmentId').value = appointment.id;
+        document.getElementById('editAppointmentCompany').value = appointment.companyId;
+        
+        // Filtrar serviços e profissionais pela empresa selecionada
+        filterSelectByCompany('editAppointmentService', appointment.companyId.toString());
+        filterSelectByCompany('editAppointmentProfessional', appointment.companyId.toString());
+        
+        document.getElementById('editAppointmentClient').value = appointment.clientId;
+        document.getElementById('editAppointmentService').value = appointment.serviceId;
+        document.getElementById('editAppointmentProfessional').value = appointment.professionalId;
+        document.getElementById('editAppointmentDate').value = appointment.date;
+        
+        // Gerar horários disponíveis
+        generateAvailableTimes('edit');
+        
+        // Adicionar o horário atual como opção, mesmo que já esteja ocupado
+        const timeSelect = document.getElementById('editAppointmentTime');
+        let hasCurrentTime = false;
+        
+        for (let i = 0; i < timeSelect.options.length; i++) {
+            if (timeSelect.options[i].value === appointment.time) {
+                hasCurrentTime = true;
+                break;
+            }
+        }
+        
+        if (!hasCurrentTime) {
+            const option = document.createElement('option');
+            option.value = appointment.time;
+            option.textContent = appointment.time;
+            timeSelect.appendChild(option);
+        }
+        
+        document.getElementById('editAppointmentTime').value = appointment.time;
+        document.getElementById('editAppointmentStatus').value = appointment.status;
+        document.getElementById('editAppointmentSource').value = appointment.source;
+        document.getElementById('editAppointmentNotes').value = appointment.notes;
+        document.getElementById('editSendNotification').checked = true;
+        
+        // Abrir o modal
+        const modal = new bootstrap.Modal(document.getElementById('editAppointmentModal'));
+        modal.show();
+    }
+    
+    // Atualizar um agendamento
+    function updateAppointment() {
+        const form = document.getElementById('editAppointmentForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+        
+        const appointmentId = parseInt(document.getElementById('editAppointmentId').value);
+        const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
+        
+        if (appointmentIndex === -1) {
+            alert('Agendamento não encontrado!');
+            return;
+        }
+        
+        // Obter valores dos campos
+        const companyId = parseInt(document.getElementById('editAppointmentCompany').value);
+        const companySelect = document.getElementById('editAppointmentCompany');
+        const companyName = companySelect.options[companySelect.selectedIndex].text;
+        
+        const clientId = parseInt(document.getElementById('editAppointmentClient').value);
+        const clientSelect = document.getElementById('editAppointmentClient');
+        const clientName = clientSelect.options[clientSelect.selectedIndex].text;
+        
+        // Obter cliente completo
+        const client = clients.find(c => c.id === clientId);
+        
+        const serviceId = parseInt(document.getElementById('editAppointmentService').value);
+        const serviceSelect = document.getElementById('editAppointmentService');
+        const serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
+        
+        // Obter serviço completo
+        const service = services.find(s => s.id === serviceId);
+        
+        const professionalId = parseInt(document.getElementById('editAppointmentProfessional').value);
+        const professionalSelect = document.getElementById('editAppointmentProfessional');
+        const professionalName = professionalSelect.options[professionalSelect.selectedIndex].text;
+        
+        const date = document.getElementById('editAppointmentDate').value;
+        const time = document.getElementById('editAppointmentTime').value;
+        const status = document.getElementById('editAppointmentStatus').value;
+        const source = document.getElementById('editAppointmentSource').value;
+        const notes = document.getElementById('editAppointmentNotes').value;
+        const sendNotification = document.getElementById('editSendNotification').checked;
+        
+        // Validar se não há agendamento na mesma data/hora para o mesmo profissional (exceto o atual)
+        const existingAppointment = appointments.find(a => 
+            a.id !== appointmentId &&
+            a.date === date && 
+            a.time === time && 
+            a.professionalId === professionalId &&
+            a.status !== 'canceled'
+        );
+        
+        if (existingAppointment) {
+            alert('Já existe um agendamento para este profissional nesta data e horário.');
+            return;
+        }
+        
+        // Verificar se houve alteração no status
+        const originalStatus = appointments[appointmentIndex].status;
+        const statusChanged = originalStatus !== status;
+        
+        // Salvar o agendamento original para histórico
+        const originalAppointment = {...appointments[appointmentIndex]};
+        
+        // Atualizar o agendamento
+        appointments[appointmentIndex] = {
+            ...appointments[appointmentIndex],
+            clientId: clientId,
+            clientName: clientName,
+            clientEmail: client ? client.email : originalAppointment.clientEmail,
+            clientPhone: client ? client.phone : originalAppointment.clientPhone,
+            companyId: companyId,
+            companyName: companyName,
+            serviceId: serviceId,
+            serviceName: serviceName,
+            serviceDuration: service ? service.duration : originalAppointment.serviceDuration,
+            servicePrice: service ? service.price : originalAppointment.servicePrice,
+            professionalId: professionalId,
+            professionalName: professionalName,
+            date: date,
+            time: time,
+            status: status,
+            source: source,
+            notes: notes
+        };
+        
+        // Adicionar entrada no histórico sobre a edição
+        const now = new Date();
+        const timestamp = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        
+        if (!appointments[appointmentIndex].history) {
+            appointments[appointmentIndex].history = [];
+        }
+        
+        appointments[appointmentIndex].history.push({ 
+            timestamp: timestamp, 
+            event: 'Agendamento editado', 
+            user: 'Administrador' 
+        });
+        
+        // Adicionar entrada no histórico sobre mudança de status, se houver
+        if (statusChanged) {
+            let statusMessage = '';
+            switch (status) {
+                case 'scheduled':
+                    statusMessage = 'Agendamento marcado como "Agendado"';
+                    break;
+                case 'confirmed':
+                    statusMessage = 'Agendamento marcado como "Confirmado"';
+                    break;
+                case 'completed':
+                    statusMessage = 'Agendamento marcado como "Concluído"';
+                    break;
+                case 'canceled':
+                    statusMessage = 'Agendamento marcado como "Cancelado"';
+                    break;
+                case 'noshow':
+                    statusMessage = 'Agendamento marcado como "Não Compareceu"';
+                    break;
+            }
+            
+            appointments[appointmentIndex].history.push({ 
+                timestamp: timestamp, 
+                event: statusMessage, 
+                user: 'Administrador' 
+            });
+        }
+        
+        // Adicionar evento de notificação ao histórico se selecionado
+        if (sendNotification) {
+            appointments[appointmentIndex].history.push({ 
+                timestamp: timestamp, 
+                event: 'Notificação de atualização enviada ao cliente', 
+                user: 'Sistema' 
+            });
+        }
+        
+        // Salvar no localStorage
+        saveAppointmentsToStorage();
+        
+        // Atualizar interface
+        populateAppointmentsTable();
+        updateStatusCounts();
+        
+        // Fechar o modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editAppointmentModal'));
+        modal.hide();
+        
+        // Mostrar mensagem de sucesso
+        alert('Agendamento atualizado com sucesso!');
+    }
+</script> 

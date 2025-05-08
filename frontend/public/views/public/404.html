@@ -1,0 +1,44 @@
+<!-- View da Página 404 - Não Encontrada -->
+<div class="min-vh-100 d-flex align-items-center">
+    <div class="container text-center">
+        <div class="mb-5">
+            <a href="#/" class="text-decoration-none" data-link>
+                <img src="../src/img/LogoAgendAIForHeader.png" alt="AgendAI Logo" class="img-fluid mb-4" style="max-width: 150px;">
+            </a>
+        </div>
+        
+        <div class="error-container mb-5">
+            <h1 class="display-1 fw-bold text-primary">404</h1>
+            <h2 class="mb-4">Página não encontrada - Redirecionando para a página inicial...</h2>
+            
+            <div class="d-flex justify-content-center">
+                <a href="#/" class="btn btn-primary btn-lg px-5 py-3" data-link>
+                    <i class="fas fa-home me-2"></i> Ir para o Início
+                </a>
+            </div>
+        </div>
+        
+        <div class="text-muted">
+            <p>Se o problema persistir, entre em contato com o suporte.</p>
+            <p><a href="mailto:suporte@agendai.com.br" class="text-decoration-none">suporte@agendai.com.br</a> | (83) 99328-3219</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Redirecionar automaticamente para a página inicial após 2 segundos
+    setTimeout(function() {
+        if (typeof App !== 'undefined' && App.navigate) {
+            App.navigate('/');
+        } else {
+            window.location.hash = '#/';
+        }
+    }, 2000);
+</script>
+
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+</style> 

@@ -1,0 +1,378 @@
+<!-- View do Dashboard de Empresas -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/company" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/company/calendar" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Calendário
+            </a>
+            <a href="#/company/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-check me-2"></i> Agendamentos
+            </a>
+            <a href="#/company/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/company/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/company/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Clientes
+            </a>
+            <a href="#/company/scheduling" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-link me-2"></i> Página de Agendamento
+            </a>
+            <a href="#/company/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-line me-2"></i> Relatórios
+            </a>
+            <a href="#/company/plan" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Meu Plano
+            </a>
+            <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Dashboard Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h2 class="mb-3">Dashboard da Empresa</h2>
+                    <p class="text-muted">Bem-vindo ao painel de controle da sua empresa. Gerencie agendamentos, profissionais e serviços.</p>
+                </div>
+            </div>
+            
+            <!-- Cards Row -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Agendamentos (Hoje)</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">12</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Faturamento (Mensal)</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">R$ 12.500</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Taxa de Ocupação</div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col-auto">
+                                            <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">65%</div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="progress progress-sm mr-2">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: 65%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Clientes Novos</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Rows -->
+            <!-- Weekly Appointments Chart Row -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Agendamentos por Dia da Semana</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area" style="height: 300px;">
+                                <canvas id="weeklyAppointmentsChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Services and Professionals Row -->
+            <div class="row mb-4">
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Top 5 Serviços Mais Solicitados</h6>
+                        </div>
+                        <div class="card-body d-flex flex-column" style="height: 350px;">
+                            <div class="chart-pie pt-2 pb-2" style="flex-grow: 1;">
+                                <canvas id="servicesChart"></canvas>
+                            </div>
+                            <div class="mt-auto text-center small pt-3">
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-primary"></i> Corte de Cabelo
+                                </span>
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-success"></i> Manicure
+                                </span>
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-info"></i> Coloração
+                                </span>
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-warning"></i> Barba
+                                </span>
+                                <span class="me-2">
+                                    <i class="fas fa-circle text-danger"></i> Depilação
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-6">
+                    <!-- Top 3 Professionals Card -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">Top 3 Profissionais Mais Requisitados</h6>
+                        </div>
+                        <div class="card-body" style="height: 350px;">
+                            <div class="professionals-list">
+                                <div class="d-flex align-items-center border-bottom py-3">
+                                    <div class="position-relative me-3">
+                                        <img class="rounded-circle" src="https://via.placeholder.com/60" alt="Profissional" style="width: 60px; height: 60px;">
+                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle">
+                                            <span class="visually-hidden">Online</span>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Ricardo Silva</h6>
+                                        <span class="text-muted">Cabeleireiro</span>
+                                        <div class="mt-1">
+                                            <div class="progress" style="height: 6px; width: 100px;">
+                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto text-end">
+                                        <span class="badge bg-primary fs-6 mb-1">42</span>
+                                        <div class="text-muted small">agendamentos</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center border-bottom py-3">
+                                    <div class="position-relative me-3">
+                                        <img class="rounded-circle" src="https://via.placeholder.com/60" alt="Profissional" style="width: 60px; height: 60px;">
+                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-success border border-light rounded-circle">
+                                            <span class="visually-hidden">Online</span>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Joana Santos</h6>
+                                        <span class="text-muted">Manicure</span>
+                                        <div class="mt-1">
+                                            <div class="progress" style="height: 6px; width: 100px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: 83%;" aria-valuenow="83" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto text-end">
+                                        <span class="badge bg-success fs-6 mb-1">35</span>
+                                        <div class="text-muted small">agendamentos</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center py-3">
+                                    <div class="position-relative me-3">
+                                        <img class="rounded-circle" src="https://via.placeholder.com/60" alt="Profissional" style="width: 60px; height: 60px;">
+                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                            <span class="visually-hidden">Offline</span>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0 fw-bold">Carla Almeida</h6>
+                                        <span class="text-muted">Cabeleireira</span>
+                                        <div class="mt-1">
+                                            <div class="progress" style="height: 6px; width: 100px;">
+                                                <div class="progress-bar bg-info" role="progressbar" style="width: 67%;" aria-valuenow="67" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="ms-auto text-end">
+                                        <span class="badge bg-info fs-6 mb-1">28</span>
+                                        <div class="text-muted small">agendamentos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Configurar o botão de logout
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Inicializando eventos do dashboard da empresa');
+        
+        const logoutButton = document.getElementById('logout-button');
+        console.log('Botão de logout:', logoutButton);
+        
+        if (logoutButton) {
+            logoutButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Botão de logout clicado');
+                
+                // Limpar localStorage diretamente
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página de login
+                window.location.href = 'http://localhost:3001/';
+                console.log('Redirecionando para a página inicial');
+            };
+            console.log('Evento de clique adicionado ao botão de logout');
+        } else {
+            console.error('Botão de logout não encontrado no DOM');
+        }
+    });
+</script>
+
+<style>
+    /* Estilos específicos para o dashboard da empresa */
+    .calendar-view {
+        width: 100%;
+    }
+    
+    .hour-row {
+        display: flex;
+        border-bottom: 1px solid #e3e6f0;
+    }
+    
+    .hour-label {
+        width: 60px;
+        padding: 10px;
+        text-align: right;
+        font-weight: bold;
+        color: #858796;
+    }
+    
+    .hour-slot {
+        flex-grow: 1;
+        min-height: 80px;
+        padding: 10px;
+        position: relative;
+    }
+    
+    .appointment-card {
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+    
+    .appointment-card .time {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .appointment-card .title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .status-badge {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+    }
+    
+    .professionals-list .border-bottom:last-child {
+        border-bottom: none !important;
+    }
+    
+    /* Estilos de cartões */
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
+    }
+</style> 

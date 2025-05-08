@@ -1,0 +1,20 @@
+{
+  "name": "agendai-frontend",
+  "version": "1.0.0",
+  "description": "Frontend da aplicação AgendAI - Sistema de Agendamento Inteligente",
+  "main": "index.js",
+  "scripts": {
+    "start": "serve public -s -p 5000",
+    "dev": "serve public -s -p 5000"
+  },
+  "author": "Deyvison Chaves",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^5.3.2",
+    "chart.js": "^3.9.1",
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0"
+  }
+} 

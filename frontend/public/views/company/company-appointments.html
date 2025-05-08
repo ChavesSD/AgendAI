@@ -1,0 +1,916 @@
+<!-- View de Agendamentos de Empresa -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/company" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/company/calendar" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Calendário
+            </a>
+            <a href="#/company/appointments" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-calendar-check me-2"></i> Agendamentos
+            </a>
+            <a href="#/company/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/company/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/company/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Clientes
+            </a>
+            <a href="#/company/scheduling" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-link me-2"></i> Página de Agendamento
+            </a>
+            <a href="#/company/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-line me-2"></i> Relatórios
+            </a>
+            <a href="#/company/plan" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Meu Plano
+            </a>
+            <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Appointments Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Agendamentos</h2>
+                    <p class="text-muted">Gerencie todos os agendamentos da sua empresa por profissional.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" id="new-appointment-btn">
+                        <i class="fas fa-plus me-1"></i> Novo Agendamento
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="professional-filter" class="form-label">Profissional</label>
+                            <select class="form-select" id="professional-filter">
+                                <option value="all">Todos os profissionais</option>
+                                <option value="1">Ricardo Silva</option>
+                                <option value="2">Carla Almeida</option>
+                                <option value="3">Paula Rocha</option>
+                                <option value="4">Joana Santos</option>
+                                <option value="5">Fernando Costa</option>
+                                <option value="6">Daniela Lima</option>
+                                <option value="7">Márcio Santos</option>
+                                <option value="8">Bianca Oliveira</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="service-filter" class="form-label">Serviço</label>
+                            <select class="form-select" id="service-filter">
+                                <option value="all">Todos os serviços</option>
+                                <option value="1">Corte de Cabelo</option>
+                                <option value="2">Coloração</option>
+                                <option value="3">Barba</option>
+                                <option value="4">Manicure</option>
+                                <option value="5">Depilação</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="status-filter" class="form-label">Status</label>
+                            <select class="form-select" id="status-filter">
+                                <option value="all">Todos os status</option>
+                                <option value="pending">Pendente</option>
+                                <option value="confirmed">Confirmado</option>
+                                <option value="completed">Concluído</option>
+                                <option value="cancelled">Cancelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="date-filter" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="date-filter">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-primary" id="apply-filters-btn">
+                                <i class="fas fa-filter me-1"></i> Aplicar Filtros
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" id="clear-filters-btn">
+                                <i class="fas fa-undo me-1"></i> Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Agendamentos por Profissional -->
+            <div class="row">
+                <!-- Profissional 1: Ricardo Silva -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Ricardo Silva
+                            </h6>
+                            <span class="badge bg-primary">8 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning">Pendente</span>
+                                            </div>
+                                            <div class="fw-bold">07/05/2025 - 08:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Corte de Cabelo - Masculino</div>
+                                        <div>Cliente: Carlos Mendes</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Appointment 2 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning">Pendente</span>
+                                            </div>
+                                            <div class="fw-bold">09/05/2025 - 09:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Barba</div>
+                                        <div>Cliente: Pedro Alves</div>
+                                        <div class="text-muted small">Duração: 30min</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="1">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 2: Carla Almeida -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Carla Almeida
+                            </h6>
+                            <span class="badge bg-primary">6 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning">Pendente</span>
+                                            </div>
+                                            <div class="fw-bold">07/05/2025 - 11:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Coloração e Hidratação</div>
+                                        <div>Cliente: Sandra Costa</div>
+                                        <div class="text-muted small">Duração: 2h</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Appointment 2 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-success">Confirmado</span>
+                                            </div>
+                                            <div class="fw-bold">10/05/2025 - 14:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Escova e Finalização</div>
+                                        <div>Cliente: Juliana Freitas</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="2">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 3: Paula Rocha -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Paula Rocha
+                            </h6>
+                            <span class="badge bg-primary">5 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning">Pendente</span>
+                                            </div>
+                                            <div class="fw-bold">08/05/2025 - 10:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Depilação</div>
+                                        <div>Cliente: Mariana Sousa</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="3">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 4: Joana Santos -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Joana Santos
+                            </h6>
+                            <span class="badge bg-primary">4 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-success">Confirmado</span>
+                                            </div>
+                                            <div class="fw-bold">07/05/2025 - 09:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Manicure</div>
+                                        <div>Cliente: Ana Paula</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="4">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 5: Fernando Costa -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Fernando Costa
+                            </h6>
+                            <span class="badge bg-primary">7 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-warning">Pendente</span>
+                                            </div>
+                                            <div class="fw-bold">11/05/2025 - 13:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Corte Masculino Exclusivo</div>
+                                        <div>Cliente: Roberto Campos</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Appointment 2 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-success">Confirmado</span>
+                                            </div>
+                                            <div class="fw-bold">12/05/2025 - 15:30</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Tratamento Capilar</div>
+                                        <div>Cliente: Marta Silva</div>
+                                        <div class="text-muted small">Duração: 1h30min</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="5">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 6: Daniela Lima -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Daniela Lima
+                            </h6>
+                            <span class="badge bg-primary">5 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-info">Em andamento</span>
+                                            </div>
+                                            <div class="fw-bold">07/05/2025 - 14:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Massagem Terapêutica</div>
+                                        <div>Cliente: Lucia Araújo</div>
+                                        <div class="text-muted small">Duração: 50min</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="6">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 7: Márcio Santos -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Márcio Santos
+                            </h6>
+                            <span class="badge bg-primary">3 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-danger">Cancelado</span>
+                                            </div>
+                                            <div class="fw-bold">08/05/2025 - 16:00</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar" disabled>
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Corte e Barba</div>
+                                        <div>Cliente: Marcos Pereira</div>
+                                        <div class="text-muted small">Duração: 1h</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="7">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profissional 8: Bianca Oliveira -->
+                <div class="col-md-3 mb-4">
+                    <div class="card shadow">
+                        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-user-md me-2"></i> Bianca Oliveira
+                            </h6>
+                            <span class="badge bg-primary">4 agendamentos</span>
+                        </div>
+                        <div class="card-body p-0">
+                            <div class="appointments-list">
+                                <!-- Appointment 1 -->
+                                <div class="appointment-item p-3 border-bottom">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <div class="mb-1">
+                                                <span class="badge bg-success">Confirmado</span>
+                                            </div>
+                                            <div class="fw-bold">09/05/2025 - 11:30</div>
+                                        </div>
+                                        <div class="appointment-actions">
+                                            <button class="btn btn-sm btn-outline-primary" title="Editar">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-success" title="Confirmar" disabled>
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" title="Cancelar">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">Design de Sobrancelhas</div>
+                                        <div>Cliente: Cristina Medeiros</div>
+                                        <div class="text-muted small">Duração: 40min</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-white text-center">
+                            <a href="#" class="text-primary" data-professional="8">Ver todos os agendamentos <i class="fas fa-arrow-right ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Paginação -->
+            <div class="row">
+                <div class="col-12">
+                    <nav aria-label="Navegação de páginas">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Novo/Editar Agendamento -->
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="appointmentModalLabel">Novo Agendamento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="appointmentForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="client" class="form-label">Cliente</label>
+                            <select class="form-select" id="client" required>
+                                <option value="">Selecione um cliente</option>
+                                <option value="1">Carlos Mendes</option>
+                                <option value="2">Sandra Costa</option>
+                                <option value="3">Mariana Sousa</option>
+                                <option value="4">Pedro Alves</option>
+                                <option value="5">Ana Paula</option>
+                                <option value="6">Juliana Freitas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="service" class="form-label">Serviço</label>
+                            <select class="form-select" id="service" required>
+                                <option value="">Selecione um serviço</option>
+                                <option value="1">Corte de Cabelo - Masculino</option>
+                                <option value="2">Corte de Cabelo - Feminino</option>
+                                <option value="3">Coloração</option>
+                                <option value="4">Hidratação</option>
+                                <option value="5">Barba</option>
+                                <option value="6">Manicure</option>
+                                <option value="7">Depilação</option>
+                                <option value="8">Escova e Finalização</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="professional" class="form-label">Profissional</label>
+                            <select class="form-select" id="professional" required>
+                                <option value="">Selecione um profissional</option>
+                                <option value="1">Ricardo Silva</option>
+                                <option value="2">Carla Almeida</option>
+                                <option value="3">Paula Rocha</option>
+                                <option value="4">Joana Santos</option>
+                                <option value="5">Fernando Costa</option>
+                                <option value="6">Daniela Lima</option>
+                                <option value="7">Márcio Santos</option>
+                                <option value="8">Bianca Oliveira</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" id="status" required>
+                                <option value="pending">Pendente</option>
+                                <option value="confirmed">Confirmado</option>
+                                <option value="completed">Concluído</option>
+                                <option value="cancelled">Cancelado</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="date" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="date" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="time" class="form-label">Horário</label>
+                            <input type="time" class="form-control" id="time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="notes" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveAppointment">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Estilos para a página de agendamentos */
+    .appointments-list {
+        max-height: 320px;
+        overflow-y: auto;
+    }
+    
+    .appointment-item {
+        transition: background-color 0.2s ease;
+    }
+    
+    .appointment-item:hover {
+        background-color: rgba(0, 123, 255, 0.05);
+    }
+    
+    .appointment-actions .btn {
+        margin-left: 5px;
+    }
+    
+    /* Cores para os status */
+    .badge {
+        border-radius: 12px;
+        padding: 5px 12px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .badge.bg-warning {
+        background-color: #f6c23e !important;
+    }
+    
+    .badge.bg-success {
+        background-color: #1cc88a !important;
+    }
+    
+    .badge.bg-danger {
+        background-color: #e74a3b !important;
+    }
+    
+    .badge.bg-info {
+        background-color: #36b9cc !important;
+    }
+    
+    /* Estilos para a data e hora */
+    .appointment-item .fw-bold {
+        color: #333;
+        font-size: 0.85rem;
+    }
+    
+    /* Estilos para cards de profissionais */
+    .card {
+        border-radius: 8px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+    
+    .card-header {
+        border-top-left-radius: 8px !important;
+        border-top-right-radius: 8px !important;
+    }
+    
+    /* Estilos para paginação */
+    .pagination {
+        margin-top: 20px;
+    }
+    
+    .page-link {
+        color: #4e73df;
+    }
+    
+    .page-item.active .page-link {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+</style>
+
+<script>
+    // Logout
+    document.getElementById('logout-button')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Botão de logout clicado');
+            
+        // Limpar localStorage diretamente
+        localStorage.removeItem('agendai_auth');
+        console.log('Dados de autenticação removidos do localStorage');
+        
+        // Redirecionar para a página de login
+        window.location.href = 'http://localhost:3001/';
+        console.log('Redirecionando para a página inicial');
+    });
+    
+    // Eventos para manipulação dos agendamentos
+    document.addEventListener('DOMContentLoaded', function() {
+        // Abrir modal para novo agendamento
+        document.getElementById('new-appointment-btn')?.addEventListener('click', function() {
+            const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+            document.getElementById('appointmentModalLabel').textContent = 'Novo Agendamento';
+            document.getElementById('appointmentForm').reset();
+            modal.show();
+        });
+        
+        // Manipulação dos botões de ação para cada agendamento
+        const appointmentActions = document.querySelectorAll('.appointment-actions button');
+        appointmentActions.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const action = this.getAttribute('title');
+                const appointmentItem = this.closest('.appointment-item');
+                const appointmentInfo = appointmentItem.querySelector('.fw-bold').textContent;
+                const cliente = appointmentItem.querySelector('div:nth-child(2)').textContent;
+                
+                if (action === 'Editar') {
+                    const modal = new bootstrap.Modal(document.getElementById('appointmentModal'));
+                    document.getElementById('appointmentModalLabel').textContent = 'Editar Agendamento';
+                    // Aqui você preencheria o formulário com os dados do agendamento
+                    modal.show();
+                } else if (action === 'Confirmar') {
+                    if (confirm(`Deseja confirmar o agendamento de ${appointmentInfo} para ${cliente}?`)) {
+                        // Lógica para confirmar o agendamento
+                        const statusBadge = appointmentItem.querySelector('.badge');
+                        statusBadge.className = 'badge bg-success me-2';
+                        statusBadge.textContent = 'Confirmado';
+                        this.disabled = true;
+                    }
+                } else if (action === 'Cancelar') {
+                    if (confirm(`Deseja cancelar o agendamento de ${appointmentInfo} para ${cliente}?`)) {
+                        // Lógica para cancelar o agendamento
+                        const statusBadge = appointmentItem.querySelector('.badge');
+                        statusBadge.className = 'badge bg-danger me-2';
+                        statusBadge.textContent = 'Cancelado';
+                    }
+                }
+            });
+        });
+        
+        // Salvar agendamento (novo ou editado)
+        document.getElementById('saveAppointment')?.addEventListener('click', function() {
+            const form = document.getElementById('appointmentForm');
+            if (form.checkValidity()) {
+                // Lógica para salvar o agendamento
+                alert('Agendamento salvo com sucesso!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('appointmentModal'));
+                modal.hide();
+            } else {
+                form.reportValidity();
+            }
+        });
+        
+        // Aplicar filtros
+        document.getElementById('apply-filters-btn')?.addEventListener('click', function() {
+            // Lógica para aplicar os filtros
+            alert('Filtros aplicados');
+        });
+        
+        // Limpar filtros
+        document.getElementById('clear-filters-btn')?.addEventListener('click', function() {
+            document.getElementById('professional-filter').value = 'all';
+            document.getElementById('service-filter').value = 'all';
+            document.getElementById('status-filter').value = 'all';
+            document.getElementById('date-filter').value = '';
+            // Lógica para limpar os filtros
+            alert('Filtros limpos');
+        });
+        
+        // Paginação
+        document.querySelectorAll('.pagination .page-link').forEach(link => {
+            if (!link.parentElement.classList.contains('disabled')) {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Remove a classe active de todos os itens
+                    document.querySelectorAll('.pagination .page-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Adiciona a classe active ao item clicado
+                    this.parentElement.classList.add('active');
+                    
+                    // Simulação de mudança de página
+                    if (this.textContent === 'Próximo') {
+                        const activePage = document.querySelector('.pagination .page-item.active');
+                        const nextPage = activePage.nextElementSibling;
+                        if (nextPage && !nextPage.classList.contains('disabled')) {
+                            nextPage.querySelector('.page-link').click();
+                        }
+                    } else if (this.textContent === 'Anterior') {
+                        const activePage = document.querySelector('.pagination .page-item.active');
+                        const prevPage = activePage.previousElementSibling;
+                        if (prevPage && !prevPage.classList.contains('disabled')) {
+                            prevPage.querySelector('.page-link').click();
+                        }
+                    } else {
+                        alert('Navegando para a página ' + this.textContent);
+                    }
+                });
+            }
+        });
+        
+        // Visualizar todos os agendamentos de um profissional
+        document.querySelectorAll('[data-professional]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const professionalId = this.getAttribute('data-professional');
+                const professionalName = this.closest('.card').querySelector('.font-weight-bold').textContent.trim();
+                
+                // Filtra os agendamentos pelo profissional selecionado
+                document.getElementById('professional-filter').value = professionalId;
+                alert(`Visualizando todos os agendamentos de ${professionalName}`);
+                
+                // Simula aplicação do filtro
+                document.getElementById('apply-filters-btn').click();
+            });
+        });
+    });
+</script> 

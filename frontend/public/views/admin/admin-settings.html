@@ -1,0 +1,604 @@
+<!-- View de Configurações do Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="#/admin/settings" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Settings Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Configurações do Sistema</h2>
+                    <p class="text-muted">Personalize as configurações do sistema AgendAI.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" id="save-settings">
+                        <i class="fas fa-save me-1"></i> Salvar Alterações
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Settings Tabs -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab" aria-controls="general" aria-selected="true">
+                                        <i class="fas fa-sliders-h me-2"></i>Geral
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="appearance-tab" data-bs-toggle="tab" data-bs-target="#appearance" type="button" role="tab" aria-controls="appearance" aria-selected="false">
+                                        <i class="fas fa-palette me-2"></i>Aparência
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="notifications-tab" data-bs-toggle="tab" data-bs-target="#notifications" type="button" role="tab" aria-controls="notifications" aria-selected="false">
+                                        <i class="fas fa-bell me-2"></i>Notificações
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="system-tab" data-bs-toggle="tab" data-bs-target="#system" type="button" role="tab" aria-controls="system" aria-selected="false">
+                                        <i class="fas fa-server me-2"></i>Sistema
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="security-tab" data-bs-toggle="tab" data-bs-target="#security" type="button" role="tab" aria-controls="security" aria-selected="false">
+                                        <i class="fas fa-shield-alt me-2"></i>Segurança
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content p-4 border border-top-0 rounded-bottom" id="settingsTabsContent">
+                                <!-- General Settings Tab -->
+                                <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general-tab">
+                                    <h5 class="mb-3">Configurações Gerais</h5>
+                                    
+                                    <div class="mb-4">
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="maintenanceMode" checked>
+                                            <label class="form-check-label" for="maintenanceMode">Modo de Manutenção</label>
+                                            <small class="form-text text-muted d-block">Quando ativado, apenas administradores podem acessar o sistema.</small>
+                                        </div>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="debugMode">
+                                            <label class="form-check-label" for="debugMode">Modo de Depuração</label>
+                                            <small class="form-text text-muted d-block">Ativa logs detalhados e ferramentas de depuração.</small>
+                                        </div>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="enableCache" checked>
+                                            <label class="form-check-label" for="enableCache">Habilitar Cache</label>
+                                            <small class="form-text text-muted d-block">Melhora a performance armazenando dados em cache.</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="siteName" class="form-label">Nome do Site</label>
+                                            <input type="text" class="form-control" id="siteName" value="AgendAI">
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="timeZone" class="form-label">Fuso Horário</label>
+                                            <select class="form-select" id="timeZone">
+                                                <option value="America/Sao_Paulo" selected>América/São Paulo</option>
+                                                <option value="America/Recife">América/Recife</option>
+                                                <option value="America/Manaus">América/Manaus</option>
+                                                <option value="America/Belem">América/Belém</option>
+                                                <option value="America/Fortaleza">América/Fortaleza</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="dateFormat" class="form-label">Formato de Data</label>
+                                            <select class="form-select" id="dateFormat">
+                                                <option value="DD/MM/YYYY" selected>DD/MM/YYYY</option>
+                                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="timeFormat" class="form-label">Formato de Hora</label>
+                                            <select class="form-select" id="timeFormat">
+                                                <option value="24h" selected>24 horas</option>
+                                                <option value="12h">12 horas (AM/PM)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Appearance Settings Tab -->
+                                <div class="tab-pane fade" id="appearance" role="tabpanel" aria-labelledby="appearance-tab">
+                                    <h5 class="mb-3">Configurações de Aparência</h5>
+                                    
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <label for="themeColor" class="form-label">Cor Principal</label>
+                                            <div class="d-flex">
+                                                <input type="color" class="form-control form-control-color me-2" id="themeColor" value="#3a86ff" title="Escolha a cor principal">
+                                                <input type="text" class="form-control" value="#3a86ff" id="themeColorHex">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="secondaryColor" class="form-label">Cor Secundária</label>
+                                            <div class="d-flex">
+                                                <input type="color" class="form-control form-control-color me-2" id="secondaryColor" value="#7209b7" title="Escolha a cor secundária">
+                                                <input type="text" class="form-control" value="#7209b7" id="secondaryColorHex">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Modo de Cores</label>
+                                        <div class="d-flex">
+                                            <div class="form-check me-4">
+                                                <input class="form-check-input" type="radio" name="colorMode" id="lightMode" checked>
+                                                <label class="form-check-label" for="lightMode">
+                                                    <i class="fas fa-sun me-1"></i> Claro
+                                                </label>
+                                            </div>
+                                            <div class="form-check me-4">
+                                                <input class="form-check-input" type="radio" name="colorMode" id="darkMode">
+                                                <label class="form-check-label" for="darkMode">
+                                                    <i class="fas fa-moon me-1"></i> Escuro
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="colorMode" id="autoMode">
+                                                <label class="form-check-label" for="autoMode">
+                                                    <i class="fas fa-adjust me-1"></i> Automático
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <label class="form-label">Layout do Sidebar</label>
+                                        <div class="d-flex">
+                                            <div class="form-check me-4">
+                                                <input class="form-check-input" type="radio" name="sidebarLayout" id="expandedSidebar" checked>
+                                                <label class="form-check-label" for="expandedSidebar">
+                                                    <i class="fas fa-expand me-1"></i> Expandido
+                                                </label>
+                                            </div>
+                                            <div class="form-check me-4">
+                                                <input class="form-check-input" type="radio" name="sidebarLayout" id="collapsedSidebar">
+                                                <label class="form-check-label" for="collapsedSidebar">
+                                                    <i class="fas fa-compress me-1"></i> Recolhido
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="logoUpload" class="form-label">Logo da Empresa</label>
+                                            <input class="form-control" type="file" id="logoUpload">
+                                            <small class="form-text text-muted">Tamanho recomendado: 200x200px, formato PNG ou SVG.</small>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label for="faviconUpload" class="form-label">Favicon</label>
+                                            <input class="form-control" type="file" id="faviconUpload">
+                                            <small class="form-text text-muted">Tamanho recomendado: 32x32px, formato ICO ou PNG.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Notifications Settings Tab -->
+                                <div class="tab-pane fade" id="notifications" role="tabpanel" aria-labelledby="notifications-tab">
+                                    <h5 class="mb-3">Configurações de Notificações</h5>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Email</h6>
+                                        
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="emailNotificationsEnabled" checked>
+                                            <label class="form-check-label" for="emailNotificationsEnabled">Habilitar notificações por email</label>
+                                        </div>
+                                        
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label for="smtpServer" class="form-label">Servidor SMTP</label>
+                                                <input type="text" class="form-control" id="smtpServer" value="smtp.gmail.com">
+                                            </div>
+                                            
+                                            <div class="col-md-3">
+                                                <label for="smtpPort" class="form-label">Porta</label>
+                                                <input type="text" class="form-control" id="smtpPort" value="587">
+                                            </div>
+                                            
+                                            <div class="col-md-3">
+                                                <label for="smtpSecurity" class="form-label">Segurança</label>
+                                                <select class="form-select" id="smtpSecurity">
+                                                    <option value="tls" selected>TLS</option>
+                                                    <option value="ssl">SSL</option>
+                                                    <option value="none">Nenhuma</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="smtpUsername" class="form-label">Usuário</label>
+                                                <input type="email" class="form-control" id="smtpUsername" value="contato@agendai.com.br">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="smtpPassword" class="form-label">Senha</label>
+                                                <input type="password" class="form-control" id="smtpPassword" value="********">
+                                            </div>
+                                        </div>
+                                        
+                                        <button class="btn btn-outline-primary mt-3">
+                                            <i class="fas fa-paper-plane me-1"></i> Testar Configurações
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">SMS</h6>
+                                        
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="smsNotificationsEnabled" checked>
+                                            <label class="form-check-label" for="smsNotificationsEnabled">Habilitar notificações por SMS</label>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="smsProvider" class="form-label">Provedor de SMS</label>
+                                                <select class="form-select" id="smsProvider">
+                                                    <option value="twilio" selected>Twilio</option>
+                                                    <option value="zenvia">Zenvia</option>
+                                                    <option value="totalvoice">TotalVoice</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="smsApiKey" class="form-label">API Key</label>
+                                                <input type="text" class="form-control" id="smsApiKey" value="**************************">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="smsFromNumber" class="form-label">Número de Origem</label>
+                                                <input type="text" class="form-control" id="smsFromNumber" value="+5583993283219">
+                                            </div>
+                                        </div>
+                                        
+                                        <button class="btn btn-outline-primary mt-3">
+                                            <i class="fas fa-sms me-1"></i> Testar Configurações
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- System Settings Tab -->
+                                <div class="tab-pane fade" id="system" role="tabpanel" aria-labelledby="system-tab">
+                                    <h5 class="mb-3">Configurações do Sistema</h5>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Recursos do Sistema</h6>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="maxAppointmentsPerDay" class="form-label">Máximo de Agendamentos por Dia</label>
+                                                <input type="number" class="form-control" id="maxAppointmentsPerDay" value="100">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="defaultTimeSlot" class="form-label">Duração Padrão de Time Slot (minutos)</label>
+                                                <input type="number" class="form-control" id="defaultTimeSlot" value="30">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="workdayStart" class="form-label">Horário de Início do Dia</label>
+                                                <input type="time" class="form-control" id="workdayStart" value="08:00">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="workdayEnd" class="form-label">Horário de Fim do Dia</label>
+                                                <input type="time" class="form-control" id="workdayEnd" value="18:00">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Políticas de Agendamento</h6>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="allowSameDayBooking" checked>
+                                            <label class="form-check-label" for="allowSameDayBooking">Permitir agendamentos para o mesmo dia</label>
+                                        </div>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="requireConfirmation">
+                                            <label class="form-check-label" for="requireConfirmation">Exigir confirmação do administrador para agendamentos</label>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="cancellationTimeLimit" class="form-label">Prazo para Cancelamento (horas)</label>
+                                                <input type="number" class="form-control" id="cancellationTimeLimit" value="24">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="advanceBookingLimit" class="form-label">Limite de Antecedência para Agendamento (dias)</label>
+                                                <input type="number" class="form-control" id="advanceBookingLimit" value="30">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Manutenção</h6>
+                                        
+                                        <div class="row g-3 mb-3">
+                                            <div class="col-md-6">
+                                                <label for="automaticBackup" class="form-label">Backup Automático</label>
+                                                <select class="form-select" id="automaticBackup">
+                                                    <option value="daily" selected>Diário</option>
+                                                    <option value="weekly">Semanal</option>
+                                                    <option value="monthly">Mensal</option>
+                                                    <option value="none">Desativado</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="logRetention" class="form-label">Retenção de Logs (dias)</label>
+                                                <input type="number" class="form-control" id="logRetention" value="90">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary">
+                                                <i class="fas fa-database me-1"></i> Backup Manual
+                                            </button>
+                                            <button class="btn btn-outline-secondary">
+                                                <i class="fas fa-broom me-1"></i> Limpar Cache
+                                            </button>
+                                            <button class="btn btn-outline-danger">
+                                                <i class="fas fa-trash-alt me-1"></i> Limpar Logs
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Security Settings Tab -->
+                                <div class="tab-pane fade" id="security" role="tabpanel" aria-labelledby="security-tab">
+                                    <h5 class="mb-3">Configurações de Segurança</h5>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Política de Senhas</h6>
+                                        
+                                        <div class="form-check form-switch mb-2">
+                                            <input class="form-check-input" type="checkbox" id="enforceStrongPasswords" checked>
+                                            <label class="form-check-label" for="enforceStrongPasswords">Exigir senhas fortes</label>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="minimumPasswordLength" class="form-label">Tamanho Mínimo da Senha</label>
+                                                <input type="number" class="form-control" id="minimumPasswordLength" value="8">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="passwordExpiration" class="form-label">Expiração de Senha (dias)</label>
+                                                <input type="number" class="form-control" id="passwordExpiration" value="90">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">Autenticação</h6>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="twoFactorAuthentication">
+                                            <label class="form-check-label" for="twoFactorAuthentication">Habilitar autenticação de dois fatores</label>
+                                        </div>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="lockAccountAfterFailedAttempts" checked>
+                                            <label class="form-check-label" for="lockAccountAfterFailedAttempts">Bloquear conta após tentativas de login malsucedidas</label>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="maxLoginAttempts" class="form-label">Número Máximo de Tentativas</label>
+                                                <input type="number" class="form-control" id="maxLoginAttempts" value="5">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="lockoutDuration" class="form-label">Duração do Bloqueio (minutos)</label>
+                                                <input type="number" class="form-control" id="lockoutDuration" value="30">
+                                            </div>
+                                            
+                                            <div class="col-md-6">
+                                                <label for="sessionTimeout" class="form-label">Tempo Limite da Sessão (minutos)</label>
+                                                <input type="number" class="form-control" id="sessionTimeout" value="30">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-4">
+                                        <h6 class="fw-bold">API e Integrações</h6>
+                                        
+                                        <div class="form-check form-switch mb-3">
+                                            <input class="form-check-input" type="checkbox" id="enableApiAccess" checked>
+                                            <label class="form-check-label" for="enableApiAccess">Habilitar acesso à API</label>
+                                        </div>
+                                        
+                                        <div class="row g-3">
+                                            <div class="col-md-6">
+                                                <label for="apiKey" class="form-label">Chave da API</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="apiKey" value="sk_test_51LvAdTDJ7P7PB0fQYsKs3LwEByUZJ" readonly>
+                                                    <button class="btn btn-outline-secondary" type="button">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                    <button class="btn btn-outline-primary" type="button">
+                                                        <i class="fas fa-sync-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="button" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-undo me-1"></i> Restaurar Padrões
+                                </button>
+                                <button type="button" class="btn btn-primary" id="save-settings-bottom">
+                                    <i class="fas fa-save me-1"></i> Salvar Alterações
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configurar o botão de logout
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Botão de logout clicado');
+                
+                // Limpar localStorage diretamente
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página de login
+                window.location.href = 'http://localhost:3001/';
+                console.log('Redirecionando para a página inicial');
+            };
+        } else {
+            console.error('Botão de logout não encontrado no DOM');
+        }
+        
+        // Inicializa as tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Manipulador para sincronizar os inputs de cor
+        document.getElementById('themeColor').addEventListener('input', function(e) {
+            document.getElementById('themeColorHex').value = e.target.value;
+        });
+        
+        document.getElementById('themeColorHex').addEventListener('input', function(e) {
+            document.getElementById('themeColor').value = e.target.value;
+        });
+        
+        document.getElementById('secondaryColor').addEventListener('input', function(e) {
+            document.getElementById('secondaryColorHex').value = e.target.value;
+        });
+        
+        document.getElementById('secondaryColorHex').addEventListener('input', function(e) {
+            document.getElementById('secondaryColor').value = e.target.value;
+        });
+        
+        // Manipulador para o botão de salvar
+        document.getElementById('save-settings').addEventListener('click', function() {
+            saveSettings();
+        });
+        
+        document.getElementById('save-settings-bottom').addEventListener('click', function() {
+            saveSettings();
+        });
+        
+        function saveSettings() {
+            // Simulação de salvamento
+            console.log('Salvando configurações...');
+            
+            // Exibe mensagem de sucesso
+            const toast = document.createElement('div');
+            toast.className = 'position-fixed bottom-0 end-0 p-3';
+            toast.style.zIndex = '5';
+            toast.innerHTML = `
+                <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto"><i class="fas fa-check-circle text-success me-2"></i> Sucesso</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        Configurações salvas com sucesso!
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Remove o toast após 3 segundos
+            setTimeout(function() {
+                toast.remove();
+            }, 3000);
+        }
+    });
+</script>

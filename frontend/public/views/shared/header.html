@@ -1,0 +1,49 @@
+<!-- Cabeçalho da Aplicação -->
+<header class="topbar">
+    <div class="topbar-container">
+        <div class="topbar-left">
+            <button id="sidebarToggle" class="sidebar-toggle btn btn-link text-primary">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForHeader.png" alt="AgendAI Logo" class="logo">
+            </div>
+        </div>
+        <div class="topbar-right">
+            <div class="dropdown">
+                <button class="btn btn-link dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="d-none d-md-inline-block me-2 user-name"></span>
+                    <i class="fas fa-user-circle fa-lg"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><a class="dropdown-item" href="#/profile"><i class="fas fa-user me-2"></i>Meu Perfil</a></li>
+                    <li><a class="dropdown-item" href="#/settings"><i class="fas fa-cog me-2"></i>Configurações</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i>Sair</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+
+<script>
+    // Atualizar o nome do usuário no header
+    document.addEventListener('DOMContentLoaded', function() {
+        const userNameElement = document.querySelector('.user-name');
+        
+        if (userNameElement) {
+            try {
+                const authData = localStorage.getItem('agendai_auth');
+                
+                if (authData) {
+                    const auth = JSON.parse(authData);
+                    if (auth.userData && auth.userData.name) {
+                        userNameElement.textContent = auth.userData.name;
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao obter nome do usuário:', error);
+            }
+        }
+    });
+</script> 

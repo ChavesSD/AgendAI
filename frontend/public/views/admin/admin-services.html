@@ -1,0 +1,549 @@
+<!-- View de Gestão de Serviços para o Dashboard Administrativo -->
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
+            <div class="logo-container">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+            </div>
+        </div>
+        <div class="list-group list-group-flush">
+            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            </a>
+            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-tag me-2"></i> Planos
+            </a>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-building me-2"></i> Empresas
+            </a>
+            <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-users me-2"></i> Usuários
+            </a>
+            <a href="#/admin/professionals" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-md me-2"></i> Profissionais
+            </a>
+            <a href="#/admin/services" class="list-group-item list-group-item-action active" data-link>
+                <i class="fas fa-list-alt me-2"></i> Serviços
+            </a>
+            <a href="#/admin/clients" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-user-friends me-2"></i> Clientes
+            </a>
+            <a href="#/admin/appointments" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-calendar-alt me-2"></i> Agendamentos
+            </a>
+            <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-chart-bar me-2"></i> Relatórios
+            </a>
+            <a href="#/admin/settings" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-cog me-2"></i> Configurações
+            </a>
+        </div>
+    </div>
+    
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Services Content -->
+        <div class="container-fluid p-4">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2 class="mb-3">Gestão de Serviços</h2>
+                    <p class="text-muted">Cadastre e gerencie os serviços oferecidos pelas empresas do AgendAI.</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                        <i class="fas fa-plus me-1"></i> Novo Serviço
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Filtros</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="filterName" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="filterName" placeholder="Nome do serviço">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterCompany" class="form-label">Empresa</label>
+                            <select class="form-select" id="filterCompany">
+                                <option value="">Todas</option>
+                                <option value="1001">Salão Beleza Total</option>
+                                <option value="1002">Estética Sempre Bela</option>
+                                <option value="1003">Barbearia Modern Cut</option>
+                                <option value="1004">Clínica Estética Renascer</option>
+                                <option value="1005">Studio Nail Art</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterCategory" class="form-label">Categoria</label>
+                            <select class="form-select" id="filterCategory">
+                                <option value="">Todas</option>
+                                <option value="hair">Cabelo</option>
+                                <option value="nails">Unhas</option>
+                                <option value="face">Facial</option>
+                                <option value="body">Corporal</option>
+                                <option value="spa">SPA</option>
+                                <option value="barber">Barbearia</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="filterStatus" class="form-label">Status</label>
+                            <select class="form-select" id="filterStatus">
+                                <option value="">Todos</option>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary me-2" id="clearFiltersBtn">
+                                <i class="fas fa-eraser me-1"></i> Limpar
+                            </button>
+                            <button type="button" class="btn btn-primary" id="applyFiltersBtn">
+                                <i class="fas fa-search me-1"></i> Filtrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Services Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Serviços Cadastrados</h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                            <div class="dropdown-header">Opções:</div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-excel me-2"></i> Exportar Excel</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-2"></i> Exportar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#"><i class="fas fa-sync-alt me-2"></i> Atualizar</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="servicesTable" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Empresa</th>
+                                    <th>Duração</th>
+                                    <th>Preço</th>
+                                    <th>Profissionais</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2001</td>
+                                    <td>Corte de Cabelo Masculino</td>
+                                    <td>Cabelo</td>
+                                    <td>Barbearia Modern Cut</td>
+                                    <td>30 min</td>
+                                    <td>R$ 50,00</td>
+                                    <td>3 profissionais</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-service" data-id="2001" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="2001" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="2001" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2002</td>
+                                    <td>Manicure Completa</td>
+                                    <td>Unhas</td>
+                                    <td>Studio Nail Art</td>
+                                    <td>45 min</td>
+                                    <td>R$ 40,00</td>
+                                    <td>2 profissionais</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-service" data-id="2002" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="2002" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="2002" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2003</td>
+                                    <td>Coloração + Hidratação</td>
+                                    <td>Cabelo</td>
+                                    <td>Salão Beleza Total</td>
+                                    <td>120 min</td>
+                                    <td>R$ 180,00</td>
+                                    <td>5 profissionais</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-service" data-id="2003" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="2003" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="2003" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2004</td>
+                                    <td>Limpeza de Pele</td>
+                                    <td>Facial</td>
+                                    <td>Clínica Estética Renascer</td>
+                                    <td>60 min</td>
+                                    <td>R$ 120,00</td>
+                                    <td>2 profissionais</td>
+                                    <td><span class="badge bg-success">Ativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-service" data-id="2004" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="2004" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="2004" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2005</td>
+                                    <td>Depilação Completa</td>
+                                    <td>Corporal</td>
+                                    <td>Estética Sempre Bela</td>
+                                    <td>90 min</td>
+                                    <td>R$ 150,00</td>
+                                    <td>3 profissionais</td>
+                                    <td><span class="badge bg-danger">Inativo</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-info view-service" data-id="2005" title="Visualizar">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-primary edit-service" data-id="2005" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger delete-service" data-id="2005" title="Excluir">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Anterior</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Próximo</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar/Editar Serviço -->
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addServiceModalLabel">Novo Serviço</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="serviceName" class="form-label">Nome do Serviço*</label>
+                            <input type="text" class="form-control" id="serviceName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="serviceCategory" class="form-label">Categoria*</label>
+                            <select class="form-select" id="serviceCategory" required>
+                                <option value="">Selecione...</option>
+                                <option value="hair">Cabelo</option>
+                                <option value="nails">Unhas</option>
+                                <option value="face">Facial</option>
+                                <option value="body">Corporal</option>
+                                <option value="spa">SPA</option>
+                                <option value="barber">Barbearia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="serviceCompany" class="form-label">Empresa*</label>
+                            <select class="form-select" id="serviceCompany" required>
+                                <option value="">Selecione...</option>
+                                <option value="1001">Salão Beleza Total</option>
+                                <option value="1002">Estética Sempre Bela</option>
+                                <option value="1003">Barbearia Modern Cut</option>
+                                <option value="1004">Clínica Estética Renascer</option>
+                                <option value="1005">Studio Nail Art</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="serviceStatus" class="form-label">Status*</label>
+                            <select class="form-select" id="serviceStatus" required>
+                                <option value="active">Ativo</option>
+                                <option value="inactive">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="serviceDuration" class="form-label">Duração (minutos)*</label>
+                            <input type="number" class="form-control" id="serviceDuration" min="15" step="15" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="servicePrice" class="form-label">Preço (R$)*</label>
+                            <input type="number" class="form-control" id="servicePrice" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="serviceDescription" class="form-label">Descrição*</label>
+                        <textarea class="form-control" id="serviceDescription" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Profissionais Aptos a Realizar o Serviço*</label>
+                        <div class="professionals-container border p-3 rounded" style="max-height: 200px; overflow-y: auto;">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro1">
+                                <label class="form-check-label" for="pro1">Ricardo Silva (Barbearia Modern Cut)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro2">
+                                <label class="form-check-label" for="pro2">Joana Santos (Studio Nail Art)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro3">
+                                <label class="form-check-label" for="pro3">Carla Almeida (Salão Beleza Total)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro4">
+                                <label class="form-check-label" for="pro4">Paulo Rodrigues (Barbearia Modern Cut)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro5">
+                                <label class="form-check-label" for="pro5">Amanda Ferreira (Clínica Estética Renascer)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro6">
+                                <label class="form-check-label" for="pro6">Felipe Moreira (Clínica Estética Renascer)</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="pro7">
+                                <label class="form-check-label" for="pro7">Mariana Costa (Estética Sempre Bela)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Opções Adicionais</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="serviceHighlighted">
+                            <label class="form-check-label" for="serviceHighlighted">Destacar na página inicial</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="serviceDiscount">
+                            <label class="form-check-label" for="serviceDiscount">Aplicar desconto</label>
+                        </div>
+                        <div class="discount-options mt-2 ps-4" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input type="number" class="form-control" id="discountValue" placeholder="Valor do desconto (%)" min="1" max="99">
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="date" class="form-control" id="discountExpiry" placeholder="Data de expiração">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="saveServiceBtn">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logout
+    document.getElementById('logout-button')?.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Botão de logout clicado');
+            
+        // Limpar localStorage diretamente
+        localStorage.removeItem('agendai_auth');
+        console.log('Dados de autenticação removidos do localStorage');
+        
+        // Redirecionar para a página de login
+        window.location.href = 'http://localhost:3001/';
+        console.log('Redirecionando para a página inicial');
+    });
+
+    // Inicialização da página de serviços
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Página de serviços carregada!');
+        
+        // Configurar todos os links do sidebar para funcionarem corretamente
+        document.querySelectorAll('[data-link]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                console.log('Clique em link:', href);
+                if (typeof App !== 'undefined' && App.navigate) {
+                    // Remover o # inicial se existir
+                    const path = href.startsWith('#') ? href.substring(1) : href;
+                    App.navigate(path);
+                } else {
+                    window.location.href = href;
+                }
+            });
+        });
+        
+        // Mostrar/ocultar opções de desconto
+        document.getElementById('serviceDiscount')?.addEventListener('change', function() {
+            const discountOptions = document.querySelector('.discount-options');
+            if (discountOptions) {
+                discountOptions.style.display = this.checked ? 'block' : 'none';
+            }
+        });
+        
+        // Atualizar lista de profissionais quando selecionar empresa
+        document.getElementById('serviceCompany')?.addEventListener('change', function() {
+            console.log('Empresa selecionada:', this.value);
+            // Em um cenário real, aqui seria feita uma requisição para obter os profissionais da empresa selecionada
+            
+            // Exemplo de atualização da lista (simulado)
+            document.querySelectorAll('.professionals-container .form-check').forEach(check => {
+                const label = check.querySelector('.form-check-label').textContent;
+                // Mostra apenas os profissionais da empresa selecionada
+                check.style.display = label.includes(this.options[this.selectedIndex].text) ? 'block' : 'none';
+            });
+        });
+        
+        // Lógica para os botões de filtro
+        document.getElementById('clearFiltersBtn')?.addEventListener('click', function() {
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterCompany').value = '';
+            document.getElementById('filterCategory').value = '';
+            document.getElementById('filterStatus').value = '';
+        });
+        
+        document.getElementById('applyFiltersBtn')?.addEventListener('click', function() {
+            const name = document.getElementById('filterName').value;
+            const company = document.getElementById('filterCompany').value;
+            const category = document.getElementById('filterCategory').value;
+            const status = document.getElementById('filterStatus').value;
+            
+            alert(`Filtros aplicados: Nome: ${name}, Empresa: ${company}, Categoria: ${category}, Status: ${status}`);
+            // Aqui seria implementada a lógica de filtragem real
+        });
+        
+        // Configurar botões de ações na tabela
+        document.querySelectorAll('.view-service').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const serviceId = this.getAttribute('data-id');
+                alert(`Visualizar serviço ID: ${serviceId}`);
+            });
+        });
+        
+        document.querySelectorAll('.edit-service').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const serviceId = this.getAttribute('data-id');
+                // Aqui seria carregado os dados do serviço e aberto o modal de edição
+                const modal = new bootstrap.Modal(document.getElementById('addServiceModal'));
+                document.getElementById('addServiceModalLabel').textContent = 'Editar Serviço';
+                modal.show();
+            });
+        });
+        
+        document.querySelectorAll('.delete-service').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const serviceId = this.getAttribute('data-id');
+                if (confirm(`Deseja realmente excluir o serviço ID: ${serviceId}?`)) {
+                    alert(`Serviço ID: ${serviceId} excluído com sucesso!`);
+                }
+            });
+        });
+        
+        // Manipulador para o botão salvar no modal
+        document.getElementById('saveServiceBtn')?.addEventListener('click', function() {
+            const form = document.getElementById('serviceForm');
+            if (form.checkValidity()) {
+                alert('Serviço salvo com sucesso!');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('addServiceModal'));
+                modal.hide();
+            } else {
+                form.reportValidity();
+            }
+        });
+    });
+</script>
+
+<style>
+    /* Estilos específicos para a página de serviços */
+    .form-check-label {
+        cursor: pointer;
+    }
+    
+    .discount-options {
+        transition: all 0.3s ease;
+    }
+    
+    .professionals-container {
+        background-color: #f8f9fc;
+    }
+</style> 
