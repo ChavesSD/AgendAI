@@ -4,7 +4,7 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
         <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
             <div class="logo-container">
-                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
             </div>
         </div>
         <div class="list-group list-group-flush">
@@ -45,24 +45,15 @@
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Administrador
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Perfil</a>
-                                <a class="dropdown-item" href="#/admin/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -531,6 +522,25 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Configurar o botão de logout
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Botão de logout clicado');
+                
+                // Limpar localStorage diretamente
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página de login
+                window.location.href = 'http://localhost:3001/';
+                console.log('Redirecionando para a página inicial');
+            };
+        } else {
+            console.error('Botão de logout não encontrado no DOM');
+        }
+        
         // Inicializa as tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

@@ -4,7 +4,7 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
         <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
             <div class="logo-container">
-                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
             </div>
         </div>
         <div class="list-group list-group-flush">
@@ -50,15 +50,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Administrador
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#/admin/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -164,11 +159,11 @@
             
             <!-- Segunda linha de gráficos -->
             <div class="row">
-                <!-- Gráfico de Empresas por Tipo de Plano -->
+                <!-- Gráfico de Empresas por Planos -->
                 <div class="col-xl-6 col-lg-6 mb-4">
                     <div class="card shadow h-100">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Empresas Por Planos</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Empresas por Planos</h6>
                             <div class="dropdown no-arrow">
                                 <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink3" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
@@ -223,8 +218,8 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="companiesGrowthChart" width="400" height="300"></canvas>
+                            <div class="chart-line">
+                                <canvas id="companiesMonthlyChart" width="400" height="300"></canvas>
                             </div>
                         </div>
                     </div>
@@ -264,7 +259,7 @@
         font-size: 0.7rem;
     }
     
-    .chart-area, .chart-pie, .chart-bar {
+    .chart-area, .chart-pie, .chart-bar, .chart-line {
         position: relative;
         height: 20rem;
     }
@@ -293,237 +288,66 @@
 <!-- Scripts externos -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="/public/src/js/dashboard-charts.js"></script>
 
-<!-- Incorporação direta do código do dashboard-charts.js -->
 <script>
-/**
- * Dashboard Charts - Inicializador de gráficos para o dashboard
- */
-
-// Função que será chamada diretamente do HTML do dashboard
-function initDashboardCharts() {
-    console.log('Inicializando gráficos...');
-    
-    // Garante que o Chart.js está disponível
-    if (typeof Chart === 'undefined') {
-        console.error('Chart.js não disponível. Carregando diretamente...');
-        loadChartJS(function() {
-            renderAllCharts();
+    // Configurar o botão de logout
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Dashboard admin carregado!');
+        
+        // Garantir que os dropdowns do Bootstrap sejam inicializados
+        var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+        dropdownElementList.map(function (dropdownToggleEl) {
+            return new bootstrap.Dropdown(dropdownToggleEl);
         });
-    } else {
-        console.log('Chart.js já carregado. Renderizando gráficos...');
-        renderAllCharts();
-    }
-}
-
-// Carrega a biblioteca Chart.js dinamicamente se necessário
-function loadChartJS(callback) {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js';
-    script.onload = callback;
-    script.onerror = function() {
-        console.error('Falha ao carregar Chart.js');
-        renderFallbackText();
-    };
-    document.head.appendChild(script);
-}
-
-// Renderiza todos os gráficos
-function renderAllCharts() {
-    try {
-        // Gráfico de pizza para Empresas por Planos
-        renderDoughnutChart(
-            'companiesByPlanChart',
-            ["Básico", "Premium", "Enterprise", "Trial"],
-            [18, 15, 9, 0],
-            ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e']
-        );
         
-        // Gráfico de linha para Empresas Cadastradas Por Mês
-        renderLineChart(
-            'companiesGrowthChart',
-            ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-            [3, 5, 4, 7, 10, 8, 9, 15, 13, 17, 19, 22]
-        );
+        // Configurar o botão de logout
+        const logoutButton = document.getElementById('logout-button');
+        if (logoutButton) {
+            logoutButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Botão de logout clicado');
+                
+                // Limpar localStorage diretamente
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página de login
+                window.location.href = 'http://localhost:3001/';
+                console.log('Redirecionando para a página inicial');
+            };
+        } else {
+            console.error('Botão de logout não encontrado no DOM');
+        }
         
-        console.log('Todos os gráficos renderizados com sucesso');
-    } catch (error) {
-        console.error('Erro ao renderizar gráficos:', error);
-        renderFallbackText();
-    }
-}
-
-// Função para renderizar um gráfico de linha (line chart)
-function renderLineChart(elementId, labels, data) {
-    const ctx = document.getElementById(elementId);
-    if (!ctx) {
-        console.error(`Elemento ${elementId} não encontrado`);
-        return;
-    }
-    
-    // Limpa qualquer gráfico existente
-    clearChart(elementId);
-    
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "Empresas",
-                lineTension: 0.3,
-                backgroundColor: "rgba(78, 115, 223, 0.05)",
-                borderColor: "rgba(78, 115, 223, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointBorderColor: "rgba(78, 115, 223, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-                data: data,
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-                padding: {
-                    left: 10,
-                    right: 25,
-                    top: 25,
-                    bottom: 0
+        // Configurar todos os links do sidebar para funcionarem corretamente
+        console.log('Configurando links do sidebar...');
+        
+        document.querySelectorAll('[data-link]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const href = this.getAttribute('href');
+                console.log('Clique em link:', href);
+                if (typeof App !== 'undefined' && App.navigate) {
+                    // Remover o # inicial se existir
+                    const path = href.startsWith('#') ? href.substring(1) : href;
+                    App.navigate(path);
+                } else {
+                    window.location.href = href;
                 }
-            },
-            scales: {
-                x: {
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        maxTicksLimit: 5,
-                        padding: 10
-                    },
-                    grid: {
-                        color: "rgb(234, 236, 244)",
-                        zeroLineColor: "rgb(234, 236, 244)",
-                        drawBorder: false,
-                        borderDash: [2],
-                        zeroLineBorderDash: [2]
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-}
-
-// Função para renderizar um gráfico de rosca (doughnut chart)
-function renderDoughnutChart(elementId, labels, data, colors) {
-    const ctx = document.getElementById(elementId);
-    if (!ctx) {
-        console.error(`Elemento ${elementId} não encontrado`);
-        return;
-    }
-    
-    // Limpa qualquer gráfico existente
-    clearChart(elementId);
-    
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: colors,
-                hoverBackgroundColor: colors.map(color => {
-                    // Torna a cor um pouco mais escura para o hover
-                    return color.replace(/rgb\((\d+), (\d+), (\d+)\)/, function(match, r, g, b) {
-                        return `rgb(${Math.max(0, r-20)}, ${Math.max(0, g-20)}, ${Math.max(0, b-20)})`;
-                    });
-                }),
-                hoverBorderColor: "rgba(234, 236, 244, 1)",
-            }],
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '70%',
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
-        }
-    });
-}
-
-// Limpa qualquer gráfico existente em um elemento antes de renderizar um novo
-function clearChart(elementId) {
-    const chartInstance = Chart.getChart(elementId);
-    if (chartInstance) {
-        chartInstance.destroy();
-    }
-}
-
-// Fallback - Quando tudo falhar, apenas exibe um texto nos canvas
-function renderFallbackText() {
-    const canvasIds = ['companiesByPlanChart', 'companiesGrowthChart'];
-    
-    canvasIds.forEach(id => {
-        const canvas = document.getElementById(id);
-        if (canvas) {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillStyle = '#333';
-                ctx.fillText('Dados indisponíveis', canvas.width / 2, canvas.height / 2);
-            }
-        }
-    });
-}
-
-// Inicializar gráficos quando o DOM estiver carregado
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM carregado. Inicializando gráficos...');
-    initDashboardCharts();
-    
-    // Configurar todos os links do sidebar
-    document.querySelectorAll('[data-link]').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const href = this.getAttribute('href');
-            console.log('Clique em link:', href);
-            if (typeof App !== 'undefined' && App.navigate) {
-                // Remover o # inicial se existir
-                const path = href.startsWith('#') ? href.substring(1) : href;
-                App.navigate(path);
+            });
+        });
+        
+        // Inicializar os gráficos
+        setTimeout(function() {
+            console.log('Iniciando gráficos do dashboard...');
+            if (typeof initDashboardCharts === 'function') {
+                initDashboardCharts();
             } else {
-                window.location.href = href;
+                console.error('Função initDashboardCharts não encontrada!');
             }
-        });
+        }, 500);
     });
-});
-
-// Configuração do logout
-document.getElementById('logout-button')?.addEventListener('click', function(e) {
-    e.preventDefault();
-    // Em uma SPA, usamos o App.logout definido no app.js
-    if (typeof App !== 'undefined' && App.logout) {
-        App.logout();
-    } else {
-        window.location.href = '#/login';
-    }
-});
 </script>
 </body>
 </html> 

@@ -6,7 +6,7 @@
                 <div class="card border-0 shadow-lg position-relative z-2">
                     <div class="card-body p-4">
                         <div class="text-center mb-4">
-                            <img src="src/img/LogoAgendAIForHeader.png" alt="AgendAI Logo" class="img-fluid" style="max-width: 220px;">
+                            <img src="/public/src/img/LogoAgendAIForHeader.png" alt="AgendAI Logo" class="img-fluid" style="max-width: 220px;">
                             <p class="text-muted small mt-2">Faça login para acessar sua conta</p>
                         </div>
                         
@@ -89,10 +89,46 @@
                     </div>
                 </div>
                 
-                <div class="text-center mt-3">
-                    <a href="#/" class="btn btn-link text-muted" data-link>
-                        <i class="fas fa-arrow-left me-1"></i> Voltar para página inicial
-                    </a>
+                <!-- Modal de Registro -->
+                <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow">
+                            <div class="modal-header border-0 pb-0">
+                                <h5 class="modal-title fw-bold" id="registerModalLabel">Criar Conta</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="register-form">
+                                    <div class="mb-3">
+                                        <label for="register-name" class="form-label small">Nome Completo</label>
+                                        <input type="text" class="form-control" id="register-name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-email" class="form-label small">Email</label>
+                                        <input type="email" class="form-control" id="register-email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-password" class="form-label small">Senha</label>
+                                        <input type="password" class="form-control" id="register-password" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="register-confirm-password" class="form-label small">Confirmar Senha</label>
+                                        <input type="password" class="form-control" id="register-confirm-password" required>
+                                        <div class="invalid-feedback">As senhas não coincidem</div>
+                                    </div>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="agree-terms" required>
+                                        <label class="form-check-label small" for="agree-terms">
+                                            Eu concordo com os <a href="#/terms" class="text-decoration-none fw-bold" data-link>termos e condições</a>
+                                        </label>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-primary">Criar Conta</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -102,48 +138,6 @@
     <div class="login-shape-1"></div>
     <div class="login-shape-2"></div>
     <div class="login-shape-3"></div>
-    
-    <!-- Modal de Registro -->
-    <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold" id="registerModalLabel">Criar Conta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="register-form">
-                        <div class="mb-3">
-                            <label for="register-name" class="form-label small">Nome Completo</label>
-                            <input type="text" class="form-control" id="register-name" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-email" class="form-label small">Email</label>
-                            <input type="email" class="form-control" id="register-email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-password" class="form-label small">Senha</label>
-                            <input type="password" class="form-control" id="register-password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="register-confirm-password" class="form-label small">Confirmar Senha</label>
-                            <input type="password" class="form-control" id="register-confirm-password" required>
-                            <div class="invalid-feedback">As senhas não coincidem</div>
-                        </div>
-                        <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" id="agree-terms" required>
-                            <label class="form-check-label small" for="agree-terms">
-                                Eu concordo com os <a href="#/terms" class="text-decoration-none fw-bold" data-link>termos e condições</a>
-                            </label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Criar Conta</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <style>
@@ -206,73 +200,81 @@
             opacity: 0.5;
         }
     }
+    
+    /* Estilo para centralizar o dropdown-menu */
+    .dropdown-menu-center {
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 220px;
+    }
+    
+    /* Ajuste para ícones no dropdown */
+    .dropdown-item i {
+        opacity: 0.7;
+    }
 </style>
 
 <script>
-    // Carrega o email salvo se o lembrar-me estiver ativo
-    window.onload = function() {
-        var savedEmail = localStorage.getItem('agendai_saved_email');
-        var savedRememberMe = localStorage.getItem('agendai_remember_me');
+    // Função para mostrar/ocultar senha
+    function togglePassword() {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eye-icon');
         
-        if (savedEmail && savedRememberMe === 'true') {
-            document.getElementById('email').value = savedEmail;
-            document.getElementById('remember-me').checked = true;
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('fa-eye');
+            eyeIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('fa-eye-slash');
+            eyeIcon.classList.add('fa-eye');
+        }
+    }
+    
+    // Função para salvar o "lembrar-me"
+    function saveRememberMe() {
+        const rememberMe = document.getElementById('remember-me').checked;
+        localStorage.setItem('remember-me', rememberMe);
+    }
+    
+    // Processar login diretamente
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const errorEl = document.getElementById('login-error');
+        
+        // Ocultar mensagem de erro
+        errorEl.classList.add('d-none');
+        
+        // Validação simples
+        if (!email || !password) {
+            errorEl.textContent = 'Preencha todos os campos';
+            errorEl.classList.remove('d-none');
+            return;
         }
         
-        // Adiciona o evento de submissão ao formulário de login
-        var loginForm = document.getElementById('login-form');
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                var email = document.getElementById('email').value.toLowerCase().trim();
-                var password = document.getElementById('password').value;
-                var rememberMe = document.getElementById('remember-me').checked;
-                
-                // Salvar credenciais se lembrar-me estiver marcado
-                if (rememberMe) {
-                    localStorage.setItem('agendai_saved_email', email);
-                    localStorage.setItem('agendai_remember_me', 'true');
-                } else {
-                    localStorage.removeItem('agendai_saved_email');
-                    localStorage.removeItem('agendai_remember_me');
-                }
-                
-                // Verificações de credenciais
-                var isAdminEmail = email === 'admin@agendai.com' || email === 'dmin@agendai.com';
-                var isEmpresaEmail = email === 'empresa@agendai.com';
-                
-                if (isAdminEmail && password === 'admin') {
-                    // Admin login
-                    localStorage.setItem('agendai_auth', 'simulated_jwt_admin');
-                    localStorage.setItem('agendai_type', 'admin');
-                    
-                    // Use a função App.login se disponível, caso contrário, navegue diretamente
-                    if (typeof App !== 'undefined' && App.login) {
-                        App.login('admin', 'simulated_jwt_admin');
-                    } else {
-                        window.location.hash = '#/admin';
-                        // Recarregar a página para garantir que as alterações sejam aplicadas
-                        setTimeout(() => window.location.reload(), 100);
-                    }
-                } else if (isEmpresaEmail && password === 'empresa') {
-                    // Empresa login
-                    localStorage.setItem('agendai_auth', 'simulated_jwt_company');
-                    localStorage.setItem('agendai_type', 'company');
-                    
-                    // Use a função App.login se disponível, caso contrário, navegue diretamente
-                    if (typeof App !== 'undefined' && App.login) {
-                        App.login('company', 'simulated_jwt_company');
-                    } else {
-                        window.location.hash = '#/company';
-                        // Recarregar a página para garantir que as alterações sejam aplicadas
-                        setTimeout(() => window.location.reload(), 100);
-                    }
-                } else {
-                    // Falha no login
-                    document.getElementById('login-error').classList.remove('d-none');
-                }
-            });
+        // Simulação de login simplificada
+        if (email === 'admin@agendai.com' && password === 'admin') {
+            window.location.hash = '#/admin/dashboard';
+        } else if (email === 'empresa@agendai.com' && password === 'empresa') {
+            // Redirecionar para a página estática do dashboard da empresa
+            window.location.href = '/company-dashboard.html';
+        } else {
+            // Login falhou
+            errorEl.textContent = 'Email ou senha inválidos';
+            errorEl.classList.remove('d-none');
         }
-    };
+    });
+    
+    // Carregar configuração "lembrar-me"
+    window.addEventListener('DOMContentLoaded', function() {
+        const rememberMe = localStorage.getItem('remember-me') === 'true';
+        document.getElementById('remember-me').checked = rememberMe;
+        
+        if (rememberMe) {
+            // Aqui poderia preencher o email automaticamente se necessário
+        }
+    });
 </script> 

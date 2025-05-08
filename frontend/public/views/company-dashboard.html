@@ -4,7 +4,7 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
         <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
             <div class="logo-container">
-                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
             </div>
         </div>
         <div class="list-group list-group-flush">
@@ -26,13 +26,16 @@
             <a href="#/company/clients" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-users me-2"></i> Clientes
             </a>
-            <a href="#relatorios" class="list-group-item list-group-item-action">
+            <a href="#/company/scheduling" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-link me-2"></i> Página de Agendamento
+            </a>
+            <a href="#/company/reports" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-chart-line me-2"></i> Relatórios
             </a>
-            <a href="#plano" class="list-group-item list-group-item-action">
+            <a href="#/company/plan" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-tag me-2"></i> Meu Plano
             </a>
-            <a href="#configuracoes" class="list-group-item list-group-item-action">
+            <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-cog me-2"></i> Configurações
             </a>
         </div>
@@ -47,15 +50,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Empresa Demo
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#/company/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -278,137 +276,29 @@
 </div>
 
 <script>
-    // Configuração do logout
-    document.getElementById('logout-button')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Em uma SPA, usamos o App.logout definido no app.js
-        if (typeof App !== 'undefined' && App.logout) {
-            App.logout();
-        } else {
-            window.location.href = '#/login';
-        }
-    });
-
-    // Inicializar gráficos quando o DOM estiver pronto
+    // Configurar o botão de logout
     document.addEventListener('DOMContentLoaded', function() {
-        // Gráfico de serviços
-        const servicesCtx = document.getElementById('servicesChart');
-        if (servicesCtx) {
-            new Chart(servicesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ["Corte de Cabelo", "Manicure", "Coloração", "Barba", "Depilação"],
-                    datasets: [{
-                        data: [35, 25, 20, 15, 5],
-                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
-                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
-                        hoverBorderColor: "rgba(234, 236, 244, 1)",
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }
+        console.log('Inicializando eventos do dashboard da empresa');
         
-        // Gráfico de agendamentos por dia da semana
-        const weeklyAppointmentsCtx = document.getElementById('weeklyAppointmentsChart');
-        if (weeklyAppointmentsCtx) {
-            new Chart(weeklyAppointmentsCtx, {
-                type: 'line',
-                data: {
-                    labels: ["Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado", "Domingo"],
-                    datasets: [{
-                        label: "Agendamentos",
-                        lineTension: 0.3,
-                        backgroundColor: "rgba(78, 115, 223, 0.05)",
-                        borderColor: "rgba(78, 115, 223, 1)",
-                        pointRadius: 3,
-                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                        pointBorderColor: "rgba(78, 115, 223, 1)",
-                        pointHoverRadius: 5,
-                        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                        pointHitRadius: 10,
-                        pointBorderWidth: 2,
-                        data: [15, 10, 18, 14, 22, 12, 5],
-                    }],
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    layout: {
-                        padding: {
-                            left: 10,
-                            right: 25,
-                            top: 25,
-                            bottom: 0
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false,
-                                drawBorder: false
-                            },
-                            ticks: {
-                                maxTicksLimit: 7
-                            }
-                        },
-                        y: {
-                            ticks: {
-                                maxTicksLimit: 5,
-                                padding: 10,
-                                callback: function(value, index, values) {
-                                    return value;
-                                }
-                            },
-                            grid: {
-                                color: "rgb(234, 236, 244)",
-                                zeroLineColor: "rgb(234, 236, 244)",
-                                drawBorder: false,
-                                borderDash: [2],
-                                zeroLineBorderDash: [2]
-                            }
-                        },
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: "rgb(255,255,255)",
-                            bodyColor: "#858796",
-                            titleMarginBottom: 10,
-                            titleColor: '#6e707e',
-                            titleFontSize: 14,
-                            borderColor: '#dddfeb',
-                            borderWidth: 1,
-                            xPadding: 15,
-                            yPadding: 15,
-                            displayColors: false,
-                            intersect: false,
-                            mode: 'index',
-                            caretPadding: 10,
-                            callbacks: {
-                                label: function(context) {
-                                    var label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += context.parsed.y;
-                                    return label;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+        const logoutButton = document.getElementById('logout-button');
+        console.log('Botão de logout:', logoutButton);
+        
+        if (logoutButton) {
+            logoutButton.onclick = function(e) {
+                e.preventDefault();
+                console.log('Botão de logout clicado');
+                
+                // Limpar localStorage diretamente
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página de login
+                window.location.href = 'http://localhost:3001/';
+                console.log('Redirecionando para a página inicial');
+            };
+            console.log('Evento de clique adicionado ao botão de logout');
+        } else {
+            console.error('Botão de logout não encontrado no DOM');
         }
     });
 </script>
@@ -467,5 +357,22 @@
     
     .professionals-list .border-bottom:last-child {
         border-bottom: none !important;
+    }
+    
+    /* Estilos de cartões */
+    .border-left-primary {
+        border-left: 0.25rem solid #4e73df !important;
+    }
+    
+    .border-left-success {
+        border-left: 0.25rem solid #1cc88a !important;
+    }
+    
+    .border-left-info {
+        border-left: 0.25rem solid #36b9cc !important;
+    }
+    
+    .border-left-warning {
+        border-left: 0.25rem solid #f6c23e !important;
     }
 </style> 

@@ -2,10 +2,107 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0;url=public/index.html">
-    <title>Redirecionando...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AgendAI - Sistema inteligente de agendamento">
+    <title>AgendAI - Sistema de Agendamento Inteligente</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/public/src/img/LogoAgendAI.png" type="image/png">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Estilos Personalizados -->
+    <link rel="stylesheet" href="/public/src/css/styles.css">
+
+    <!-- Pré-carregamento de dependências importantes -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js" as="script">
 </head>
 <body>
-    <p>Redirecionando para o site. Se não for redirecionado automaticamente, <a href="public/index.html">clique aqui</a>.</p>
+    <!-- Container principal da aplicação SPA -->
+    <div id="app-content" class="app-container">
+        <!-- O conteúdo será carregado dinamicamente aqui -->
+        <div class="d-flex justify-content-center align-items-center min-vh-100">
+            <div class="text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Carregando...</span>
+                </div>
+                <p class="mt-3">Carregando AgendAI...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- Script global para o botão de logout -->
+    <script>
+        // Adicionar handler global para o botão de logout
+        document.addEventListener('click', function(e) {
+            const logoutButton = e.target.closest('#logout-button');
+            if (logoutButton) {
+                e.preventDefault();
+                console.log('Botão de logout clicado (handler global)');
+                
+                // Limpar localStorage
+                localStorage.removeItem('agendai_auth');
+                console.log('Dados de autenticação removidos do localStorage');
+                
+                // Redirecionar para a página inicial
+                window.location.href = '/';
+                console.log('Redirecionando para a página inicial');
+                
+                // Forçar reload após pequeno delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 100);
+            }
+        });
+    </script>
+    
+    <!-- Script de inicialização para garantir que as dependências estejam carregadas -->
+    <script>
+        // Verificar se todas as dependências estão disponíveis
+        window.AgendAIDependencies = {
+            bootstrap: typeof bootstrap !== 'undefined',
+            chart: typeof Chart !== 'undefined'
+        };
+        
+        // Verificar dependências
+        function checkDependencies() {
+            console.log('Verificando dependências:', window.AgendAIDependencies);
+            const allLoaded = Object.values(window.AgendAIDependencies).every(dep => dep === true);
+            
+            if (!allLoaded) {
+                console.warn('Nem todas as dependências foram carregadas. Aguardando...');
+                setTimeout(checkDependencies, 100); // Tentar novamente
+                return false;
+            }
+            
+            console.log('Todas as dependências carregadas. Inicializando aplicativo...');
+            return true;
+        }
+        
+        // Função para inicializar o aplicativo
+        function initApp() {
+            if (checkDependencies()) {
+                // Carregar o aplicativo principal
+                const scriptApp = document.createElement('script');
+                scriptApp.src = '/public/src/js/app.js';
+                scriptApp.onload = () => console.log('App.js carregado com sucesso');
+                scriptApp.onerror = (e) => console.error('Erro ao carregar app.js:', e);
+                document.body.appendChild(scriptApp);
+            }
+        }
+        
+        // Iniciar carregamento quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
 </body>
 </html> 

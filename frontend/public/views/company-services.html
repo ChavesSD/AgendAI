@@ -4,7 +4,7 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
         <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
             <div class="logo-container">
-                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
             </div>
         </div>
         <div class="list-group list-group-flush">
@@ -26,10 +26,13 @@
             <a href="#/company/clients" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-users me-2"></i> Clientes
             </a>
-            <a href="#relatorios" class="list-group-item list-group-item-action">
+            <a href="#/company/scheduling" class="list-group-item list-group-item-action" data-link>
+                <i class="fas fa-link me-2"></i> Página de Agendamento
+            </a>
+            <a href="#/company/reports" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-chart-line me-2"></i> Relatórios
             </a>
-            <a href="#plano" class="list-group-item list-group-item-action">
+            <a href="#/company/plan" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-tag me-2"></i> Meu Plano
             </a>
             <a href="#/company/settings" class="list-group-item list-group-item-action" data-link>
@@ -47,15 +50,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Empresa Demo
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#/company/settings" data-link><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -434,14 +432,23 @@ document.addEventListener('DOMContentLoaded', function() {
         modal.hide();
     });
     
-    // Logout
-    document.getElementById('logout-button')?.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (typeof App !== 'undefined' && App.logout) {
-            App.logout();
-        } else {
-            window.location.href = '#/login';
-        }
-    });
+    // Configurar o botão de logout
+    const logoutButton = document.getElementById('logout-button');
+    if (logoutButton) {
+        logoutButton.onclick = function(e) {
+            e.preventDefault();
+            console.log('Botão de logout clicado');
+            
+            // Limpar localStorage diretamente
+            localStorage.removeItem('agendai_auth');
+            console.log('Dados de autenticação removidos do localStorage');
+            
+            // Redirecionar para a página de login
+            window.location.href = 'http://localhost:3001/';
+            console.log('Redirecionando para a página inicial');
+        };
+    } else {
+        console.error('Botão de logout não encontrado no DOM');
+    }
 });
 </script> 

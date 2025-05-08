@@ -4,7 +4,7 @@
     <div class="border-end bg-white" id="sidebar-wrapper">
         <div class="sidebar-heading bg-primary text-white py-4 d-flex justify-content-center">
             <div class="logo-container">
-                <img src="src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
+                <img src="/public/src/img/LogoAgendAIForFooter.png" alt="AgendAI Logo" class="logo-medium">
             </div>
         </div>
         <div class="list-group list-group-flush">
@@ -35,7 +35,7 @@
             <a href="#/admin/reports" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-chart-bar me-2"></i> Relatórios
             </a>
-            <a href="javascript:void(0)" class="list-group-item list-group-item-action">
+            <a href="#/admin/settings" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-cog me-2"></i> Configurações
             </a>
         </div>
@@ -45,24 +45,15 @@
     <div id="page-content-wrapper">
         <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
             <div class="container-fluid">
-                <button class="btn btn-primary" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-user-circle me-1"></i> Administrador
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i> Perfil</a>
-                                <a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i> Configurações</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" id="logout-button"><i class="fas fa-sign-out-alt me-2"></i> Sair</a>
-                            </div>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-secondary btn-sm mt-1" id="logout-button">
+                                <i class="fas fa-sign-out-alt me-1"></i> Sair
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -249,12 +240,6 @@
                                     <td>10</td>
                                     <td><span class="badge bg-success">Ativo</span></td>
                                     <td>
-                                        <button class="btn btn-sm btn-info view-plan" data-id="1" title="Visualizar">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-primary edit-plan" data-id="1" title="Editar" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
                                         <button class="btn btn-sm btn-danger delete-plan" data-id="1" title="Excluir">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -269,12 +254,6 @@
                                     <td>25</td>
                                     <td><span class="badge bg-success">Ativo</span></td>
                                     <td>
-                                        <button class="btn btn-sm btn-info view-plan" data-id="2" title="Visualizar">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-primary edit-plan" data-id="2" title="Editar" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
                                         <button class="btn btn-sm btn-danger delete-plan" data-id="2" title="Excluir">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -289,12 +268,6 @@
                                     <td>Ilimitado</td>
                                     <td><span class="badge bg-success">Ativo</span></td>
                                     <td>
-                                        <button class="btn btn-sm btn-info view-plan" data-id="3" title="Visualizar">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn btn-sm btn-primary edit-plan" data-id="3" title="Editar" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
                                         <button class="btn btn-sm btn-danger delete-plan" data-id="3" title="Excluir">
                                             <i class="fas fa-trash"></i>
                                         </button>
@@ -576,20 +549,18 @@
         }
     ];
 
-    // Toggle sidebar
-    document.getElementById('sidebarToggle')?.addEventListener('click', function() {
-        document.getElementById('wrapper').classList.toggle('toggled');
-    });
-    
-    // Configuração do logout
+    // Logout
     document.getElementById('logout-button')?.addEventListener('click', function(e) {
         e.preventDefault();
-        // Em uma SPA, usamos o App.logout definido no app.js
-        if (typeof App !== 'undefined' && App.logout) {
-            App.logout();
-        } else {
-            window.location.href = '#/login';
-        }
+        console.log('Botão de logout clicado');
+            
+        // Limpar localStorage diretamente
+        localStorage.removeItem('agendai_auth');
+        console.log('Dados de autenticação removidos do localStorage');
+        
+        // Redirecionar para a página de login
+        window.location.href = 'http://localhost:3001/';
+        console.log('Redirecionando para a página inicial');
     });
 
     // Inicialização da página de planos
