@@ -39,4 +39,5 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
-*.sw? 
+*.sw? Pasta temporária de backup será ignorada em futuros commits
+frontend/temp_backup/
