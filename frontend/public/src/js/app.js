@@ -659,9 +659,9 @@ const App = {
                         window.servicesChartInstance = new Chart(servicesCtx, {
                             type: 'doughnut',
                             data: {
-                                labels: ["Corte de Cabelo", "Manicure", "Coloração", "Barba", "Depilação"],
+                                labels: [],
                                 datasets: [{
-                                    data: [0, 0, 0, 0, 0],
+                                    data: [],
                                     backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
                                     hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
                                     hoverBorderColor: "rgba(234, 236, 244, 1)",
