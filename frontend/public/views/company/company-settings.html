@@ -113,33 +113,33 @@
                                                 <div class="row g-3">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="companyName" class="form-label">Nome da Empresa</label>
-                                                        <input type="text" class="form-control" id="companyName" value="Empresa Demonstração">
+                                                        <input type="text" class="form-control" id="companyName" placeholder="Nome da sua empresa">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="companyCNPJ" class="form-label">CNPJ</label>
-                                                        <input type="text" class="form-control" id="companyCNPJ" value="12.345.678/0001-90">
+                                                        <input type="text" class="form-control" id="companyCNPJ" placeholder="XX.XXX.XXX/0001-XX">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="companyPhone" class="form-label">Telefone</label>
-                                                        <input type="text" class="form-control" id="companyPhone" value="(11) 3456-7890">
+                                                        <input type="text" class="form-control" id="companyPhone" placeholder="(XX) XXXX-XXXX">
                                                     </div>
                                                     <div class="col-md-6 mb-3">
                                                         <label for="companyEmail" class="form-label">E-mail</label>
-                                                        <input type="email" class="form-control" id="companyEmail" value="contato@empresademo.com.br">
+                                                        <input type="email" class="form-control" id="companyEmail" placeholder="contato@suaempresa.com.br">
                                                     </div>
                                                     <div class="col-12 mb-3">
                                                         <label for="companyAddress" class="form-label">Endereço</label>
-                                                        <input type="text" class="form-control" id="companyAddress" value="Av. Paulista, 1000 - Bela Vista">
+                                                        <input type="text" class="form-control" id="companyAddress" placeholder="Endereço completo">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <label for="companyCity" class="form-label">Cidade</label>
-                                                        <input type="text" class="form-control" id="companyCity" value="São Paulo">
+                                                        <input type="text" class="form-control" id="companyCity" placeholder="Sua cidade">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <label for="companyState" class="form-label">Estado</label>
                                                         <select class="form-select" id="companyState">
-                                                            <option>Selecione...</option>
-                                                            <option value="SP" selected>São Paulo</option>
+                                                            <option selected>Selecione...</option>
+                                                            <option value="SP">São Paulo</option>
                                                             <option value="RJ">Rio de Janeiro</option>
                                                             <option value="MG">Minas Gerais</option>
                                                             <option value="RS">Rio Grande do Sul</option>
@@ -170,44 +170,44 @@
                                                         <td>
                                                             <div class="form-check form-switch">
                                                                 <input class="form-check-input" type="checkbox" id="mondayStatus">
-                                                                <label class="form-check-label" for="mondayStatus">Aberto</label>
+                                                                <label class="form-check-label" for="mondayStatus">Fechado</label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>Terça-feira</td>
                                                         <td>
                                                             <div class="form-check form-switch">
-                                                                <input class="form-check-input" type="checkbox" id="tuesdayStatus" checked>
-                                                                <label class="form-check-label" for="tuesdayStatus">Aberto</label>
+                                                                <input class="form-check-input" type="checkbox" id="tuesdayStatus">
+                                                                <label class="form-check-label" for="tuesdayStatus">Fechado</label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control" value="09:00">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control" value="18:00">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>Sábado</td>
                                                         <td>
                                                             <div class="form-check form-switch">
-                                                                <input class="form-check-input" type="checkbox" id="saturdayStatus" checked>
-                                                                <label class="form-check-label" for="saturdayStatus">Aberto</label>
+                                                                <input class="form-check-input" type="checkbox" id="saturdayStatus">
+                                                                <label class="form-check-label" for="saturdayStatus">Fechado</label>
                                                             </div>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control" value="09:00">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                         <td>
-                                                            <input type="time" class="form-control" value="13:00">
+                                                            <input type="time" class="form-control" disabled>
                                                         </td>
                                                     </tr>
                                                     <tr>
@@ -243,11 +243,11 @@
                                         <div class="row g-3 mb-4">
                                             <div class="col-md-6">
                                                 <label for="accountName" class="form-label">Nome</label>
-                                                <input type="text" class="form-control" id="accountName" value="João da Silva">
+                                                <input type="text" class="form-control" id="accountName" placeholder="Seu nome">
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="accountEmail" class="form-label">E-mail</label>
-                                                <input type="email" class="form-control" id="accountEmail" value="joao.silva@empresademo.com.br">
+                                                <input type="email" class="form-control" id="accountEmail" placeholder="seu.email@exemplo.com.br">
                                             </div>
                                         </div>
                                         
