@@ -249,75 +249,10 @@
 </style>
 
 <script>
-// Dados simulados
-if (typeof window.clients === "undefined") { window.clients = [
-    {
-        id: 1,
-        nome: 'João Silva',
-        email: 'joao.silva@email.com',
-        telefone: '(11) 98765-4321',
-        cpf: '123.456.789-00',
-        endereco: 'Rua das Flores, 123',
-        dataNascimento: '1985-07-15',
-        observacoes: 'Cliente preferencial',
-        status: 'ativo',
-        ultimoAgendamento: '2023-10-15',
-        historico: [
-            {data: '2023-10-15', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'concluído'},
-            {data: '2023-09-20', servico: 'Barba', profissional: 'Ricardo Silva', status: 'concluído'},
-            {data: '2023-08-05', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'concluído'}
-        ]
-    },
-    {
-        id: 2,
-        nome: 'Maria Oliveira',
-        email: 'maria.oliveira@email.com',
-        telefone: '(11) 91234-5678',
-        cpf: '987.654.321-00',
-        endereco: 'Av. Paulista, 1000',
-        dataNascimento: '1990-03-22',
-        observacoes: 'Prefere atendimento no final da tarde',
-        status: 'ativo',
-        ultimoAgendamento: '2023-10-10',
-        historico: [
-            {data: '2023-10-10', servico: 'Corte de Cabelo - Feminino', profissional: 'Carla Almeida', status: 'concluído'},
-            {data: '2023-09-15', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'}
-        ]
-    },
-    {
-        id: 3,
-        nome: 'Carlos Pereira',
-        email: 'carlos.pereira@email.com',
-        telefone: '(11) 97777-8888',
-        cpf: '456.789.123-00',
-        endereco: 'Rua Augusta, 500',
-        dataNascimento: '1978-12-05',
-        observacoes: '',
-        status: 'inativo',
-        ultimoAgendamento: '2023-08-20',
-        historico: [
-            {data: '2023-08-20', servico: 'Corte de Cabelo - Masculino', profissional: 'Ricardo Silva', status: 'cancelado'},
-            {data: '2023-07-10', servico: 'Barba', profissional: 'Ricardo Silva', status: 'concluído'}
-        ]
-    },
-    {
-        id: 4,
-        nome: 'Ana Souza',
-        email: 'ana.souza@email.com',
-        telefone: '(11) 95555-6666',
-        cpf: '789.123.456-00',
-        endereco: 'Rua Oscar Freire, 300',
-        dataNascimento: '1995-05-30',
-        observacoes: 'Cliente indicada por Maria Oliveira',
-        status: 'ativo',
-        ultimoAgendamento: '2023-10-12',
-        historico: [
-            {data: '2023-10-12', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'},
-            {data: '2023-10-12', servico: 'Depilação - Perna Completa', profissional: 'Paula Rocha', status: 'concluído'},
-            {data: '2023-09-05', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'}
-        ]
-    }
-]; }
+// Clientes da empresa (dados mockados)
+if (typeof window.companyClients === 'undefined') {
+    window.companyClients = [];
+}
 
 // Renderizar lista de clientes
 function renderClients() {
@@ -328,7 +263,7 @@ function renderClients() {
     const searchTerm = document.getElementById('search-client').value.toLowerCase();
     const statusFilter = document.getElementById('filter-status').value;
     
-    const filteredClients = window.clients.filter(client => {
+    const filteredClients = window.companyClients.filter(client => {
         // Filtrar por busca
         const matchesSearch = !searchTerm || 
             client.nome.toLowerCase().includes(searchTerm) ||
@@ -388,7 +323,7 @@ function resetClientForm() {
 
 // Editar cliente
 function editClient(id) {
-    const client = window.clients.find(c => c.id === id);
+    const client = window.companyClients.find(c => c.id === id);
     if (!client) return;
     
     document.getElementById('client-id').value = client.id;
@@ -408,7 +343,7 @@ function editClient(id) {
 
 // Visualizar histórico do cliente
 function viewClientHistory(id) {
-    const client = window.clients.find(c => c.id === id);
+    const client = window.companyClients.find(c => c.id === id);
     if (!client) return;
     
     document.getElementById('history-client-name').textContent = client.nome;
@@ -460,7 +395,7 @@ function viewClientHistory(id) {
 // Excluir cliente
 function deleteClient(id) {
     if (confirm('Deseja realmente excluir este cliente?')) {
-        window.clients = window.clients.filter(c => c.id !== id);
+        window.companyClients = window.companyClients.filter(c => c.id !== id);
         renderClients();
     }
 }
@@ -496,7 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (id) {
             // Atualizar cliente existente
-            const client = window.clients.find(c => c.id == id);
+            const client = window.companyClients.find(c => c.id == id);
             if (client) {
                 client.nome = nome;
                 client.email = email;
@@ -509,10 +444,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Adicionar novo cliente
-            const newId = window.clients.length ? Math.max(...window.clients.map(c => c.id)) + 1 : 1;
+            const newId = window.companyClients.length ? Math.max(...window.companyClients.map(c => c.id)) + 1 : 1;
             const hoje = new Date().toISOString().split('T')[0];
             
-            window.clients.push({
+            window.companyClients.push({
                 id: newId,
                 nome,
                 email,

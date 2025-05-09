@@ -490,65 +490,7 @@
 <script>
     // Planos em formato de objeto para fácil acesso
     if (typeof window.plans === 'undefined') {
-        window.plans = [
-            {
-                id: 1,
-                name: "Básico",
-                price: 50.00,
-                appointments: 50,
-                professionals: 2,
-                services: 10,
-                status: "active",
-                highlight: "none",
-                description: "Plano básico ideal para pequenos negócios começarem a usar o sistema de agendamento.",
-                features: {
-                    reports: false,
-                    emailNotifications: true,
-                    smsNotifications: false,
-                    whatsAppNotifications: false,
-                    customization: false,
-                    api: false
-                }
-            },
-            {
-                id: 2,
-                name: "Intermediário",
-                price: 70.00,
-                appointments: 150,
-                professionals: 5,
-                services: 25,
-                status: "active",
-                highlight: "popular",
-                description: "Plano intermediário com mais recursos e capacidade para negócios em crescimento.",
-                features: {
-                    reports: true,
-                    emailNotifications: true,
-                    smsNotifications: true,
-                    whatsAppNotifications: false,
-                    customization: false,
-                    api: false
-                }
-            },
-            {
-                id: 3,
-                name: "Avançado",
-                price: 100.00,
-                appointments: 0, // 0 = ilimitado
-                professionals: 0, // 0 = ilimitado
-                services: 0, // 0 = ilimitado
-                status: "active",
-                highlight: "none",
-                description: "Plano avançado com recursos ilimitados para grandes empresas.",
-                features: {
-                    reports: true,
-                    emailNotifications: true,
-                    smsNotifications: true,
-                    whatsAppNotifications: true,
-                    customization: true,
-                    api: true
-                }
-            }
-        ];
+        window.plans = [];
     }
 
     // Logout

@@ -206,67 +206,11 @@
 <script>
 // Dados simulados
 if (typeof window.professionals === 'undefined') {
-    window.professionals = [
-        {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro'},
-        {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista'},
-        {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora'},
-        {id: 4, nome: 'Joana Santos', especialidade: 'Manicure'}
-    ];
+    window.professionals = [];
 }
 
 if (typeof window.services === 'undefined') {
-    window.services = [
-        {
-            id: 1, 
-            nome: 'Corte de Cabelo - Masculino', 
-            duracao: 30, 
-            preco: 50.00, 
-            categoria: 'Cabelo', 
-            descricao: 'Corte masculino com tesoura ou máquina', 
-            status: 'ativo',
-            profissionais: [1, 2]
-        },
-        {
-            id: 2, 
-            nome: 'Corte de Cabelo - Feminino', 
-            duracao: 60, 
-            preco: 80.00, 
-            categoria: 'Cabelo', 
-            descricao: 'Corte feminino com modelagem', 
-            status: 'ativo',
-            profissionais: [2]
-        },
-        {
-            id: 3, 
-            nome: 'Barba', 
-            duracao: 30, 
-            preco: 35.00, 
-            categoria: 'Barba', 
-            descricao: 'Aparar e modelar barba com navalha', 
-            status: 'ativo',
-            profissionais: [1]
-        },
-        {
-            id: 4, 
-            nome: 'Manicure', 
-            duracao: 45, 
-            preco: 40.00, 
-            categoria: 'Manicure/Pedicure', 
-            descricao: 'Cutilagem e esmaltagem', 
-            status: 'ativo',
-            profissionais: [4]
-        },
-        {
-            id: 5, 
-            nome: 'Depilação - Perna Completa', 
-            duracao: 60, 
-            preco: 80.00, 
-            categoria: 'Depilação', 
-            descricao: 'Depilação com cera quente', 
-            status: 'ativo',
-            profissionais: [3]
-        }
-    ];
+    window.services = [];
 }
 
 // Renderizar lista de serviços

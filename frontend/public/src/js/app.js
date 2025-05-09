@@ -557,7 +557,7 @@ const App = {
                         data: {
                             labels: ["Básico", "Intermediário", "Avançado"],
                             datasets: [{
-                                data: [18, 15, 9],
+                                data: [0, 0, 0],
                                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
                                 hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
                                 hoverBorderColor: "rgba(234, 236, 244, 1)",
@@ -606,7 +606,7 @@ const App = {
                                 pointHoverBorderColor: "rgba(78, 115, 223, 1)",
                                 pointHitRadius: 10,
                                 pointBorderWidth: 2,
-                                data: [4, 3, 5, 7, 4, 5, 8, 6, 4, 7, 5, 3],
+                                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             }],
                         },
                         options: {
@@ -661,7 +661,7 @@ const App = {
                             data: {
                                 labels: ["Corte de Cabelo", "Manicure", "Coloração", "Barba", "Depilação"],
                                 datasets: [{
-                                    data: [35, 25, 20, 15, 5],
+                                    data: [0, 0, 0, 0, 0],
                                     backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
                                     hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
                                     hoverBorderColor: "rgba(234, 236, 244, 1)",
@@ -709,7 +709,7 @@ const App = {
                                     pointHoverBorderColor: "rgba(78, 115, 223, 1)",
                                     pointHitRadius: 10,
                                     pointBorderWidth: 2,
-                                    data: [15, 10, 18, 14, 22, 12, 5],
+                                    data: [0, 0, 0, 0, 0, 0, 0],
                                 }],
                             },
                             options: {
