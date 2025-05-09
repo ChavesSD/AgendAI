@@ -74,48 +74,13 @@
                 <div class="col-12">
                     <div class="card shadow mb-4">
                         <div class="card-header py-3 bg-primary">
-                            <h6 class="m-0 font-weight-bold text-white">Plano Atual: Premium</h6>
+                            <h6 class="m-0 font-weight-bold text-white">Plano Atual: Não Definido</h6>
                         </div>
-                        <div class="card-body">
-                            <div class="row align-items-center">
-                                <div class="col-md-3 text-center">
-                                    <div class="display-4 fw-bold text-primary mb-2">R$ 149,90</div>
-                                    <p class="mb-0 text-muted">por mês</p>
-                                    <div class="badge bg-success mt-2">Ativo</div>
-                                </div>
-                                <div class="col-md-6">
-                                    <h6 class="fw-bold">Recursos do seu plano:</h6>
-                                    <div class="d-flex flex-column">
-                                        <div class="mb-2">
-                                            <i class="fas fa-check-circle text-success me-2"></i> 
-                                            <span>Até 5 profissionais</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <i class="fas fa-check-circle text-success me-2"></i> 
-                                            <span>Agendamento online ilimitado</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <i class="fas fa-check-circle text-success me-2"></i> 
-                                            <span>Lembretes por e-mail e SMS</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <i class="fas fa-check-circle text-success me-2"></i> 
-                                            <span>Relatórios avançados</span>
-                                        </div>
-                                        <div class="mb-2">
-                                            <i class="fas fa-check-circle text-success me-2"></i> 
-                                            <span>Página de agendamento personalizada</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 text-center">
-                                    <div class="mb-3">
-                                        <span class="d-block mb-1">Próxima cobrança:</span>
-                                        <span class="fw-bold">15/06/2023</span>
-                                    </div>
-                                    <button class="btn btn-outline-danger">Cancelar Plano</button>
-                                </div>
-                            </div>
+                        <div class="card-body text-center py-5">
+                            <i class="fas fa-tag fa-3x text-muted mb-3"></i>
+                            <h5>Nenhum plano ativo</h5>
+                            <p class="text-muted">Escolha um plano abaixo para começar a utilizar o sistema.</p>
+                            <button class="btn btn-primary mt-3">Escolher um Plano</button>
                         </div>
                     </div>
                 </div>
@@ -130,13 +95,13 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <div class="display-5 fw-bold">3</div>
-                                <p class="text-muted mb-0">de 5 permitidos</p>
+                                <div class="display-5 fw-bold">0</div>
+                                <p class="text-muted mb-0">de 0 permitidos</p>
                             </div>
                             <div class="progress mb-3">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 60%;" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
-                            <button class="btn btn-sm btn-outline-primary">Adicionar Profissional</button>
+                            <button class="btn btn-sm btn-outline-primary" disabled>Adicionar Profissional</button>
                         </div>
                     </div>
                 </div>
@@ -148,7 +113,7 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <div class="display-5 fw-bold">253</div>
+                                <div class="display-5 fw-bold">0</div>
                                 <p class="text-muted mb-0">agendamentos</p>
                             </div>
                             <div class="chart-pie mb-3">
@@ -165,11 +130,11 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <div class="display-5 fw-bold">1.2 GB</div>
-                                <p class="text-muted mb-0">de 5 GB permitidos</p>
+                                <div class="display-5 fw-bold">0 GB</div>
+                                <p class="text-muted mb-0">de 0 GB permitidos</p>
                             </div>
                             <div class="progress mb-3">
-                                <div class="progress-bar" role="progressbar" style="width: 24%;" aria-valuenow="24" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                             </div>
                             <small class="text-muted">Inclui fotos, documentos e backups</small>
                         </div>
@@ -184,7 +149,7 @@
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">Histórico de Faturas</h6>
                             <div>
-                                <button class="btn btn-sm btn-outline-primary">
+                                <button class="btn btn-sm btn-outline-primary" disabled>
                                     <i class="fas fa-download me-1"></i> Exportar Todas
                                 </button>
                             </div>
@@ -204,39 +169,10 @@
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>#INV-12345</td>
-                                            <td>15/05/2023</td>
-                                            <td>15/05/2023 - 14/06/2023</td>
-                                            <td>R$ 149,90</td>
-                                            <td><span class="badge bg-success">Pago</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-secondary">
-                                                    <i class="fas fa-download"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#INV-12344</td>
-                                            <td>15/04/2023</td>
-                                            <td>15/04/2023 - 14/05/2023</td>
-                                            <td>R$ 149,90</td>
-                                            <td><span class="badge bg-success">Pago</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-secondary">
-                                                    <i class="fas fa-download"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>#INV-12343</td>
-                                            <td>15/03/2023</td>
-                                            <td>15/03/2023 - 14/04/2023</td>
-                                            <td>R$ 149,90</td>
-                                            <td><span class="badge bg-success">Pago</span></td>
-                                            <td>
-                                                <button class="btn btn-sm btn-outline-secondary">
-                                                    <i class="fas fa-download"></i>
-                                                </button>
+                                            <td colspan="6" class="text-center py-4">
+                                                <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                                                <p>Nenhuma fatura para exibir.</p>
+                                                <p class="text-muted">O histórico de faturas aparecerá aqui.</p>
                                             </td>
                                         </tr>
                                     </tbody>

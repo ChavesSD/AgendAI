@@ -273,62 +273,20 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!-- Os dados serão carregados dinamicamente -->
                                         <tr>
-                                            <td>2458</td>
-                                            <td>João da Silva</td>
-                                            <td>Corte de Cabelo</td>
-                                            <td>Ricardo Silva</td>
-                                            <td>12/05/2023</td>
-                                            <td>10:30</td>
-                                            <td>R$ 45,00</td>
-                                            <td><span class="badge bg-success">Concluído</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2457</td>
-                                            <td>Maria Oliveira</td>
-                                            <td>Manicure</td>
-                                            <td>Joana Santos</td>
-                                            <td>12/05/2023</td>
-                                            <td>09:15</td>
-                                            <td>R$ 35,00</td>
-                                            <td><span class="badge bg-success">Concluído</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2456</td>
-                                            <td>Antônio Ferreira</td>
-                                            <td>Barba</td>
-                                            <td>Ricardo Silva</td>
-                                            <td>11/05/2023</td>
-                                            <td>16:45</td>
-                                            <td>R$ 25,00</td>
-                                            <td><span class="badge bg-success">Concluído</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2455</td>
-                                            <td>Ana Beatriz</td>
-                                            <td>Coloração</td>
-                                            <td>Carla Almeida</td>
-                                            <td>11/05/2023</td>
-                                            <td>14:00</td>
-                                            <td>R$ 120,00</td>
-                                            <td><span class="badge bg-success">Concluído</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td>2454</td>
-                                            <td>Roberto Carlos</td>
-                                            <td>Corte de Cabelo + Barba</td>
-                                            <td>Ricardo Silva</td>
-                                            <td>11/05/2023</td>
-                                            <td>11:30</td>
-                                            <td>R$ 65,00</td>
-                                            <td><span class="badge bg-success">Concluído</span></td>
+                                            <td colspan="8" class="text-center py-4">
+                                                <i class="fas fa-file-alt fa-3x text-gray-300 mb-3"></i>
+                                                <p>Nenhum agendamento para exibir.</p>
+                                                <p class="text-muted">Os agendamentos concluídos aparecerão aqui.</p>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <div>
-                                    <span class="text-muted">Mostrando 5 de 253 registros</span>
+                                    <span class="text-muted">Mostrando 0 de 0 registros</span>
                                 </div>
                                 <div>
                                     <nav aria-label="Page navigation">
@@ -339,9 +297,9 @@
                                                 </a>
                                             </li>
                                             <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item">
+                                            <li class="page-item disabled"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item disabled"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item disabled">
                                                 <a class="page-link" href="#" aria-label="Next">
                                                     <span aria-hidden="true">&raquo;</span>
                                                 </a>
@@ -378,7 +336,7 @@
             new Chart(appointmentsByDayCtx, {
                 type: 'line',
                 data: {
-                    labels: ["01/05", "02/05", "03/05", "04/05", "05/05", "06/05", "07/05", "08/05", "09/05", "10/05", "11/05", "12/05"],
+                    labels: [],
                     datasets: [{
                         label: "Agendamentos",
                         lineTension: 0.3,
@@ -392,7 +350,7 @@
                         pointHoverBorderColor: "rgba(78, 115, 223, 1)",
                         pointHitRadius: 10,
                         pointBorderWidth: 2,
-                        data: [8, 12, 15, 10, 11, 14, 7, 13, 9, 12, 18, 15],
+                        data: [],
                     }],
                 },
                 options: {
@@ -412,9 +370,9 @@
             new Chart(revenueByServiceCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ["Corte de Cabelo", "Manicure", "Coloração", "Barba", "Depilação"],
+                    labels: [],
                     datasets: [{
-                        data: [5200, 2800, 3100, 1500, 250],
+                        data: [],
                         backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
                         hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
                         hoverBorderColor: "rgba(234, 236, 244, 1)",
