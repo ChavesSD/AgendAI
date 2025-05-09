@@ -40,4 +40,11 @@ As credenciais de teste são:
 
 ## Executando o Projeto
 
-Este frontend deve ser servido pelo backend. Consulte as instruções no README principal para executar o projeto completo. 
+Este frontend deve ser servido pelo backend. Consulte as instruções no README principal para executar o projeto completo.
+
+**IMPORTANTE**: O sistema deve ser acessado sempre através da porta 3001:
+```
+http://localhost:3001
+```
+
+Algumas funcionalidades dependem desta porta específica e podem não funcionar corretamente se acessadas por outra porta. 

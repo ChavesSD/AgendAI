@@ -506,130 +506,134 @@
 
 <script>
     // Dados dos clientes (simulação do banco de dados)
-    let clients = [
-        {
-            id: 1001,
-            name: "Carlos Silva",
-            email: "carlos.silva@email.com",
-            phone: "(83) 99999-1111",
-            companyId: 1001,
-            companyName: "Salão Beleza Total",
-            document: "12345678900",
-            status: "active",
-            birthdate: "1985-05-15",
-            gender: "male",
-            address: "Rua das Flores, 123",
-            city: "João Pessoa",
-            state: "PB",
-            zipcode: "58000-000",
-            notes: "Cliente fiel desde 2020",
-            optIn: true,
-            createdAt: "10/01/2023"
-        },
-        {
-            id: 1002,
-            name: "Ana Oliveira",
-            email: "ana.oliveira@email.com",
-            phone: "(83) 99999-2222",
-            companyId: 1001,
-            companyName: "Salão Beleza Total",
-            document: "98765432100",
-            status: "active",
-            birthdate: "1990-08-22",
-            gender: "female",
-            address: "Av. Principal, 456",
-            city: "João Pessoa",
-            state: "PB",
-            zipcode: "58000-000",
-            notes: "",
-            optIn: true,
-            createdAt: "15/02/2023"
-        },
-        {
-            id: 1003,
-            name: "Pedro Santos",
-            email: "pedro.santos@email.com",
-            phone: "(83) 99999-3333",
-            companyId: 1003,
-            companyName: "Barbearia Modern Cut",
-            document: "45678912300",
-            status: "active",
-            birthdate: "1988-12-10",
-            gender: "male",
-            address: "Rua dos Barbeiros, 789",
-            city: "Campina Grande",
-            state: "PB",
-            zipcode: "58100-000",
-            notes: "Prefere atendimento aos sábados",
-            optIn: false,
-            createdAt: "20/03/2023"
-        },
-        {
-            id: 1004,
-            name: "Mariana Costa",
-            email: "mariana.costa@email.com",
-            phone: "(83) 99999-4444",
-            companyId: 1002,
-            companyName: "Estética Sempre Bela",
-            document: "78912345600",
-            status: "inactive",
-            birthdate: "1995-04-18",
-            gender: "female",
-            address: "Av. das Acácias, 321",
-            city: "João Pessoa",
-            state: "PB",
-            zipcode: "58000-000",
-            notes: "",
-            optIn: true,
-            createdAt: "05/04/2023"
-        },
-        {
-            id: 1005,
-            name: "João Ferreira",
-            email: "joao.ferreira@email.com",
-            phone: "(83) 99999-5555",
-            companyId: 1003,
-            companyName: "Barbearia Modern Cut",
-            document: "12345678901",
-            status: "active",
-            birthdate: "1982-11-30",
-            gender: "male",
-            address: "Rua dos Pinheiros, 654",
-            city: "Campina Grande",
-            state: "PB",
-            zipcode: "58100-000",
-            notes: "Cliente VIP",
-            optIn: true,
-            createdAt: "10/05/2023"
-        },
-        {
-            id: 1006,
-            name: "Juliana Lima",
-            email: "juliana.lima@email.com",
-            phone: "(83) 99999-6666",
-            companyId: 1004,
-            companyName: "Clínica Estética Renascer",
-            document: "98765432101",
-            status: "active",
-            birthdate: "1992-07-25",
-            gender: "female",
-            address: "Rua das Palmeiras, 987",
-            city: "João Pessoa",
-            state: "PB",
-            zipcode: "58000-000",
-            notes: "Alérgica a alguns produtos",
-            optIn: false,
-            createdAt: "15/06/2023"
-        }
-    ];
+    if (typeof window.clients === 'undefined') {
+        window.clients = [
+            {
+                id: 1001,
+                name: "Carlos Silva",
+                email: "carlos.silva@email.com",
+                phone: "(83) 99999-1111",
+                companyId: 1001,
+                companyName: "Salão Beleza Total",
+                document: "12345678900",
+                status: "active",
+                birthdate: "1985-05-15",
+                gender: "male",
+                address: "Rua das Flores, 123",
+                city: "João Pessoa",
+                state: "PB",
+                zipcode: "58000-000",
+                notes: "Cliente fiel desde 2020",
+                optIn: true,
+                createdAt: "10/01/2023"
+            },
+            {
+                id: 1002,
+                name: "Ana Oliveira",
+                email: "ana.oliveira@email.com",
+                phone: "(83) 99999-2222",
+                companyId: 1001,
+                companyName: "Salão Beleza Total",
+                document: "98765432100",
+                status: "active",
+                birthdate: "1990-08-22",
+                gender: "female",
+                address: "Av. Principal, 456",
+                city: "João Pessoa",
+                state: "PB",
+                zipcode: "58000-000",
+                notes: "",
+                optIn: true,
+                createdAt: "15/02/2023"
+            },
+            {
+                id: 1003,
+                name: "Pedro Santos",
+                email: "pedro.santos@email.com",
+                phone: "(83) 99999-3333",
+                companyId: 1003,
+                companyName: "Barbearia Modern Cut",
+                document: "45678912300",
+                status: "active",
+                birthdate: "1988-12-10",
+                gender: "male",
+                address: "Rua dos Barbeiros, 789",
+                city: "Campina Grande",
+                state: "PB",
+                zipcode: "58100-000",
+                notes: "Prefere atendimento aos sábados",
+                optIn: false,
+                createdAt: "20/03/2023"
+            },
+            {
+                id: 1004,
+                name: "Mariana Costa",
+                email: "mariana.costa@email.com",
+                phone: "(83) 99999-4444",
+                companyId: 1002,
+                companyName: "Estética Sempre Bela",
+                document: "78912345600",
+                status: "inactive",
+                birthdate: "1995-04-18",
+                gender: "female",
+                address: "Av. das Acácias, 321",
+                city: "João Pessoa",
+                state: "PB",
+                zipcode: "58000-000",
+                notes: "",
+                optIn: true,
+                createdAt: "05/04/2023"
+            },
+            {
+                id: 1005,
+                name: "João Ferreira",
+                email: "joao.ferreira@email.com",
+                phone: "(83) 99999-5555",
+                companyId: 1003,
+                companyName: "Barbearia Modern Cut",
+                document: "12345678901",
+                status: "active",
+                birthdate: "1982-11-30",
+                gender: "male",
+                address: "Rua dos Pinheiros, 654",
+                city: "Campina Grande",
+                state: "PB",
+                zipcode: "58100-000",
+                notes: "Cliente VIP",
+                optIn: true,
+                createdAt: "10/05/2023"
+            },
+            {
+                id: 1006,
+                name: "Juliana Lima",
+                email: "juliana.lima@email.com",
+                phone: "(83) 99999-6666",
+                companyId: 1004,
+                companyName: "Clínica Estética Renascer",
+                document: "98765432101",
+                status: "active",
+                birthdate: "1992-07-25",
+                gender: "female",
+                address: "Rua das Palmeiras, 987",
+                city: "João Pessoa",
+                state: "PB",
+                zipcode: "58000-000",
+                notes: "Alérgica a alguns produtos",
+                optIn: false,
+                createdAt: "15/06/2023"
+            }
+        ];
+    }
 
     // Dados simulados de empresas
-    let companies = [
-        { id: 1001, name: "Salão Beleza Total", status: "active" },
-        { id: 1002, name: "Estética Sempre Bela", status: "active" },
-        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
-        { id: 1004, name: "Clínica Estética Renascer", status: "active" }
-    ];
+    if (typeof window.companies === 'undefined') {
+        window.companies = [
+            { id: 1001, name: "Salão Beleza Total", status: "active" },
+            { id: 1002, name: "Estética Sempre Bela", status: "active" },
+            { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+            { id: 1004, name: "Clínica Estética Renascer", status: "active" }
+        ];
+    }
 
     // Inicialização da página
     document.addEventListener('DOMContentLoaded', function() {
@@ -674,8 +678,8 @@
             // Carregar clientes
             const storedClients = localStorage.getItem('agendai_clients');
             if (storedClients) {
-                clients = JSON.parse(storedClients);
-                console.log('Clientes carregados do localStorage:', clients.length);
+                window.clients = JSON.parse(storedClients);
+                console.log('Clientes carregados do localStorage:', window.clients.length);
                 populateClientsTable();
             } else {
                 // Salvar os clientes padrão no localStorage
@@ -689,8 +693,8 @@
     // Salvar clientes no localStorage
     function saveClientsToStorage() {
         try {
-            localStorage.setItem('agendai_clients', JSON.stringify(clients));
-            console.log('Clientes salvos no localStorage:', clients.length);
+            localStorage.setItem('agendai_clients', JSON.stringify(window.clients));
+            console.log('Clientes salvos no localStorage:', window.clients.length);
         } catch (error) {
             console.error('Erro ao salvar clientes no localStorage:', error);
         }
@@ -717,7 +721,7 @@
         }
         
         // Se não houver empresas no localStorage, usar as empresas simuladas
-        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : window.companies;
         
         // Preencher os selects
         selects.forEach(select => {
@@ -757,7 +761,7 @@
         const filterDate = document.getElementById('filterDate')?.value || '';
         
         // Filtrar os clientes
-        let filteredClients = clients;
+        let filteredClients = window.clients;
         
         if (filterName) {
             filteredClients = filteredClients.filter(client => 
@@ -863,7 +867,7 @@
 
     // Visualizar detalhes do cliente
     function viewClient(id) {
-        const client = clients.find(c => c.id === id);
+        const client = window.clients.find(c => c.id === id);
         if (client) {
             // Em uma implementação real, você abriria um modal com mais detalhes
             alert(`Visualizando cliente: ${client.name}\nEmail: ${client.email}\nTelefone: ${client.phone}\nEmpresa: ${client.companyName}`);
@@ -872,7 +876,7 @@
 
     // Mostrar confirmação de exclusão
     function showDeleteConfirmation(id) {
-        const client = clients.find(c => c.id === id);
+        const client = window.clients.find(c => c.id === id);
         if (!client) {
             alert('Cliente não encontrado!');
             return;
@@ -948,7 +952,7 @@
         const companyName = companySelect.options[companySelect.selectedIndex].text;
         
         // Gerar um novo ID (em um sistema real, isso seria gerado pelo backend)
-        const newId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1001;
+        const newId = window.clients.length > 0 ? Math.max(...window.clients.map(c => c.id)) + 1 : 1001;
         
         // Criar o novo cliente
         const newClient = {
@@ -972,7 +976,7 @@
         };
         
         // Adicionar o cliente à lista
-        clients.push(newClient);
+        window.clients.push(newClient);
         
         // Salvar no localStorage
         saveClientsToStorage();
@@ -993,7 +997,7 @@
 
     // Carregar um cliente para edição
     function loadClientForEditing(id) {
-        const client = clients.find(c => c.id === id);
+        const client = window.clients.find(c => c.id === id);
         if (!client) {
             alert('Cliente não encontrado!');
             return;
@@ -1030,7 +1034,7 @@
         }
         
         const clientId = parseInt(document.getElementById('editClientId').value);
-        const clientIndex = clients.findIndex(c => c.id === clientId);
+        const clientIndex = window.clients.findIndex(c => c.id === clientId);
         
         if (clientIndex === -1) {
             alert('Cliente não encontrado!');
@@ -1044,7 +1048,7 @@
         
         // Atualizar o cliente
         const updatedClient = {
-            ...clients[clientIndex],
+            ...window.clients[clientIndex],
             name: document.getElementById('editClientName').value,
             email: document.getElementById('editClientEmail').value,
             phone: document.getElementById('editClientPhone').value,
@@ -1063,7 +1067,7 @@
         };
         
         // Atualizar o cliente na lista
-        clients[clientIndex] = updatedClient;
+        window.clients[clientIndex] = updatedClient;
         
         // Salvar no localStorage
         saveClientsToStorage();
@@ -1082,17 +1086,17 @@
     // Excluir um cliente
     function deleteClient() {
         const clientId = parseInt(document.getElementById('deleteClientId').value);
-        const clientIndex = clients.findIndex(c => c.id === clientId);
+        const clientIndex = window.clients.findIndex(c => c.id === clientId);
         
         if (clientIndex === -1) {
             alert('Cliente não encontrado!');
             return;
         }
         
-        const client = clients[clientIndex];
+        const client = window.clients[clientIndex];
         
         // Remover da lista
-        clients.splice(clientIndex, 1);
+        window.clients.splice(clientIndex, 1);
         
         // Salvar no localStorage
         saveClientsToStorage();
@@ -1170,7 +1174,7 @@
                 if (importedRecords > 0) {
                     // Adicionar clientes fictícios
                     for (let i = 0; i < importedRecords; i++) {
-                        const newId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1001;
+                        const newId = window.clients.length > 0 ? Math.max(...window.clients.map(c => c.id)) + 1 : 1001;
                         const newClient = {
                             id: newId,
                             name: `Cliente Importado ${i+1}`,
@@ -1190,7 +1194,7 @@
                             optIn: false,
                             createdAt: new Date().toLocaleDateString('pt-BR')
                         };
-                        clients.push(newClient);
+                        window.clients.push(newClient);
                     }
                     
                     // Salvar no localStorage

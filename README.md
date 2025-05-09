@@ -64,7 +64,9 @@ O projeto está organizado nas seguintes pastas:
    ```
    npm run dev
    ```
-   O servidor estará disponível em: http://localhost:3001
+   
+   **IMPORTANTE**: O sistema sempre será executado na porta 3001. Acesse através do endereço:
+   http://localhost:3001
 
 ## Acessos de Teste
 

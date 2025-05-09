@@ -503,122 +503,126 @@
 
 <script>
     // Dados dos usuários (simulação do banco de dados)
-    let users = [
-        {
-            id: 1001,
-            name: "João Silva",
-            email: "joao.silva@belezatotal.com.br",
-            password: "senha123", // Em um sistema real, isso seria um hash
-            companyId: 1001,
-            companyName: "Salão Beleza Total",
-            role: "admin",
-            status: "active",
-            phone: "(83) 99999-1111",
-            createdAt: "15/04/2023",
-            notes: "Usuário administrador da empresa",
-            permissions: {
-                viewDashboard: true,
-                manageAppointments: true,
-                manageClients: true,
-                manageServices: true,
-                viewReports: true,
-                manageSettings: true
+    if (typeof window.users === 'undefined') {
+        window.users = [
+            {
+                id: 1001,
+                name: "João Silva",
+                email: "joao.silva@belezatotal.com.br",
+                password: "senha123", // Em um sistema real, isso seria um hash
+                companyId: 1001,
+                companyName: "Salão Beleza Total",
+                role: "admin",
+                status: "active",
+                phone: "(83) 99999-1111",
+                createdAt: "15/04/2023",
+                notes: "Usuário administrador da empresa",
+                permissions: {
+                    viewDashboard: true,
+                    manageAppointments: true,
+                    manageClients: true,
+                    manageServices: true,
+                    viewReports: true,
+                    manageSettings: true
+                }
+            },
+            {
+                id: 1002,
+                name: "Maria Oliveira",
+                email: "maria@semprebela.com.br",
+                password: "senha123",
+                companyId: 1002,
+                companyName: "Estética Sempre Bela",
+                role: "manager",
+                status: "active",
+                phone: "(83) 99999-2222",
+                createdAt: "20/05/2023",
+                notes: "Gerente da empresa",
+                permissions: {
+                    viewDashboard: true,
+                    manageAppointments: true,
+                    manageClients: true,
+                    manageServices: true,
+                    viewReports: true,
+                    manageSettings: false
+                }
+            },
+            {
+                id: 1003,
+                name: "Pedro Santos",
+                email: "pedro@moderncut.com.br",
+                password: "senha123",
+                companyId: 1003,
+                companyName: "Barbearia Modern Cut",
+                role: "staff",
+                status: "pending",
+                phone: "(83) 99999-3333",
+                createdAt: "25/06/2023",
+                notes: "Funcionário com acesso limitado",
+                permissions: {
+                    viewDashboard: true,
+                    manageAppointments: true,
+                    manageClients: false,
+                    manageServices: false,
+                    viewReports: false,
+                    manageSettings: false
+                }
+            },
+            {
+                id: 1004,
+                name: "Ana Souza",
+                email: "ana@renascer.com.br",
+                password: "senha123",
+                companyId: 1004,
+                companyName: "Clínica Estética Renascer",
+                role: "admin",
+                status: "active",
+                phone: "(83) 99999-4444",
+                createdAt: "10/07/2023",
+                notes: "Administradora com todos os acessos",
+                permissions: {
+                    viewDashboard: true,
+                    manageAppointments: true,
+                    manageClients: true,
+                    manageServices: true,
+                    viewReports: true,
+                    manageSettings: true
+                }
+            },
+            {
+                id: 1005,
+                name: "Carlos Ferreira",
+                email: "carlos@admin.agendai.com.br",
+                password: "admin123",
+                companyId: 0,
+                companyName: "AgendAI (Sistema)",
+                role: "superadmin",
+                status: "active",
+                phone: "(83) 99999-5555",
+                createdAt: "01/01/2023",
+                notes: "Super administrador do sistema",
+                permissions: {
+                    viewDashboard: true,
+                    manageAppointments: true,
+                    manageClients: true,
+                    manageServices: true,
+                    viewReports: true,
+                    manageSettings: true
+                }
             }
-        },
-        {
-            id: 1002,
-            name: "Maria Oliveira",
-            email: "maria@semprebela.com.br",
-            password: "senha123",
-            companyId: 1002,
-            companyName: "Estética Sempre Bela",
-            role: "manager",
-            status: "active",
-            phone: "(83) 99999-2222",
-            createdAt: "20/05/2023",
-            notes: "Gerente da empresa",
-            permissions: {
-                viewDashboard: true,
-                manageAppointments: true,
-                manageClients: true,
-                manageServices: true,
-                viewReports: true,
-                manageSettings: false
-            }
-        },
-        {
-            id: 1003,
-            name: "Pedro Santos",
-            email: "pedro@moderncut.com.br",
-            password: "senha123",
-            companyId: 1003,
-            companyName: "Barbearia Modern Cut",
-            role: "staff",
-            status: "pending",
-            phone: "(83) 99999-3333",
-            createdAt: "25/06/2023",
-            notes: "Funcionário com acesso limitado",
-            permissions: {
-                viewDashboard: true,
-                manageAppointments: true,
-                manageClients: false,
-                manageServices: false,
-                viewReports: false,
-                manageSettings: false
-            }
-        },
-        {
-            id: 1004,
-            name: "Ana Souza",
-            email: "ana@renascer.com.br",
-            password: "senha123",
-            companyId: 1004,
-            companyName: "Clínica Estética Renascer",
-            role: "admin",
-            status: "active",
-            phone: "(83) 99999-4444",
-            createdAt: "10/07/2023",
-            notes: "Administradora com todos os acessos",
-            permissions: {
-                viewDashboard: true,
-                manageAppointments: true,
-                manageClients: true,
-                manageServices: true,
-                viewReports: true,
-                manageSettings: true
-            }
-        },
-        {
-            id: 1005,
-            name: "Carlos Ferreira",
-            email: "carlos@admin.agendai.com.br",
-            password: "admin123",
-            companyId: 0,
-            companyName: "AgendAI (Sistema)",
-            role: "superadmin",
-            status: "active",
-            phone: "(83) 99999-5555",
-            createdAt: "01/01/2023",
-            notes: "Super administrador do sistema",
-            permissions: {
-                viewDashboard: true,
-                manageAppointments: true,
-                manageClients: true,
-                manageServices: true,
-                viewReports: true,
-                manageSettings: true
-            }
-        }
-    ];
+        ];
+    }
 
     // Dados simulados de empresas
-    let companies = [
-        { id: 1001, name: "Salão Beleza Total", status: "active" },
-        { id: 1002, name: "Estética Sempre Bela", status: "active" },
-        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
-        { id: 1004, name: "Clínica Estética Renascer", status: "active" },
-        { id: 0, name: "AgendAI (Sistema)", status: "active" }
-    ];
+    if (typeof window.companies === 'undefined') {
+        window.companies = [
+            { id: 1001, name: "Salão Beleza Total", status: "active" },
+            { id: 1002, name: "Estética Sempre Bela", status: "active" },
+            { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+            { id: 1004, name: "Clínica Estética Renascer", status: "active" },
+            { id: 0, name: "AgendAI (Sistema)", status: "active" }
+        ];
+    }
 
     // Inicialização da página
     document.addEventListener('DOMContentLoaded', function() {
@@ -674,7 +678,7 @@
         }
         
         // Se não houver empresas no localStorage, usar as empresas simuladas
-        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : window.companies;
         
         // Preencher os selects
         selects.forEach(select => {
@@ -704,8 +708,8 @@
         try {
             const storedUsers = localStorage.getItem('agendai_users');
             if (storedUsers) {
-                users = JSON.parse(storedUsers);
-                console.log('Usuários carregados do localStorage:', users.length);
+                window.users = JSON.parse(storedUsers);
+                console.log('Usuários carregados do localStorage:', window.users.length);
             } else {
                 // Salvar os usuários padrão no localStorage
                 saveUsersToStorage();
@@ -718,8 +722,8 @@
     // Salvar usuários no localStorage
     function saveUsersToStorage() {
         try {
-            localStorage.setItem('agendai_users', JSON.stringify(users));
-            console.log('Usuários salvos no localStorage:', users.length);
+            localStorage.setItem('agendai_users', JSON.stringify(window.users));
+            console.log('Usuários salvos no localStorage:', window.users.length);
         } catch (error) {
             console.error('Erro ao salvar usuários no localStorage:', error);
         }
@@ -731,7 +735,7 @@
         document.querySelectorAll('.view-user').forEach(btn => {
             btn.addEventListener('click', function() {
                 const userId = parseInt(this.getAttribute('data-id'));
-                const user = users.find(u => u.id === userId);
+                const user = window.users.find(u => u.id === userId);
                 if (user) {
                     alert(`Visualizando usuário: ${user.name}\nEmail: ${user.email}\nEmpresa: ${user.companyName}`);
                     // Em uma implementação real, você abriria um modal com mais detalhes
@@ -797,7 +801,7 @@
         
         // Verificar se o email já existe
         const email = document.getElementById('userEmail').value.toLowerCase();
-        if (users.some(u => u.email.toLowerCase() === email)) {
+        if (window.users.some(u => u.email.toLowerCase() === email)) {
             alert('Este email já está sendo utilizado por outro usuário!');
             return;
         }
@@ -808,7 +812,7 @@
         const companyName = companySelect.options[companySelect.selectedIndex].text;
         
         // Gerar um novo ID (em um sistema real, isso seria gerado pelo backend)
-        const newId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1001;
+        const newId = window.users.length > 0 ? Math.max(...window.users.map(u => u.id)) + 1 : 1001;
         
         // Criar o novo usuário
         const newUser = {
@@ -834,7 +838,7 @@
         };
         
         // Adicionar o usuário à lista
-        users.push(newUser);
+        window.users.push(newUser);
         
         // Salvar no localStorage
         saveUsersToStorage();
@@ -852,7 +856,7 @@
 
     // Função para carregar um usuário para edição
     function loadUserForEditing(userId) {
-        const user = users.find(u => u.id === userId);
+        const user = window.users.find(u => u.id === userId);
         if (!user) {
             alert('Usuário não encontrado!');
             return;
@@ -894,7 +898,7 @@
         }
         
         const userId = parseInt(document.getElementById('editUserId').value);
-        const userIndex = users.findIndex(u => u.id === userId);
+        const userIndex = window.users.findIndex(u => u.id === userId);
         
         if (userIndex === -1) {
             alert('Usuário não encontrado!');
@@ -912,7 +916,7 @@
         
         // Verificar se o email já existe (exceto para o usuário atual)
         const email = document.getElementById('editUserEmail').value.toLowerCase();
-        if (users.some(u => u.id !== userId && u.email.toLowerCase() === email)) {
+        if (window.users.some(u => u.id !== userId && u.email.toLowerCase() === email)) {
             alert('Este email já está sendo utilizado por outro usuário!');
             return;
         }
@@ -924,7 +928,7 @@
         
         // Atualizar o usuário
         const updatedUser = {
-            ...users[userIndex],
+            ...window.users[userIndex],
             name: document.getElementById('editUserName').value,
             email: email,
             companyId: companyId,
@@ -949,7 +953,7 @@
         }
         
         // Atualizar o usuário na lista
-        users[userIndex] = updatedUser;
+        window.users[userIndex] = updatedUser;
         
         // Salvar no localStorage
         saveUsersToStorage();
@@ -974,21 +978,13 @@
             return;
         }
         
-        const userIndex = users.findIndex(u => u.id === userId);
-        if (userIndex === -1) {
-            alert('Usuário não encontrado!');
-            return;
-        }
-        
-        const user = users[userIndex];
-        
-        // Remover da lista
-        users.splice(userIndex, 1);
+        // Remover o usuário da lista
+        window.users = window.users.filter(u => u.id !== userId);
         
         // Salvar no localStorage
         saveUsersToStorage();
         
         // Atualizar a tabela
-        alert(`Usuário ${user.name} excluído com sucesso!`);
+        alert(`Usuário ${userId} excluído com sucesso!`);
     }
-</script> 
+</script>

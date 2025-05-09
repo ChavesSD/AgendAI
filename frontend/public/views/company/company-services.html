@@ -205,76 +205,80 @@
 
 <script>
 // Dados simulados
-let professionals = [
-    {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro'},
-    {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista'},
-    {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora'},
-    {id: 4, nome: 'Joana Santos', especialidade: 'Manicure'}
-];
+if (typeof window.professionals === 'undefined') {
+    window.professionals = [
+        {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro'},
+        {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista'},
+        {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora'},
+        {id: 4, nome: 'Joana Santos', especialidade: 'Manicure'}
+    ];
+}
 
-let services = [
-    {
-        id: 1, 
-        nome: 'Corte de Cabelo - Masculino', 
-        duracao: 30, 
-        preco: 50.00, 
-        categoria: 'Cabelo', 
-        descricao: 'Corte masculino com tesoura ou máquina', 
-        status: 'ativo',
-        profissionais: [1, 2]
-    },
-    {
-        id: 2, 
-        nome: 'Corte de Cabelo - Feminino', 
-        duracao: 60, 
-        preco: 80.00, 
-        categoria: 'Cabelo', 
-        descricao: 'Corte feminino com modelagem', 
-        status: 'ativo',
-        profissionais: [2]
-    },
-    {
-        id: 3, 
-        nome: 'Barba', 
-        duracao: 30, 
-        preco: 35.00, 
-        categoria: 'Barba', 
-        descricao: 'Aparar e modelar barba com navalha', 
-        status: 'ativo',
-        profissionais: [1]
-    },
-    {
-        id: 4, 
-        nome: 'Manicure', 
-        duracao: 45, 
-        preco: 40.00, 
-        categoria: 'Manicure/Pedicure', 
-        descricao: 'Cutilagem e esmaltagem', 
-        status: 'ativo',
-        profissionais: [4]
-    },
-    {
-        id: 5, 
-        nome: 'Depilação - Perna Completa', 
-        duracao: 60, 
-        preco: 80.00, 
-        categoria: 'Depilação', 
-        descricao: 'Depilação com cera quente', 
-        status: 'ativo',
-        profissionais: [3]
-    }
-];
+if (typeof window.services === 'undefined') {
+    window.services = [
+        {
+            id: 1, 
+            nome: 'Corte de Cabelo - Masculino', 
+            duracao: 30, 
+            preco: 50.00, 
+            categoria: 'Cabelo', 
+            descricao: 'Corte masculino com tesoura ou máquina', 
+            status: 'ativo',
+            profissionais: [1, 2]
+        },
+        {
+            id: 2, 
+            nome: 'Corte de Cabelo - Feminino', 
+            duracao: 60, 
+            preco: 80.00, 
+            categoria: 'Cabelo', 
+            descricao: 'Corte feminino com modelagem', 
+            status: 'ativo',
+            profissionais: [2]
+        },
+        {
+            id: 3, 
+            nome: 'Barba', 
+            duracao: 30, 
+            preco: 35.00, 
+            categoria: 'Barba', 
+            descricao: 'Aparar e modelar barba com navalha', 
+            status: 'ativo',
+            profissionais: [1]
+        },
+        {
+            id: 4, 
+            nome: 'Manicure', 
+            duracao: 45, 
+            preco: 40.00, 
+            categoria: 'Manicure/Pedicure', 
+            descricao: 'Cutilagem e esmaltagem', 
+            status: 'ativo',
+            profissionais: [4]
+        },
+        {
+            id: 5, 
+            nome: 'Depilação - Perna Completa', 
+            duracao: 60, 
+            preco: 80.00, 
+            categoria: 'Depilação', 
+            descricao: 'Depilação com cera quente', 
+            status: 'ativo',
+            profissionais: [3]
+        }
+    ];
+}
 
 // Renderizar lista de serviços
 function renderServices() {
     const tbody = document.getElementById('services-table-body');
     tbody.innerHTML = '';
     
-    services.forEach(service => {
+    window.services.forEach(service => {
         // Criar uma string com os badges dos profissionais
         let profissionaisBadges = '';
         service.profissionais.forEach(profId => {
-            const prof = professionals.find(p => p.id === profId);
+            const prof = window.professionals.find(p => p.id === profId);
             if (prof) {
                 profissionaisBadges += `<span class="professional-badge">${prof.nome}</span> `;
             }
@@ -311,7 +315,7 @@ function renderProfessionalCheckboxes(selectedProfessionals = []) {
     const container = document.getElementById('service-professionals');
     container.innerHTML = '';
     
-    professionals.forEach(prof => {
+    window.professionals.forEach(prof => {
         const isChecked = selectedProfessionals.includes(prof.id);
         
         const div = document.createElement('div');
@@ -340,7 +344,7 @@ function resetServiceForm() {
 
 // Editar serviço
 function editService(id) {
-    const service = services.find(s => s.id === id);
+    const service = window.services.find(s => s.id === id);
     if (!service) return;
     
     document.getElementById('service-id').value = service.id;
@@ -361,7 +365,7 @@ function editService(id) {
 // Excluir serviço
 function deleteService(id) {
     if (confirm('Deseja realmente excluir este serviço?')) {
-        services = services.filter(s => s.id !== id);
+        window.services = window.services.filter(s => s.id !== id);
         renderServices();
     }
 }
@@ -402,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (id) {
             // Atualizar serviço existente
-            const service = services.find(s => s.id == id);
+            const service = window.services.find(s => s.id == id);
             if (service) {
                 service.nome = nome;
                 service.duracao = duracao;
@@ -414,8 +418,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Adicionar novo serviço
-            const newId = services.length ? Math.max(...services.map(s => s.id)) + 1 : 1;
-            services.push({
+            const newId = window.services.length ? Math.max(...window.services.map(s => s.id)) + 1 : 1;
+            window.services.push({
                 id: newId,
                 nome,
                 duracao,

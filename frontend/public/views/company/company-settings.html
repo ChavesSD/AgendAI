@@ -96,17 +96,20 @@
                                     <h5 class="card-title">Informações da Empresa</h5>
                                     <form>
                                         <div class="row mb-4">
-                                            <div class="col-md-2 mb-3">
-                                                <div class="text-center">
-                                                    <img src="https://via.placeholder.com/150" class="img-fluid rounded-circle mb-3" alt="Logo da Empresa">
-                                                    <div class="d-grid gap-2">
-                                                        <button type="button" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-upload me-1"></i> Alterar Logo
+                                            <div class="col-md-3 text-center">
+                                                <div class="mb-3">
+                                                    <img src="/public/src/img/company-logo-placeholder.png" class="img-fluid rounded-circle mb-3" alt="Logo da Empresa">
+                                                    <div class="d-grid">
+                                                        <button class="btn btn-primary mb-2" id="changeLogoBtn">
+                                                            <i class="fas fa-camera me-2"></i> Trocar Logo
+                                                        </button>
+                                                        <button class="btn btn-outline-secondary btn-sm" id="removeLogoBtn">
+                                                            <i class="fas fa-trash me-2"></i> Remover
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-10">
+                                            <div class="col-md-9">
                                                 <div class="row g-3">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="companyName" class="form-label">Nome da Empresa</label>
@@ -363,52 +366,45 @@
                                 <div class="tab-pane fade" id="integrations" role="tabpanel" aria-labelledby="integrations-tab">
                                     <h5 class="card-title">Integrações</h5>
                                     
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/50" alt="Google Calendar" class="me-3">
-                                                    <div>
-                                                        <h6 class="mb-0">Google Calendar</h6>
-                                                        <p class="text-muted mb-0">Sincronize seus agendamentos com o Google Calendar</p>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <button class="btn btn-primary">Conectar</button>
-                                                </div>
-                                            </div>
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Integrações</h5>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="card mb-3">
                                         <div class="card-body">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/50" alt="WhatsApp" class="me-3">
-                                                    <div>
-                                                        <h6 class="mb-0">WhatsApp Business</h6>
-                                                        <p class="text-muted mb-0">Envie confirmações e lembretes via WhatsApp</p>
+                                            <div class="row mb-4">
+                                                <div class="col-md-12">
+                                                    <div class="d-flex align-items-center p-3 border rounded mb-3">
+                                                        <img src="/public/src/img/google-calendar-icon.png" alt="Google Calendar" class="me-3">
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">Google Calendar</h6>
+                                                            <p class="text-muted mb-0">Sincronize os agendamentos com seu calendário Google</p>
+                                                        </div>
+                                                        <div>
+                                                            <button class="btn btn-primary">Conectar</button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div>
-                                                    <button class="btn btn-outline-success">Conectado</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="https://via.placeholder.com/50" alt="Instagram" class="me-3">
-                                                    <div>
-                                                        <h6 class="mb-0">Instagram</h6>
-                                                        <p class="text-muted mb-0">Permita agendamentos diretamente do Instagram</p>
+                                                    
+                                                    <div class="d-flex align-items-center p-3 border rounded mb-3">
+                                                        <img src="/public/src/img/whatsapp-icon.png" alt="WhatsApp" class="me-3">
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">WhatsApp</h6>
+                                                            <p class="text-muted mb-0">Envie lembretes e confirmações via WhatsApp</p>
+                                                        </div>
+                                                        <div>
+                                                            <button class="btn btn-primary">Conectar</button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div>
-                                                    <button class="btn btn-primary">Conectar</button>
+                                                    
+                                                    <div class="d-flex align-items-center p-3 border rounded">
+                                                        <img src="/public/src/img/instagram-icon.png" alt="Instagram" class="me-3">
+                                                        <div class="flex-grow-1">
+                                                            <h6 class="mb-1">Instagram</h6>
+                                                            <p class="text-muted mb-0">Compartilhe seu perfil de agendamento no Instagram</p>
+                                                        </div>
+                                                        <div>
+                                                            <button class="btn btn-primary">Conectar</button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

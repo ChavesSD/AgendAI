@@ -28,6 +28,17 @@ function initDashboardCharts() {
             companiesMonthlyChartInstance = null;
         }
         
+        // Verificar se existem outros gráficos com o mesmo canvas
+        const existingPlanChart = Chart.getChart('companiesByPlanChart');
+        if (existingPlanChart) {
+            existingPlanChart.destroy();
+        }
+        
+        const existingMonthlyChart = Chart.getChart('companiesMonthlyChart');
+        if (existingMonthlyChart) {
+            existingMonthlyChart.destroy();
+        }
+        
         // Gráfico de Empresas por Planos
         const planChartEl = document.getElementById('companiesByPlanChart');
         if (planChartEl) {
@@ -131,19 +142,10 @@ function initDashboardCharts() {
     }
 }
 
-// Se o módulo for carregado diretamente
+// Registrar a função globalmente
 if (typeof window !== 'undefined') {
-    // Registrar a função globalmente
     window.initDashboardCharts = initDashboardCharts;
     
-    // Verificar se o DOM já está pronto
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        console.log('DOM já está pronto, aguardando um momento para inicializar gráficos...');
-        setTimeout(initDashboardCharts, 500);
-    } else {
-        console.log('Aguardando o DOM estar pronto para inicializar gráficos...');
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(initDashboardCharts, 500);
-        });
-    }
+    // Remover a inicialização automática para evitar duplicação,
+    // já que o admin-dashboard.html já chama a função
 } 

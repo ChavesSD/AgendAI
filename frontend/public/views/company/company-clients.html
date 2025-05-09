@@ -250,7 +250,7 @@
 
 <script>
 // Dados simulados
-let clients = [
+if (typeof window.clients === "undefined") { window.clients = [
     {
         id: 1,
         nome: 'João Silva',
@@ -317,7 +317,7 @@ let clients = [
             {data: '2023-09-05', servico: 'Manicure', profissional: 'Joana Santos', status: 'concluído'}
         ]
     }
-];
+]; }
 
 // Renderizar lista de clientes
 function renderClients() {
@@ -328,7 +328,7 @@ function renderClients() {
     const searchTerm = document.getElementById('search-client').value.toLowerCase();
     const statusFilter = document.getElementById('filter-status').value;
     
-    const filteredClients = clients.filter(client => {
+    const filteredClients = window.clients.filter(client => {
         // Filtrar por busca
         const matchesSearch = !searchTerm || 
             client.nome.toLowerCase().includes(searchTerm) ||
@@ -388,7 +388,7 @@ function resetClientForm() {
 
 // Editar cliente
 function editClient(id) {
-    const client = clients.find(c => c.id === id);
+    const client = window.clients.find(c => c.id === id);
     if (!client) return;
     
     document.getElementById('client-id').value = client.id;
@@ -408,7 +408,7 @@ function editClient(id) {
 
 // Visualizar histórico do cliente
 function viewClientHistory(id) {
-    const client = clients.find(c => c.id === id);
+    const client = window.clients.find(c => c.id === id);
     if (!client) return;
     
     document.getElementById('history-client-name').textContent = client.nome;
@@ -460,7 +460,7 @@ function viewClientHistory(id) {
 // Excluir cliente
 function deleteClient(id) {
     if (confirm('Deseja realmente excluir este cliente?')) {
-        clients = clients.filter(c => c.id !== id);
+        window.clients = window.clients.filter(c => c.id !== id);
         renderClients();
     }
 }
@@ -496,7 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (id) {
             // Atualizar cliente existente
-            const client = clients.find(c => c.id == id);
+            const client = window.clients.find(c => c.id == id);
             if (client) {
                 client.nome = nome;
                 client.email = email;
@@ -509,10 +509,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Adicionar novo cliente
-            const newId = clients.length ? Math.max(...clients.map(c => c.id)) + 1 : 1;
+            const newId = window.clients.length ? Math.max(...window.clients.map(c => c.id)) + 1 : 1;
             const hoje = new Date().toISOString().split('T')[0];
             
-            clients.push({
+            window.clients.push({
                 id: newId,
                 nome,
                 email,

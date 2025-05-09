@@ -165,17 +165,19 @@
 
 <script>
 // Dados simulados (poderia vir de uma API futuramente)
-let professionals = [
-    {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro', telefone: '(11) 99999-1111', email: 'ricardo@empresa.com', status: 'ativo'},
-    {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista', telefone: '(11) 99999-2222', email: 'carla@empresa.com', status: 'ativo'},
-    {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora', telefone: '(11) 99999-3333', email: 'paula@empresa.com', status: 'ativo'},
-    {id: 4, nome: 'Joana Santos', especialidade: 'Manicure', telefone: '(11) 99999-4444', email: 'joana@empresa.com', status: 'inativo'}
-];
+if (typeof window.professionals === 'undefined') {
+    window.professionals = [
+        {id: 1, nome: 'Ricardo Silva', especialidade: 'Cabelereiro', telefone: '(11) 99999-1111', email: 'ricardo@empresa.com', status: 'ativo'},
+        {id: 2, nome: 'Carla Almeida', especialidade: 'Colorista', telefone: '(11) 99999-2222', email: 'carla@empresa.com', status: 'ativo'},
+        {id: 3, nome: 'Paula Rocha', especialidade: 'Depiladora', telefone: '(11) 99999-3333', email: 'paula@empresa.com', status: 'ativo'},
+        {id: 4, nome: 'Joana Santos', especialidade: 'Manicure', telefone: '(11) 99999-4444', email: 'joana@empresa.com', status: 'inativo'}
+    ];
+}
 
 function renderProfessionals() {
     const tbody = document.getElementById('professionals-table-body');
     tbody.innerHTML = '';
-    professionals.forEach(prof => {
+    window.professionals.forEach(prof => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>${prof.nome}</td>
@@ -202,7 +204,7 @@ function resetProfessionalForm() {
 }
 
 function editProfessional(id) {
-    const prof = professionals.find(p => p.id === id);
+    const prof = window.professionals.find(p => p.id === id);
     if (!prof) return;
     document.getElementById('professional-id').value = prof.id;
     document.getElementById('professional-name').value = prof.nome;
@@ -217,7 +219,7 @@ function editProfessional(id) {
 
 function deleteProfessional(id) {
     if (confirm('Deseja realmente excluir este profissional?')) {
-        professionals = professionals.filter(p => p.id !== id);
+        window.professionals = window.professionals.filter(p => p.id !== id);
         renderProfessionals();
     }
 }
@@ -262,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (id) {
             // Editar
-            const prof = professionals.find(p => p.id == id);
+            const prof = window.professionals.find(p => p.id == id);
             if (prof) {
                 prof.nome = nome;
                 prof.especialidade = especialidade;
@@ -272,8 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             // Adicionar
-            const newId = professionals.length ? Math.max(...professionals.map(p => p.id)) + 1 : 1;
-            professionals.push({id: newId, nome, especialidade, telefone, email, status});
+            const newId = window.professionals.length ? Math.max(...window.professionals.map(p => p.id)) + 1 : 1;
+            window.professionals.push({id: newId, nome, especialidade, telefone, email, status});
         }
         renderProfessionals();
         const modal = bootstrap.Modal.getInstance(document.getElementById('professionalModal'));

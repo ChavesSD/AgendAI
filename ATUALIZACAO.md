@@ -34,6 +34,11 @@
    - Corrigidas as URLs de redirecionamento após logout
    - Corrigido problema de arquivos duplicados nas pastas views
 
+7. **Correções em declarações de variáveis globais**:
+   - Corrigida a declaração de variáveis globais para usar o prefixo `window.` e evitar redeclarações no contexto SPA
+   - Atualizado o código para verificar a existência de variáveis antes de declarar, usando `if (typeof window.variableName === 'undefined')`
+   - Corrigidos arquivos: admin-clients.html, admin-reports.html, admin-appointments.html, admin-professionals.html, admin.users.html e outros
+
 ## O que falta fazer:
 
 1. **Implementação completa da API Backend**:
@@ -75,6 +80,17 @@
    - Substituídas as URLs hardcoded (http://localhost:3001) por URLs relativas (/)
    - Melhorada a lógica de carregamento de views com tratamento de erros
    - Corrigido redirecionamento após logout
+
+## Informação importante sobre a porta do servidor
+
+**ATENÇÃO**: O sistema AgendAI SEMPRE deve ser acessado através da porta 3001. O servidor foi configurado para utilizar essa porta específica e algumas funcionalidades podem não operar corretamente se acessadas por outra porta.
+
+Para acessar o sistema, utilize o endereço:
+```
+http://localhost:3001
+```
+
+Caso precise alterar a porta, será necessário atualizar referências em diversos arquivos do sistema.
 
 ## Próximos passos
 

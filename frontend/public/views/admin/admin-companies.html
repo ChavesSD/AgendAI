@@ -541,19 +541,19 @@
         }
         
         // Tentar obter planos do localStorage
-        let plans = [];
+        let localPlans = [];
         try {
             const storedPlans = localStorage.getItem('agendai_plans');
             if (storedPlans) {
-                plans = JSON.parse(storedPlans);
+                localPlans = JSON.parse(storedPlans);
             }
         } catch (error) {
             console.error('Erro ao carregar planos:', error);
         }
         
         // Se não houver planos no localStorage, usar os planos padrão
-        if (!plans || plans.length === 0) {
-            plans = [
+        if (!localPlans || localPlans.length === 0) {
+            localPlans = [
                 { id: 1, name: "Básico", price: 50.00 },
                 { id: 2, name: "Intermediário", price: 70.00 },
                 { id: 3, name: "Avançado", price: 100.00 }
@@ -561,7 +561,7 @@
         }
         
         // Adicionar os planos ao select
-        plans.forEach(plan => {
+        localPlans.forEach(plan => {
             if (plan.status !== 'inactive') { // Não mostrar planos inativos
                 const option = document.createElement('option');
                 option.value = plan.id;
@@ -570,6 +570,6 @@
             }
         });
         
-        console.log('Planos carregados no formulário:', plans);
+        console.log('Planos carregados no formulário:', localPlans);
     }
 </script> 

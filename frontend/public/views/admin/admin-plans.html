@@ -489,65 +489,67 @@
 
 <script>
     // Planos em formato de objeto para fácil acesso
-    let plans = [
-        {
-            id: 1,
-            name: "Básico",
-            price: 50.00,
-            appointments: 50,
-            professionals: 2,
-            services: 10,
-            status: "active",
-            highlight: "none",
-            description: "Plano básico ideal para pequenos negócios começarem a usar o sistema de agendamento.",
-            features: {
-                reports: false,
-                emailNotifications: true,
-                smsNotifications: false,
-                whatsAppNotifications: false,
-                customization: false,
-                api: false
+    if (typeof window.plans === 'undefined') {
+        window.plans = [
+            {
+                id: 1,
+                name: "Básico",
+                price: 50.00,
+                appointments: 50,
+                professionals: 2,
+                services: 10,
+                status: "active",
+                highlight: "none",
+                description: "Plano básico ideal para pequenos negócios começarem a usar o sistema de agendamento.",
+                features: {
+                    reports: false,
+                    emailNotifications: true,
+                    smsNotifications: false,
+                    whatsAppNotifications: false,
+                    customization: false,
+                    api: false
+                }
+            },
+            {
+                id: 2,
+                name: "Intermediário",
+                price: 70.00,
+                appointments: 150,
+                professionals: 5,
+                services: 25,
+                status: "active",
+                highlight: "popular",
+                description: "Plano intermediário com mais recursos e capacidade para negócios em crescimento.",
+                features: {
+                    reports: true,
+                    emailNotifications: true,
+                    smsNotifications: true,
+                    whatsAppNotifications: false,
+                    customization: false,
+                    api: false
+                }
+            },
+            {
+                id: 3,
+                name: "Avançado",
+                price: 100.00,
+                appointments: 0, // 0 = ilimitado
+                professionals: 0, // 0 = ilimitado
+                services: 0, // 0 = ilimitado
+                status: "active",
+                highlight: "none",
+                description: "Plano avançado com recursos ilimitados para grandes empresas.",
+                features: {
+                    reports: true,
+                    emailNotifications: true,
+                    smsNotifications: true,
+                    whatsAppNotifications: true,
+                    customization: true,
+                    api: true
+                }
             }
-        },
-        {
-            id: 2,
-            name: "Intermediário",
-            price: 70.00,
-            appointments: 150,
-            professionals: 5,
-            services: 25,
-            status: "active",
-            highlight: "popular",
-            description: "Plano intermediário com mais recursos e capacidade para negócios em crescimento.",
-            features: {
-                reports: true,
-                emailNotifications: true,
-                smsNotifications: true,
-                whatsAppNotifications: false,
-                customization: false,
-                api: false
-            }
-        },
-        {
-            id: 3,
-            name: "Avançado",
-            price: 100.00,
-            appointments: 0, // 0 = ilimitado
-            professionals: 0, // 0 = ilimitado
-            services: 0, // 0 = ilimitado
-            status: "active",
-            highlight: "none",
-            description: "Plano avançado com recursos ilimitados para grandes empresas.",
-            features: {
-                reports: true,
-                emailNotifications: true,
-                smsNotifications: true,
-                whatsAppNotifications: true,
-                customization: true,
-                api: true
-            }
-        }
-    ];
+        ];
+    }
 
     // Logout
     document.getElementById('logout-button')?.addEventListener('click', function(e) {
@@ -576,7 +578,7 @@
         document.querySelectorAll('.view-plan').forEach(btn => {
             btn.addEventListener('click', function() {
                 const planId = parseInt(this.getAttribute('data-id'));
-                const plan = plans.find(p => p.id === planId);
+                const plan = window.plans.find(p => p.id === planId);
                 if (plan) {
                     alert(`Visualizando plano: ${plan.name}\nPreço: R$ ${plan.price.toFixed(2)}`);
                 }
@@ -612,7 +614,7 @@
 
     // Carregar plano para edição
     function loadPlanForEditing(planId) {
-        const plan = plans.find(p => p.id === planId);
+        const plan = window.plans.find(p => p.id === planId);
         if (!plan) return;
         
         document.getElementById('editPlanId').value = plan.id;
@@ -642,7 +644,7 @@
             return;
         }
         
-        const newId = plans.length > 0 ? Math.max(...plans.map(p => p.id)) + 1 : 1;
+        const newId = window.plans.length > 0 ? Math.max(...window.plans.map(p => p.id)) + 1 : 1;
         
         const newPlan = {
             id: newId,
@@ -665,7 +667,7 @@
         };
         
         // Adicionar o novo plano à lista
-        plans.push(newPlan);
+        window.plans.push(newPlan);
         
         // Atualizar a UI
         refreshPlansUI();
@@ -690,7 +692,7 @@
         }
         
         const planId = parseInt(document.getElementById('editPlanId').value);
-        const planIndex = plans.findIndex(p => p.id === planId);
+        const planIndex = window.plans.findIndex(p => p.id === planId);
         
         if (planIndex === -1) return;
         
@@ -715,7 +717,7 @@
         };
         
         // Atualizar o plano na lista
-        plans[planIndex] = updatedPlan;
+        window.plans[planIndex] = updatedPlan;
         
         // Atualizar a UI
         refreshPlansUI();
@@ -739,11 +741,11 @@
             return;
         }
         
-        const planIndex = plans.findIndex(p => p.id === planId);
+        const planIndex = window.plans.findIndex(p => p.id === planId);
         if (planIndex === -1) return;
         
         // Remover o plano da lista
-        plans.splice(planIndex, 1);
+        window.plans.splice(planIndex, 1);
         
         // Atualizar a UI
         refreshPlansUI();
@@ -758,7 +760,7 @@
     // Atualizar a interface com os planos atuais
     function refreshPlansUI() {
         // Lógica para reconstruir os cards e a tabela de planos
-        console.log('UI atualizada com os planos:', plans);
+        console.log('UI atualizada com os planos:', window.plans);
         
         // Em uma implementação real, você atualizaria o DOM com os planos atuais
         // Por simplicidade, aqui apenas simulamos isso com um log
@@ -767,13 +769,13 @@
     // Atualizar planos em outras páginas
     function updatePlansInOtherPages() {
         // Armazenar os planos no localStorage para acessá-los em outras páginas
-        localStorage.setItem('agendai_plans', JSON.stringify(plans));
+        localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
         
         // Disparar um evento personalizado para notificar outras páginas sobre a atualização
-        const event = new CustomEvent('plansUpdated', { detail: plans });
+        const event = new CustomEvent('plansUpdated', { detail: window.plans });
         window.dispatchEvent(event);
         
-        console.log('Planos atualizados para outras páginas:', plans);
+        console.log('Planos atualizados para outras páginas:', window.plans);
     }
 
     // Configurar todos os links para navegação SPA

@@ -607,191 +607,197 @@
 
 <script>
     // Dados dos profissionais (simulação do banco de dados)
-    let professionals = [
-        {
-            id: 1001,
-            name: "Ana Silva",
-            email: "ana.silva@belezatotal.com.br",
-            companyId: 1001,
-            companyName: "Salão Beleza Total",
-            phone: "(83) 99999-1111",
-            status: "active",
-            document: "12345678900",
-            specialties: [
-                { id: 1, name: "Corte Feminino" },
-                { id: 2, name: "Coloração" },
-                { id: 5, name: "Penteados" }
-            ],
-            description: "Cabeleireira com mais de 10 anos de experiência em cortes e coloração.",
-            workSchedule: {
-                monday: { active: true, start: "08:00", end: "18:00" },
-                tuesday: { active: true, start: "08:00", end: "18:00" },
-                wednesday: { active: true, start: "08:00", end: "18:00" },
-                thursday: { active: true, start: "08:00", end: "18:00" },
-                friday: { active: true, start: "08:00", end: "18:00" },
-                saturday: { active: true, start: "08:00", end: "12:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
+    if (typeof window.professionals === 'undefined') {
+        window.professionals = [
+            {
+                id: 1001,
+                name: "Ana Silva",
+                email: "ana.silva@belezatotal.com.br",
+                companyId: 1001,
+                companyName: "Salão Beleza Total",
+                phone: "(83) 99999-1111",
+                status: "active",
+                document: "12345678900",
+                specialties: [
+                    { id: 1, name: "Corte Feminino" },
+                    { id: 2, name: "Coloração" },
+                    { id: 5, name: "Penteados" }
+                ],
+                description: "Cabeleireira com mais de 10 anos de experiência em cortes e coloração.",
+                workSchedule: {
+                    monday: { active: true, start: "08:00", end: "18:00" },
+                    tuesday: { active: true, start: "08:00", end: "18:00" },
+                    wednesday: { active: true, start: "08:00", end: "18:00" },
+                    thursday: { active: true, start: "08:00", end: "18:00" },
+                    friday: { active: true, start: "08:00", end: "18:00" },
+                    saturday: { active: true, start: "08:00", end: "12:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "15/04/2023"
             },
-            photo: null,
-            createdAt: "15/04/2023"
-        },
-        {
-            id: 1002,
-            name: "João Barbosa",
-            email: "joao@moderncut.com.br",
-            companyId: 1003,
-            companyName: "Barbearia Modern Cut",
-            phone: "(83) 99999-2222",
-            status: "active",
-            document: "98765432100",
-            specialties: [
-                { id: 3, name: "Corte Masculino" },
-                { id: 4, name: "Barba" }
-            ],
-            description: "Barbeiro especializado em cortes modernos e barba.",
-            workSchedule: {
-                monday: { active: true, start: "10:00", end: "20:00" },
-                tuesday: { active: true, start: "10:00", end: "20:00" },
-                wednesday: { active: true, start: "10:00", end: "20:00" },
-                thursday: { active: true, start: "10:00", end: "20:00" },
-                friday: { active: true, start: "10:00", end: "20:00" },
-                saturday: { active: true, start: "09:00", end: "15:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
+            {
+                id: 1002,
+                name: "João Barbosa",
+                email: "joao@moderncut.com.br",
+                companyId: 1003,
+                companyName: "Barbearia Modern Cut",
+                phone: "(83) 99999-2222",
+                status: "active",
+                document: "98765432100",
+                specialties: [
+                    { id: 3, name: "Corte Masculino" },
+                    { id: 4, name: "Barba" }
+                ],
+                description: "Barbeiro especializado em cortes modernos e barba.",
+                workSchedule: {
+                    monday: { active: true, start: "10:00", end: "20:00" },
+                    tuesday: { active: true, start: "10:00", end: "20:00" },
+                    wednesday: { active: true, start: "10:00", end: "20:00" },
+                    thursday: { active: true, start: "10:00", end: "20:00" },
+                    friday: { active: true, start: "10:00", end: "20:00" },
+                    saturday: { active: true, start: "09:00", end: "15:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "20/05/2023"
             },
-            photo: null,
-            createdAt: "20/05/2023"
-        },
-        {
-            id: 1003,
-            name: "Carla Ferreira",
-            email: "carla@semprebela.com.br",
-            companyId: 1002,
-            companyName: "Estética Sempre Bela",
-            phone: "(83) 99999-3333",
-            status: "vacation",
-            document: "45678912300",
-            specialties: [
-                { id: 6, name: "Manicure" },
-                { id: 7, name: "Pedicure" }
-            ],
-            description: "Especialista em unhas com formação em nail design.",
-            workSchedule: {
-                monday: { active: true, start: "08:00", end: "17:00" },
-                tuesday: { active: true, start: "08:00", end: "17:00" },
-                wednesday: { active: true, start: "08:00", end: "17:00" },
-                thursday: { active: true, start: "08:00", end: "17:00" },
-                friday: { active: true, start: "08:00", end: "17:00" },
-                saturday: { active: false, start: "08:00", end: "12:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
+            {
+                id: 1003,
+                name: "Carla Ferreira",
+                email: "carla@semprebela.com.br",
+                companyId: 1002,
+                companyName: "Estética Sempre Bela",
+                phone: "(83) 99999-3333",
+                status: "vacation",
+                document: "45678912300",
+                specialties: [
+                    { id: 6, name: "Manicure" },
+                    { id: 7, name: "Pedicure" }
+                ],
+                description: "Especialista em unhas com formação em nail design.",
+                workSchedule: {
+                    monday: { active: true, start: "08:00", end: "17:00" },
+                    tuesday: { active: true, start: "08:00", end: "17:00" },
+                    wednesday: { active: true, start: "08:00", end: "17:00" },
+                    thursday: { active: true, start: "08:00", end: "17:00" },
+                    friday: { active: true, start: "08:00", end: "17:00" },
+                    saturday: { active: false, start: "08:00", end: "12:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "10/06/2023"
             },
-            photo: null,
-            createdAt: "10/06/2023"
-        },
-        {
-            id: 1004,
-            name: "Lucas Oliveira",
-            email: "lucas@renascer.com.br",
-            companyId: 1004,
-            companyName: "Clínica Estética Renascer",
-            phone: "(83) 99999-4444",
-            status: "active",
-            document: "78912345600",
-            specialties: [
-                { id: 8, name: "Massagem Relaxante" },
-                { id: 9, name: "Drenagem Linfática" }
-            ],
-            description: "Massagista terapêutico com especialização em técnicas relaxantes.",
-            workSchedule: {
-                monday: { active: true, start: "09:00", end: "19:00" },
-                tuesday: { active: true, start: "09:00", end: "19:00" },
-                wednesday: { active: true, start: "09:00", end: "19:00" },
-                thursday: { active: true, start: "09:00", end: "19:00" },
-                friday: { active: true, start: "09:00", end: "19:00" },
-                saturday: { active: false, start: "08:00", end: "12:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
+            {
+                id: 1004,
+                name: "Lucas Oliveira",
+                email: "lucas@renascer.com.br",
+                companyId: 1004,
+                companyName: "Clínica Estética Renascer",
+                phone: "(83) 99999-4444",
+                status: "active",
+                document: "78912345600",
+                specialties: [
+                    { id: 8, name: "Massagem Relaxante" },
+                    { id: 9, name: "Drenagem Linfática" }
+                ],
+                description: "Massagista terapêutico com especialização em técnicas relaxantes.",
+                workSchedule: {
+                    monday: { active: true, start: "09:00", end: "19:00" },
+                    tuesday: { active: true, start: "09:00", end: "19:00" },
+                    wednesday: { active: true, start: "09:00", end: "19:00" },
+                    thursday: { active: true, start: "09:00", end: "19:00" },
+                    friday: { active: true, start: "09:00", end: "19:00" },
+                    saturday: { active: false, start: "08:00", end: "12:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "05/07/2023"
             },
-            photo: null,
-            createdAt: "05/07/2023"
-        },
-        {
-            id: 1005,
-            name: "Mariana Santos",
-            email: "mariana@belezatotal.com.br",
-            companyId: 1001,
-            companyName: "Salão Beleza Total",
-            phone: "(83) 99999-5555",
-            status: "inactive",
-            document: "12345678901",
-            specialties: [
-                { id: 11, name: "Maquiagem" },
-                { id: 12, name: "Design de Sobrancelhas" }
-            ],
-            description: "Especialista em maquiagem e design de sobrancelhas.",
-            workSchedule: {
-                monday: { active: true, start: "08:00", end: "18:00" },
-                tuesday: { active: true, start: "08:00", end: "18:00" },
-                wednesday: { active: true, start: "08:00", end: "18:00" },
-                thursday: { active: true, start: "08:00", end: "18:00" },
-                friday: { active: true, start: "08:00", end: "18:00" },
-                saturday: { active: true, start: "08:00", end: "12:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
+            {
+                id: 1005,
+                name: "Mariana Santos",
+                email: "mariana@belezatotal.com.br",
+                companyId: 1001,
+                companyName: "Salão Beleza Total",
+                phone: "(83) 99999-5555",
+                status: "inactive",
+                document: "12345678901",
+                specialties: [
+                    { id: 11, name: "Maquiagem" },
+                    { id: 12, name: "Design de Sobrancelhas" }
+                ],
+                description: "Especialista em maquiagem e design de sobrancelhas.",
+                workSchedule: {
+                    monday: { active: true, start: "08:00", end: "18:00" },
+                    tuesday: { active: true, start: "08:00", end: "18:00" },
+                    wednesday: { active: true, start: "08:00", end: "18:00" },
+                    thursday: { active: true, start: "08:00", end: "18:00" },
+                    friday: { active: true, start: "08:00", end: "18:00" },
+                    saturday: { active: true, start: "08:00", end: "12:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "15/08/2023"
             },
-            photo: null,
-            createdAt: "15/08/2023"
-        },
-        {
-            id: 1006,
-            name: "Paulo Mendes",
-            email: "paulo@moderncut.com.br",
-            companyId: 1003,
-            companyName: "Barbearia Modern Cut",
-            phone: "(83) 99999-6666",
-            status: "active",
-            document: "98765432101",
-            specialties: [
-                { id: 3, name: "Corte Masculino" },
-                { id: 4, name: "Barba" },
-                { id: 13, name: "Tratamento Capilar" }
-            ],
-            description: "Barbeiro especializado em cortes modernos e tratamentos capilares para homens.",
-            workSchedule: {
-                monday: { active: false, start: "10:00", end: "20:00" },
-                tuesday: { active: true, start: "10:00", end: "20:00" },
-                wednesday: { active: true, start: "10:00", end: "20:00" },
-                thursday: { active: true, start: "10:00", end: "20:00" },
-                friday: { active: true, start: "10:00", end: "20:00" },
-                saturday: { active: true, start: "09:00", end: "15:00" },
-                sunday: { active: false, start: "08:00", end: "12:00" }
-            },
-            photo: null,
-            createdAt: "10/09/2023"
-        }
-    ];
+            {
+                id: 1006,
+                name: "Paulo Mendes",
+                email: "paulo@moderncut.com.br",
+                companyId: 1003,
+                companyName: "Barbearia Modern Cut",
+                phone: "(83) 99999-6666",
+                status: "active",
+                document: "98765432101",
+                specialties: [
+                    { id: 3, name: "Corte Masculino" },
+                    { id: 4, name: "Barba" },
+                    { id: 13, name: "Tratamento Capilar" }
+                ],
+                description: "Barbeiro especializado em cortes modernos e tratamentos capilares para homens.",
+                workSchedule: {
+                    monday: { active: false, start: "10:00", end: "20:00" },
+                    tuesday: { active: true, start: "10:00", end: "20:00" },
+                    wednesday: { active: true, start: "10:00", end: "20:00" },
+                    thursday: { active: true, start: "10:00", end: "20:00" },
+                    friday: { active: true, start: "10:00", end: "20:00" },
+                    saturday: { active: true, start: "09:00", end: "15:00" },
+                    sunday: { active: false, start: "08:00", end: "12:00" }
+                },
+                photo: null,
+                createdAt: "10/09/2023"
+            }
+        ];
+    }
 
     // Lista de serviços/especialidades disponíveis
-    let services = [
-        { id: 1, name: "Corte Feminino", category: "hair" },
-        { id: 2, name: "Coloração", category: "hair" },
-        { id: 3, name: "Corte Masculino", category: "hair" },
-        { id: 4, name: "Barba", category: "hair" },
-        { id: 5, name: "Penteados", category: "hair" },
-        { id: 6, name: "Manicure", category: "nails" },
-        { id: 7, name: "Pedicure", category: "nails" },
-        { id: 8, name: "Massagem Relaxante", category: "body" },
-        { id: 9, name: "Drenagem Linfática", category: "body" },
-        { id: 10, name: "Limpeza de Pele", category: "face" },
-        { id: 11, name: "Maquiagem", category: "face" },
-        { id: 12, name: "Design de Sobrancelhas", category: "face" },
-        { id: 13, name: "Tratamento Capilar", category: "hair" }
-    ];
+    if (typeof window.services === 'undefined') {
+        window.services = [
+            { id: 1, name: "Corte Feminino", category: "hair" },
+            { id: 2, name: "Coloração", category: "hair" },
+            { id: 3, name: "Corte Masculino", category: "hair" },
+            { id: 4, name: "Barba", category: "hair" },
+            { id: 5, name: "Penteados", category: "hair" },
+            { id: 6, name: "Manicure", category: "nails" },
+            { id: 7, name: "Pedicure", category: "nails" },
+            { id: 8, name: "Massagem Relaxante", category: "body" },
+            { id: 9, name: "Drenagem Linfática", category: "body" },
+            { id: 10, name: "Limpeza de Pele", category: "face" },
+            { id: 11, name: "Maquiagem", category: "face" },
+            { id: 12, name: "Design de Sobrancelhas", category: "face" },
+            { id: 13, name: "Tratamento Capilar", category: "hair" }
+        ];
+    }
 
     // Dados simulados de empresas
-    let companies = [
-        { id: 1001, name: "Salão Beleza Total", status: "active" },
-        { id: 1002, name: "Estética Sempre Bela", status: "active" },
-        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
-        { id: 1004, name: "Clínica Estética Renascer", status: "active" }
-    ];
+    if (typeof window.companies === 'undefined') {
+        window.companies = [
+            { id: 1001, name: "Salão Beleza Total", status: "active" },
+            { id: 1002, name: "Estética Sempre Bela", status: "active" },
+            { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+            { id: 1004, name: "Clínica Estética Renascer", status: "active" }
+        ];
+    }
 
     // Inicialização da página
     document.addEventListener('DOMContentLoaded', function() {
@@ -844,8 +850,8 @@
             // Carregar profissionais
             const storedProfessionals = localStorage.getItem('agendai_professionals');
             if (storedProfessionals) {
-                professionals = JSON.parse(storedProfessionals);
-                console.log('Profissionais carregados do localStorage:', professionals.length);
+                window.professionals = JSON.parse(storedProfessionals);
+                console.log('Profissionais carregados do localStorage:', window.professionals.length);
                 populateProfessionalsTable();
             } else {
                 // Salvar os profissionais padrão no localStorage
@@ -855,8 +861,8 @@
             // Carregar serviços/especialidades
             const storedServices = localStorage.getItem('agendai_services');
             if (storedServices) {
-                services = JSON.parse(storedServices);
-                console.log('Serviços carregados do localStorage:', services.length);
+                window.services = JSON.parse(storedServices);
+                console.log('Serviços carregados do localStorage:', window.services.length);
                 loadSpecialties();
             } else {
                 // Salvar os serviços padrão no localStorage
@@ -870,8 +876,8 @@
     // Salvar profissionais no localStorage
     function saveProfessionalsToStorage() {
         try {
-            localStorage.setItem('agendai_professionals', JSON.stringify(professionals));
-            console.log('Profissionais salvos no localStorage:', professionals.length);
+            localStorage.setItem('agendai_professionals', JSON.stringify(window.professionals));
+            console.log('Profissionais salvos no localStorage:', window.professionals.length);
         } catch (error) {
             console.error('Erro ao salvar profissionais no localStorage:', error);
         }
@@ -880,8 +886,8 @@
     // Salvar serviços no localStorage
     function saveServicesToStorage() {
         try {
-            localStorage.setItem('agendai_services', JSON.stringify(services));
-            console.log('Serviços salvos no localStorage:', services.length);
+            localStorage.setItem('agendai_services', JSON.stringify(window.services));
+            console.log('Serviços salvos no localStorage:', window.services.length);
         } catch (error) {
             console.error('Erro ao salvar serviços no localStorage:', error);
         }
@@ -907,7 +913,7 @@
         }
         
         // Se não houver empresas no localStorage, usar as empresas simuladas
-        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : window.companies;
         
         // Preencher os selects
         selects.forEach(select => {
@@ -943,7 +949,7 @@
             }
             
             // Adicionar as especialidades como opções
-            services.forEach(service => {
+            window.services.forEach(service => {
                 const option = document.createElement('option');
                 option.value = service.id;
                 option.textContent = service.name;
@@ -966,7 +972,7 @@
             
             // Criar um campo de checkbox para cada especialidade, agrupado por categoria
             Object.keys(categories).forEach(category => {
-                const categoryServices = services.filter(service => service.category === category);
+                const categoryServices = window.services.filter(service => service.category === category);
                 
                 if (categoryServices.length > 0) {
                     const categoryTitle = document.createElement('div');
@@ -995,7 +1001,7 @@
             editSpecialtiesContainer.innerHTML = '';
             
             Object.keys(categories).forEach(category => {
-                const categoryServices = services.filter(service => service.category === category);
+                const categoryServices = window.services.filter(service => service.category === category);
                 
                 if (categoryServices.length > 0) {
                     const categoryTitle = document.createElement('div');
@@ -1036,7 +1042,7 @@
         const filterStatus = document.getElementById('filterStatus')?.value || '';
         
         // Filtrar os profissionais
-        let filteredProfessionals = professionals;
+        let filteredProfessionals = window.professionals;
         
         if (filterName) {
             filteredProfessionals = filteredProfessionals.filter(pro => 
@@ -1122,7 +1128,7 @@
         document.querySelectorAll('.view-professional').forEach(btn => {
             btn.addEventListener('click', function() {
                 const id = parseInt(this.getAttribute('data-id'));
-                const professional = professionals.find(p => p.id === id);
+                const professional = window.professionals.find(p => p.id === id);
                 if (professional) {
                     // Em uma implementação real, você abriria um modal com mais detalhes
                     alert(`Visualizando profissional: ${professional.name}\nEmpresa: ${professional.companyName}\nEspecialidades: ${professional.specialties.map(s => s.name).join(', ')}`);
@@ -1202,7 +1208,7 @@
         const specialties = [];
         selectedSpecialties.forEach(checkbox => {
             const specialtyId = parseInt(checkbox.value);
-            const service = services.find(s => s.id === specialtyId);
+            const service = window.services.find(s => s.id === specialtyId);
             if (service) {
                 specialties.push({ id: service.id, name: service.name });
             }
@@ -1248,7 +1254,7 @@
         };
         
         // Gerar um novo ID (em um sistema real, isso seria gerado pelo backend)
-        const newId = professionals.length > 0 ? Math.max(...professionals.map(p => p.id)) + 1 : 1001;
+        const newId = window.professionals.length > 0 ? Math.max(...window.professionals.map(p => p.id)) + 1 : 1001;
         
         // Criar o novo profissional
         const newProfessional = {
@@ -1268,7 +1274,7 @@
         };
         
         // Adicionar o profissional à lista
-        professionals.push(newProfessional);
+        window.professionals.push(newProfessional);
         
         // Salvar no localStorage
         saveProfessionalsToStorage();
@@ -1294,7 +1300,7 @@
 
     // Carregar um profissional para edição
     function loadProfessionalForEditing(id) {
-        const professional = professionals.find(p => p.id === id);
+        const professional = window.professionals.find(p => p.id === id);
         if (!professional) {
             alert('Profissional não encontrado!');
             return;
@@ -1348,7 +1354,7 @@
         }
         
         const professionalId = parseInt(document.getElementById('editProfessionalId').value);
-        const professionalIndex = professionals.findIndex(p => p.id === professionalId);
+        const professionalIndex = window.professionals.findIndex(p => p.id === professionalId);
         
         if (professionalIndex === -1) {
             alert('Profissional não encontrado!');
@@ -1364,7 +1370,7 @@
         const specialties = [];
         selectedSpecialties.forEach(checkbox => {
             const specialtyId = parseInt(checkbox.value);
-            const service = services.find(s => s.id === specialtyId);
+            const service = window.services.find(s => s.id === specialtyId);
             if (service) {
                 specialties.push({ id: service.id, name: service.name });
             }
@@ -1372,7 +1378,7 @@
         
         // Atualizar o profissional
         const updatedProfessional = {
-            ...professionals[professionalIndex],
+            ...window.professionals[professionalIndex],
             name: document.getElementById('editProfessionalName').value,
             email: document.getElementById('editProfessionalEmail').value,
             companyId: companyId,
@@ -1385,7 +1391,7 @@
         };
         
         // Atualizar o profissional na lista
-        professionals[professionalIndex] = updatedProfessional;
+        window.professionals[professionalIndex] = updatedProfessional;
         
         // Salvar no localStorage
         saveProfessionalsToStorage();
@@ -1407,16 +1413,16 @@
             return;
         }
         
-        const professionalIndex = professionals.findIndex(p => p.id === id);
+        const professionalIndex = window.professionals.findIndex(p => p.id === id);
         if (professionalIndex === -1) {
             alert('Profissional não encontrado!');
             return;
         }
         
-        const professional = professionals[professionalIndex];
+        const professional = window.professionals[professionalIndex];
         
         // Remover da lista
-        professionals.splice(professionalIndex, 1);
+        window.professionals.splice(professionalIndex, 1);
         
         // Salvar no localStorage
         saveProfessionalsToStorage();

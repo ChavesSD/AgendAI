@@ -384,146 +384,152 @@
 
 <script>
     // Dados simulados para os relatórios
-    const reportData = {
-        // Dados de faturamento (simulados)
-        billing: {
-            monthly: [
-                { period: 'Janeiro', total: 25800, appointments: 18500, plans: 7300, growth: 0 },
-                { period: 'Fevereiro', total: 27400, appointments: 19200, plans: 8200, growth: 6.2 },
-                { period: 'Março', total: 31500, appointments: 22100, plans: 9400, growth: 15.0 },
-                { period: 'Abril', total: 33200, appointments: 23800, plans: 9400, growth: 5.4 },
-                { period: 'Maio', total: 35100, appointments: 25300, plans: 9800, growth: 5.7 },
-                { period: 'Junho', total: 38700, appointments: 27500, plans: 11200, growth: 10.3 }
-            ],
-            weekly: [
-                { period: 'Semana 1', total: 8700, appointments: 6200, plans: 2500, growth: 0 },
-                { period: 'Semana 2', total: 9100, appointments: 6400, plans: 2700, growth: 4.6 },
-                { period: 'Semana 3', total: 10300, appointments: 7200, plans: 3100, growth: 13.2 },
-                { period: 'Semana 4', total: 10600, appointments: 7700, plans: 2900, growth: 2.9 }
-            ],
-            byCompany: [
-                { company: 'Salão Beleza Total', total: 15800, appointments: 12300, plans: 3500 },
-                { company: 'Estética Sempre Bela', total: 11200, appointments: 8800, plans: 2400 },
-                { company: 'Barbearia Modern Cut', total: 7300, appointments: 4800, plans: 2500 },
-                { company: 'Clínica Estética Renascer', total: 4400, appointments: 1600, plans: 2800 }
-            ]
-        },
-        
-        // Dados de agendamentos (simulados)
-        appointments: {
-            summary: {
-                total: 835,
-                completed: 712,
-                cancelled: 89,
-                noShow: 34,
-                byStatus: [
-                    { status: 'Concluídos', count: 712, percentage: 85.3 },
-                    { status: 'Cancelados', count: 89, percentage: 10.7 },
-                    { status: 'Não Compareceu', count: 34, percentage: 4.0 }
+    if (typeof window.reportData === 'undefined') {
+        window.reportData = {
+            // Dados de faturamento (simulados)
+            billing: {
+                monthly: [
+                    { period: 'Janeiro', total: 25800, appointments: 18500, plans: 7300, growth: 0 },
+                    { period: 'Fevereiro', total: 27400, appointments: 19200, plans: 8200, growth: 6.2 },
+                    { period: 'Março', total: 31500, appointments: 22100, plans: 9400, growth: 15.0 },
+                    { period: 'Abril', total: 33200, appointments: 23800, plans: 9400, growth: 5.4 },
+                    { period: 'Maio', total: 35100, appointments: 25300, plans: 9800, growth: 5.7 },
+                    { period: 'Junho', total: 38700, appointments: 27500, plans: 11200, growth: 10.3 }
                 ],
-                byDay: [
-                    { day: 'Segunda', count: 145 },
-                    { day: 'Terça', count: 132 },
-                    { day: 'Quarta', count: 138 },
-                    { day: 'Quinta', count: 150 },
-                    { day: 'Sexta', count: 165 },
-                    { day: 'Sábado', count: 105 },
-                    { day: 'Domingo', count: 0 }
+                weekly: [
+                    { period: 'Semana 1', total: 8700, appointments: 6200, plans: 2500, growth: 0 },
+                    { period: 'Semana 2', total: 9100, appointments: 6400, plans: 2700, growth: 4.6 },
+                    { period: 'Semana 3', total: 10300, appointments: 7200, plans: 3100, growth: 13.2 },
+                    { period: 'Semana 4', total: 10600, appointments: 7700, plans: 2900, growth: 2.9 }
+                ],
+                byCompany: [
+                    { company: 'Salão Beleza Total', total: 15800, appointments: 12300, plans: 3500 },
+                    { company: 'Estética Sempre Bela', total: 11200, appointments: 8800, plans: 2400 },
+                    { company: 'Barbearia Modern Cut', total: 7300, appointments: 4800, plans: 2500 },
+                    { company: 'Clínica Estética Renascer', total: 4400, appointments: 1600, plans: 2800 }
                 ]
             },
-            byProfessional: [
-                { professional: 'Ana Silva', total: 135, completed: 118, cancelled: 12, noShow: 5 },
-                { professional: 'João Barbosa', total: 142, completed: 129, cancelled: 8, noShow: 5 },
-                { professional: 'Carla Ferreira', total: 98, completed: 85, cancelled: 9, noShow: 4 },
-                { professional: 'Lucas Oliveira', total: 110, completed: 89, cancelled: 16, noShow: 5 },
-                { professional: 'Mariana Santos', total: 124, completed: 103, cancelled: 15, noShow: 6 },
-                { professional: 'Paulo Mendes', total: 126, completed: 108, cancelled: 11, noShow: 7 },
-                { professional: 'Outros', total: 100, completed: 80, cancelled: 18, noShow: 2 }
-            ],
-            byService: [
-                { service: 'Corte Feminino', total: 180, revenue: 7200 },
-                { service: 'Corte Masculino', total: 195, revenue: 5850 },
-                { service: 'Coloração', total: 120, revenue: 9600 },
-                { service: 'Barba', total: 85, revenue: 1700 },
-                { service: 'Manicure', total: 110, revenue: 3300 },
-                { service: 'Maquiagem', total: 45, revenue: 3150 },
-                { service: 'Outros', total: 100, revenue: 5000 }
-            ]
-        },
-        
-        // Dados de clientes (simulados)
-        clients: {
-            summary: {
-                total: 1250,
-                active: 980,
-                inactive: 270,
-                new: 145,
-                returning: 835,
-                byGender: [
-                    { gender: 'Feminino', count: 820, percentage: 65.6 },
-                    { gender: 'Masculino', count: 390, percentage: 31.2 },
-                    { gender: 'Outro/Não informado', count: 40, percentage: 3.2 }
+            
+            // Dados de agendamentos (simulados)
+            appointments: {
+                summary: {
+                    total: 835,
+                    completed: 712,
+                    cancelled: 89,
+                    noShow: 34,
+                    byStatus: [
+                        { status: 'Concluídos', count: 712, percentage: 85.3 },
+                        { status: 'Cancelados', count: 89, percentage: 10.7 },
+                        { status: 'Não Compareceu', count: 34, percentage: 4.0 }
+                    ],
+                    byDay: [
+                        { day: 'Segunda', count: 145 },
+                        { day: 'Terça', count: 132 },
+                        { day: 'Quarta', count: 138 },
+                        { day: 'Quinta', count: 150 },
+                        { day: 'Sexta', count: 165 },
+                        { day: 'Sábado', count: 105 },
+                        { day: 'Domingo', count: 0 }
+                    ]
+                },
+                byProfessional: [
+                    { professional: 'Ana Silva', total: 135, completed: 118, cancelled: 12, noShow: 5 },
+                    { professional: 'João Barbosa', total: 142, completed: 129, cancelled: 8, noShow: 5 },
+                    { professional: 'Carla Ferreira', total: 98, completed: 85, cancelled: 9, noShow: 4 },
+                    { professional: 'Lucas Oliveira', total: 110, completed: 89, cancelled: 16, noShow: 5 },
+                    { professional: 'Mariana Santos', total: 124, completed: 103, cancelled: 15, noShow: 6 },
+                    { professional: 'Paulo Mendes', total: 126, completed: 108, cancelled: 11, noShow: 7 },
+                    { professional: 'Outros', total: 100, completed: 80, cancelled: 18, noShow: 2 }
+                ],
+                byService: [
+                    { service: 'Corte Feminino', total: 180, revenue: 7200 },
+                    { service: 'Corte Masculino', total: 195, revenue: 5850 },
+                    { service: 'Coloração', total: 120, revenue: 9600 },
+                    { service: 'Barba', total: 85, revenue: 1700 },
+                    { service: 'Manicure', total: 110, revenue: 3300 },
+                    { service: 'Maquiagem', total: 45, revenue: 3150 },
+                    { service: 'Outros', total: 100, revenue: 5000 }
                 ]
             },
-            byFrequency: [
-                { frequency: '1 vez', count: 340 },
-                { frequency: '2-5 vezes', count: 425 },
-                { frequency: '6-10 vezes', count: 280 },
-                { frequency: 'Mais de 10 vezes', count: 205 }
-            ],
-            byCompany: [
-                { company: 'Salão Beleza Total', total: 480, active: 385, inactive: 95, new: 55 },
-                { company: 'Estética Sempre Bela', total: 320, active: 260, inactive: 60, new: 35 },
-                { company: 'Barbearia Modern Cut', total: 290, active: 215, inactive: 75, new: 40 },
-                { company: 'Clínica Estética Renascer', total: 160, active: 120, inactive: 40, new: 15 }
-            ]
-        },
-        
-        // Dados de serviços (simulados)
-        services: {
-            mostScheduled: [
-                { service: 'Corte Masculino', count: 195, percentage: 23.4 },
-                { service: 'Corte Feminino', count: 180, percentage: 21.6 },
-                { service: 'Coloração', count: 120, percentage: 14.4 },
-                { service: 'Manicure', count: 110, percentage: 13.2 },
-                { service: 'Barba', count: 85, percentage: 10.2 },
-                { service: 'Maquiagem', count: 45, percentage: 5.4 },
-                { service: 'Outros', count: 100, percentage: 12.0 }
-            ],
-            mostProfitable: [
-                { service: 'Coloração', revenue: 9600, percentage: 25.3 },
-                { service: 'Corte Feminino', revenue: 7200, percentage: 19.0 },
-                { service: 'Corte Masculino', revenue: 5850, percentage: 15.4 },
-                { service: 'Outros', revenue: 5000, percentage: 13.2 },
-                { service: 'Manicure', revenue: 3300, percentage: 8.7 },
-                { service: 'Maquiagem', revenue: 3150, percentage: 8.3 },
-                { service: 'Barba', revenue: 1700, percentage: 4.5 }
-            ],
-            byCategory: [
-                { category: 'Cabelo', count: 495, revenue: 22650 },
-                { category: 'Rosto', count: 130, revenue: 7850 },
-                { category: 'Unhas', count: 110, revenue: 3300 },
-                { category: 'Corpo', count: 100, revenue: 6000 }
-            ]
-        }
-    };
+            
+            // Dados de clientes (simulados)
+            clients: {
+                summary: {
+                    total: 1250,
+                    active: 980,
+                    inactive: 270,
+                    new: 145,
+                    returning: 835,
+                    byGender: [
+                        { gender: 'Feminino', count: 820, percentage: 65.6 },
+                        { gender: 'Masculino', count: 390, percentage: 31.2 },
+                        { gender: 'Outro/Não informado', count: 40, percentage: 3.2 }
+                    ]
+                },
+                byFrequency: [
+                    { frequency: '1 vez', count: 340 },
+                    { frequency: '2-5 vezes', count: 425 },
+                    { frequency: '6-10 vezes', count: 280 },
+                    { frequency: 'Mais de 10 vezes', count: 205 }
+                ],
+                byCompany: [
+                    { company: 'Salão Beleza Total', total: 480, active: 385, inactive: 95, new: 55 },
+                    { company: 'Estética Sempre Bela', total: 320, active: 260, inactive: 60, new: 35 },
+                    { company: 'Barbearia Modern Cut', total: 290, active: 215, inactive: 75, new: 40 },
+                    { company: 'Clínica Estética Renascer', total: 160, active: 120, inactive: 40, new: 15 }
+                ]
+            },
+            
+            // Dados de serviços (simulados)
+            services: {
+                mostScheduled: [
+                    { service: 'Corte Masculino', count: 195, percentage: 23.4 },
+                    { service: 'Corte Feminino', count: 180, percentage: 21.6 },
+                    { service: 'Coloração', count: 120, percentage: 14.4 },
+                    { service: 'Manicure', count: 110, percentage: 13.2 },
+                    { service: 'Barba', count: 85, percentage: 10.2 },
+                    { service: 'Maquiagem', count: 45, percentage: 5.4 },
+                    { service: 'Outros', count: 100, percentage: 12.0 }
+                ],
+                mostProfitable: [
+                    { service: 'Coloração', revenue: 9600, percentage: 25.3 },
+                    { service: 'Corte Feminino', revenue: 7200, percentage: 19.0 },
+                    { service: 'Corte Masculino', revenue: 5850, percentage: 15.4 },
+                    { service: 'Outros', revenue: 5000, percentage: 13.2 },
+                    { service: 'Manicure', revenue: 3300, percentage: 8.7 },
+                    { service: 'Maquiagem', revenue: 3150, percentage: 8.3 },
+                    { service: 'Barba', revenue: 1700, percentage: 4.5 }
+                ],
+                byCategory: [
+                    { category: 'Cabelo', count: 495, revenue: 22650 },
+                    { category: 'Rosto', count: 130, revenue: 7850 },
+                    { category: 'Unhas', count: 110, revenue: 3300 },
+                    { category: 'Corpo', count: 100, revenue: 6000 }
+                ]
+            }
+        };
+    }
 
     // Dados simulados de empresas, profissionais e serviços
-    const companies = [
-        { id: 1001, name: "Salão Beleza Total", status: "active" },
-        { id: 1002, name: "Estética Sempre Bela", status: "active" },
-        { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
-        { id: 1004, name: "Clínica Estética Renascer", status: "active" }
-    ];
+    if (typeof window.companies === 'undefined') {
+        window.companies = [
+            { id: 1001, name: "Salão Beleza Total", status: "active" },
+            { id: 1002, name: "Estética Sempre Bela", status: "active" },
+            { id: 1003, name: "Barbearia Modern Cut", status: "trial" },
+            { id: 1004, name: "Clínica Estética Renascer", status: "active" }
+        ];
+    }
 
-    const professionals = [
-        { id: 1001, name: "Ana Silva", companyId: 1001 },
-        { id: 1002, name: "João Barbosa", companyId: 1003 },
-        { id: 1003, name: "Carla Ferreira", companyId: 1002 },
-        { id: 1004, name: "Lucas Oliveira", companyId: 1004 },
-        { id: 1005, name: "Mariana Santos", companyId: 1001 },
-        { id: 1006, name: "Paulo Mendes", companyId: 1003 }
-    ];
+    if (typeof window.professionals === 'undefined') {
+        window.professionals = [
+            { id: 1001, name: "Ana Silva", companyId: 1001 },
+            { id: 1002, name: "João Barbosa", companyId: 1003 },
+            { id: 1003, name: "Carla Ferreira", companyId: 1002 },
+            { id: 1004, name: "Lucas Oliveira", companyId: 1004 },
+            { id: 1005, name: "Mariana Santos", companyId: 1001 },
+            { id: 1006, name: "Paulo Mendes", companyId: 1003 }
+        ];
+    }
 
     // Inicialização da página
     document.addEventListener('DOMContentLoaded', function() {
@@ -600,7 +606,7 @@
         }
         
         // Se não houver empresas no localStorage, usar as empresas simuladas
-        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : companies;
+        const companiesToUse = storedCompanies.length > 0 ? storedCompanies : window.companies;
         
         // Adicionar as empresas como opções
         companiesToUse.forEach(company => {
@@ -632,7 +638,7 @@
         }
         
         // Se não houver profissionais no localStorage, usar os profissionais simulados
-        const professionalsToUse = storedProfessionals.length > 0 ? storedProfessionals : professionals;
+        const professionalsToUse = storedProfessionals.length > 0 ? storedProfessionals : window.professionals;
         
         // Adicionar os profissionais como opções
         professionalsToUse.forEach(professional => {
@@ -811,41 +817,41 @@
             case 'billing':
                 // Selecionar dados com base no período
                 if (filters.billingPeriod === 'monthly') {
-                    return reportData.billing.monthly;
+                    return window.reportData.billing.monthly;
                 } else if (filters.billingPeriod === 'weekly') {
-                    return reportData.billing.weekly;
+                    return window.reportData.billing.weekly;
                 } else {
-                    return reportData.billing.byCompany;
+                    return window.reportData.billing.byCompany;
                 }
             
             case 'appointments':
                 // Selecionar dados com base na visualização
                 if (filters.appointmentView === 'summary') {
-                    return reportData.appointments.summary;
+                    return window.reportData.appointments.summary;
                 } else if (filters.appointmentView === 'byProfessional') {
-                    return reportData.appointments.byProfessional;
+                    return window.reportData.appointments.byProfessional;
                 } else {
-                    return reportData.appointments.byService;
+                    return window.reportData.appointments.byService;
                 }
             
             case 'clients':
                 // Selecionar dados com base na visualização
                 if (filters.clientView === 'summary') {
-                    return reportData.clients.summary;
+                    return window.reportData.clients.summary;
                 } else if (filters.clientView === 'byFrequency') {
-                    return reportData.clients.byFrequency;
+                    return window.reportData.clients.byFrequency;
                 } else {
-                    return reportData.clients.byCompany;
+                    return window.reportData.clients.byCompany;
                 }
             
             case 'services':
                 // Selecionar dados com base na classificação
                 if (filters.serviceRanking === 'mostScheduled') {
-                    return reportData.services.mostScheduled;
+                    return window.reportData.services.mostScheduled;
                 } else if (filters.serviceRanking === 'mostProfitable') {
-                    return reportData.services.mostProfitable;
+                    return window.reportData.services.mostProfitable;
                 } else {
-                    return reportData.services.byCategory;
+                    return window.reportData.services.byCategory;
                 }
             
             default:
