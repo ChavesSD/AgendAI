@@ -569,23 +569,30 @@
     function initPlansPage() {
         console.log('Inicializando página de planos...');
         
-        // Carregar planos do localStorage
-        const storedPlans = localStorage.getItem('agendai_plans');
-        if (storedPlans) {
-            try {
-                window.plans = JSON.parse(storedPlans);
-                console.log(`Carregados ${window.plans.length} planos do localStorage`);
-            } catch (e) {
-                console.error('Erro ao carregar planos do localStorage:', e);
-                window.plans = [];
+        // Carregar planos da API - mais confiável que localStorage
+        loadPlansFromAPI().then(success => {
+            if (!success) {
+                console.warn('Não foi possível carregar planos da API, tentando localStorage como fallback');
+                
+                // Fallback para localStorage se a API falhar
+                const storedPlans = localStorage.getItem('agendai_plans');
+                if (storedPlans) {
+                    try {
+                        window.plans = JSON.parse(storedPlans);
+                        console.log(`Carregados ${window.plans.length} planos do localStorage (fallback)`);
+                        refreshPlansUI();
+                    } catch (e) {
+                        console.error('Erro ao carregar planos do localStorage:', e);
+                        window.plans = [];
+                        refreshPlansUI();
+                    }
+                } else {
+                    console.log('Nenhum plano encontrado no localStorage, iniciando com array vazio');
+                    window.plans = [];
+                    refreshPlansUI();
+                }
             }
-        } else {
-            console.log('Nenhum plano encontrado no localStorage, iniciando com array vazio');
-            window.plans = []; // Iniciando com array vazio, sem planos mockados
-        }
-        
-        // Atualizar a interface
-        refreshPlansUI();
+        });
         
         console.log('Inicialização concluída');
     }
@@ -947,7 +954,7 @@
     }
 
     // Salvar novo plano
-    function savePlan() {
+    async function savePlan() {
         console.log('Função savePlan chamada');
         
         // Mostrar indicador de carregamento no botão
@@ -977,8 +984,7 @@
             const api = document.getElementById('featureAPI')?.checked || false;
             
             // Criar o objeto do plano
-            const newPlan = {
-                id: Date.now(), // ID baseado no timestamp atual
+            const planData = {
                 name: name,
                 price: price,
                 appointments: appointments,
@@ -997,17 +1003,25 @@
                 }
             };
             
-            console.log('Novo plano criado:', newPlan);
+            console.log('Dados do novo plano:', planData);
             
-            // Inicializar array de planos se não existir
+            // Salvar no backend via API
+            const newPlan = await createPlanAPI(planData);
+            
+            if (!newPlan) {
+                throw new Error('Não foi possível criar o plano na API');
+            }
+            
+            console.log('Plano criado com sucesso na API:', newPlan);
+            
+            // Adicionar ao array local para atualização imediata da UI
             if (!window.plans) {
                 window.plans = [];
             }
             
-            // Adicionar o novo plano
             window.plans.push(newPlan);
             
-            // Salvar no localStorage para persistência
+            // Salvar também no localStorage como backup
             localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
             
             // Fechar o modal com método seguro
@@ -1247,19 +1261,37 @@
     }
     
     // Função para excluir um plano
-    function deletePlan(id) {
+    async function deletePlan(id) {
         console.log('Excluindo plano:', id);
         
-        // Remover o plano do array
-        window.plans = window.plans.filter(plan => plan.id !== id);
+        if (!confirm(`Deseja realmente excluir o plano ID: ${id}?`)) {
+            return;
+        }
         
-        // Atualizar localStorage
-        localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
-        
-        // Atualizar interface
-        refreshPlansUI();
-        
-        alert('Plano excluído com sucesso!');
+        try {
+            // Excluir no backend via API
+            const success = await deletePlanAPI(id);
+            
+            if (!success) {
+                throw new Error('Não foi possível excluir o plano na API');
+            }
+            
+            console.log('Plano excluído com sucesso na API');
+            
+            // Remover o plano do array local
+            window.plans = window.plans.filter(plan => plan.id !== id);
+            
+            // Atualizar localStorage como backup
+            localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+            
+            // Atualizar interface
+            refreshPlansUI();
+            
+            alert('Plano excluído com sucesso!');
+        } catch (error) {
+            console.error('Erro ao excluir plano:', error);
+            alert('Erro ao excluir o plano. Por favor, tente novamente.');
+        }
     }
     
     // Função para editar um plano
@@ -1448,7 +1480,7 @@
     }
     
     // Função para atualizar um plano existente
-    function updatePlan() {
+    async function updatePlan() {
         console.log('Função updatePlan chamada');
         
         // Mostrar indicador de carregamento no botão
@@ -1480,15 +1512,8 @@
             const customization = document.getElementById('editFeatureCustomization')?.checked || false;
             const api = document.getElementById('editFeatureAPI')?.checked || false;
             
-            // Encontrar o plano no array
-            const planIndex = window.plans.findIndex(p => p.id === id);
-            if (planIndex === -1) {
-                throw new Error('Plano não encontrado para atualização');
-            }
-            
             // Criar o objeto atualizado do plano
-            const updatedPlan = {
-                id: id,
+            const planData = {
                 name: name,
                 price: price,
                 appointments: appointments,
@@ -1507,16 +1532,28 @@
                 }
             };
             
-            console.log('Plano atualizado:', updatedPlan);
+            console.log('Dados atualizados do plano:', planData);
             
-            // Atualizar o plano no array
-            window.plans[planIndex] = updatedPlan;
+            // Atualizar no backend via API
+            const updatedPlan = await updatePlanAPI(id, planData);
             
-            // Salvar no localStorage para persistência
+            if (!updatedPlan) {
+                throw new Error('Não foi possível atualizar o plano na API');
+            }
+            
+            console.log('Plano atualizado com sucesso na API:', updatedPlan);
+            
+            // Atualizar no array local para atualização imediata da UI
+            const planIndex = window.plans.findIndex(p => p.id === id);
+            if (planIndex !== -1) {
+                window.plans[planIndex] = updatedPlan;
+            } else {
+                // Se não encontrar no array local, adicionar
+                window.plans.push(updatedPlan);
+            }
+            
+            // Salvar também no localStorage como backup
             localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
-            
-            // Atualizar a interface do usuário
-            refreshPlansUI();
             
             // Fechar o modal com método seguro
             const modal = document.getElementById('editPlanModal');
@@ -1524,8 +1561,13 @@
                 closeModalManually(modal);
             }
             
-            // Mostrar mensagem de sucesso
-            alert('Plano atualizado com sucesso!');
+            // Atualizar a interface do usuário
+            setTimeout(function() {
+                refreshPlansUI();
+                
+                // Mostrar mensagem de sucesso
+                alert('Plano atualizado com sucesso!');
+            }, 100);
             
         } catch (error) {
             console.error('Erro ao atualizar plano:', error);
