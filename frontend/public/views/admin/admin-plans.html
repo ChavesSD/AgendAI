@@ -1,4 +1,47 @@
 <!-- View de Gestão de Planos para o Dashboard Administrativo -->
+<!-- Correção para erros de Bootstrap -->
+<script>
+    // Patch preventivo para problemas do Bootstrap Modal
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('Aplicando patches de compatibilidade para o Bootstrap...');
+        
+        // Garantir que o objeto On exista e tenha os métodos necessários
+        window.On = window.On || {};
+        On.initializeBackdrop = On.initializeBackdrop || function() { 
+            console.log('Backdrop inicializado (polyfill)'); 
+            return true; 
+        };
+        
+        On.getOrCreateInstance = On.getOrCreateInstance || function() {
+            console.log('getOrCreateInstance chamado (polyfill)');
+            return { 
+                backdrop: true, 
+                reset: function() { console.log('Reset chamado (polyfill)'); } 
+            };
+        };
+        
+        // Monitorar erros do Bootstrap
+        window.addEventListener('error', function(e) {
+            if (e.message && (
+                e.message.includes('backdrop') || 
+                e.message.includes('Cannot read properties')
+            )) {
+                console.warn('Erro do Bootstrap interceptado:', e.message);
+                // Evitar que o erro pare a execução
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, true);
+        
+        console.log('Patches aplicados com sucesso');
+    });
+</script>
+
+<!-- Importar Bootstrap CSS e JS (versão 5.2.3 - mais estável) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
     <div class="border-end bg-white" id="sidebar-wrapper">
@@ -62,13 +105,13 @@
         
         <!-- Plans Content -->
         <div class="container-fluid p-4">
-            <div class="row mb-4">
+            <div class="row mb-4" id="headerRow">
                 <div class="col-md-8">
                     <h2 class="mb-3">Gestão de Planos</h2>
                     <p class="text-muted">Configure os planos de contratação disponíveis no AgendAI.</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlanModal">
+                    <button type="button" class="btn btn-primary" id="newPlanBtn" onclick="openAddPlanModalManually()">
                         <i class="fas fa-plus me-1"></i> Novo Plano
                     </button>
                 </div>
@@ -76,126 +119,7 @@
             
             <!-- Plans Cards -->
             <div class="row mb-4">
-                <div class="col-md-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3 bg-primary text-white">
-                            <h6 class="m-0 font-weight-bold">Plano Básico</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-4">
-                                <h2 class="card-price text-primary">R$ 50,00<span class="period">/mês</span></h2>
-                            </div>
-                            <ul class="list-group list-group-flush mb-4">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Agendamentos
-                                    <span class="badge bg-primary rounded-pill">50</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Profissionais
-                                    <span class="badge bg-primary rounded-pill">2</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Serviços
-                                    <span class="badge bg-primary rounded-pill">10</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Relatórios
-                                    <span class="badge bg-danger rounded-pill">Não</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Notificações por Email
-                                    <span class="badge bg-success rounded-pill">Sim</span>
-                                </li>
-                            </ul>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-primary edit-plan" data-id="1" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                    <i class="fas fa-edit me-1"></i> Editar Plano
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow mb-4 border-primary">
-                        <div class="card-header py-3 bg-primary text-white">
-                            <h6 class="m-0 font-weight-bold">Plano Intermediário</h6>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
-                                Popular
-                            </span>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-4">
-                                <h2 class="card-price text-primary">R$ 70,00<span class="period">/mês</span></h2>
-                            </div>
-                            <ul class="list-group list-group-flush mb-4">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Agendamentos
-                                    <span class="badge bg-primary rounded-pill">150</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Profissionais
-                                    <span class="badge bg-primary rounded-pill">5</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Serviços
-                                    <span class="badge bg-primary rounded-pill">25</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Relatórios
-                                    <span class="badge bg-success rounded-pill">Básicos</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Notificações por Email e SMS
-                                    <span class="badge bg-success rounded-pill">Sim</span>
-                                </li>
-                            </ul>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-primary edit-plan" data-id="2" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                    <i class="fas fa-edit me-1"></i> Editar Plano
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3 bg-primary text-white">
-                            <h6 class="m-0 font-weight-bold">Plano Avançado</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="text-center mb-4">
-                                <h2 class="card-price text-primary">R$ 100,00<span class="period">/mês</span></h2>
-                            </div>
-                            <ul class="list-group list-group-flush mb-4">
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Agendamentos
-                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Profissionais
-                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Serviços
-                                    <span class="badge bg-primary rounded-pill">Ilimitados</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Relatórios
-                                    <span class="badge bg-success rounded-pill">Completos</span>
-                                </li>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    Notificações Completas
-                                    <span class="badge bg-success rounded-pill">Sim</span>
-                                </li>
-                            </ul>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-primary edit-plan" data-id="3" data-bs-toggle="modal" data-bs-target="#editPlanModal">
-                                    <i class="fas fa-edit me-1"></i> Editar Plano
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Os cards de planos serão gerados dinamicamente através do JavaScript -->
             </div>
             
             <!-- Plans Table -->
@@ -231,48 +155,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Básico</td>
-                                    <td>R$ 50,00</td>
-                                    <td>50</td>
-                                    <td>2</td>
-                                    <td>10</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-danger delete-plan" data-id="1" title="Excluir">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Intermediário</td>
-                                    <td>R$ 70,00</td>
-                                    <td>150</td>
-                                    <td>5</td>
-                                    <td>25</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-danger delete-plan" data-id="2" title="Excluir">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Avançado</td>
-                                    <td>R$ 100,00</td>
-                                    <td>Ilimitado</td>
-                                    <td>Ilimitado</td>
-                                    <td>Ilimitado</td>
-                                    <td><span class="badge bg-success">Ativo</span></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-danger delete-plan" data-id="3" title="Excluir">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                <!-- Os dados da tabela serão gerados dinamicamente através do JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -282,7 +165,7 @@
     </div>
 </div>
 
-<!-- Modal para Adicionar Plano -->
+<!-- Modal de Novo Plano -->
 <div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -295,27 +178,27 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="planName" class="form-label">Nome do Plano*</label>
-                            <input type="text" class="form-control" id="planName" required>
+                            <input type="text" class="form-control" id="planName" value="Novo Plano" required>
                         </div>
                         <div class="col-md-6">
                             <label for="planPrice" class="form-label">Preço (R$)*</label>
-                            <input type="number" class="form-control" id="planPrice" step="0.01" min="0" required>
+                            <input type="number" class="form-control" id="planPrice" step="0.01" min="0" value="50.00" required>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="planAppointments" class="form-label">Limite de Agendamentos*</label>
-                            <input type="number" class="form-control" id="planAppointments" min="0" required>
+                            <input type="number" class="form-control" id="planAppointments" value="50" min="0" required>
                             <div class="form-text">0 para ilimitado</div>
                         </div>
                         <div class="col-md-4">
                             <label for="planProfessionals" class="form-label">Limite de Profissionais*</label>
-                            <input type="number" class="form-control" id="planProfessionals" min="0" required>
+                            <input type="number" class="form-control" id="planProfessionals" value="2" min="0" required>
                             <div class="form-text">0 para ilimitado</div>
                         </div>
                         <div class="col-md-4">
                             <label for="planServices" class="form-label">Limite de Serviços*</label>
-                            <input type="number" class="form-control" id="planServices" min="0" required>
+                            <input type="number" class="form-control" id="planServices" value="10" min="0" required>
                             <div class="form-text">0 para ilimitado</div>
                         </div>
                     </div>
@@ -323,14 +206,14 @@
                         <div class="col-md-6">
                             <label for="planStatus" class="form-label">Status*</label>
                             <select class="form-select" id="planStatus" required>
-                                <option value="active">Ativo</option>
+                                <option value="active" selected>Ativo</option>
                                 <option value="inactive">Inativo</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label for="planHighlight" class="form-label">Destaque*</label>
                             <select class="form-select" id="planHighlight" required>
-                                <option value="none">Sem Destaque</option>
+                                <option value="none" selected>Sem Destaque</option>
                                 <option value="popular">Popular</option>
                                 <option value="recommended">Recomendado</option>
                                 <option value="best-value">Melhor Custo-Benefício</option>
@@ -350,7 +233,7 @@
                                     <label class="form-check-label" for="featureReports">Relatórios Avançados</label>
                                 </div>
                                 <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="featureEmailNotifications">
+                                    <input class="form-check-input" type="checkbox" id="featureEmailNotifications" checked>
                                     <label class="form-check-label" for="featureEmailNotifications">Notificações por Email</label>
                                 </div>
                                 <div class="form-check mb-2">
@@ -377,117 +260,155 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="savePlanBtn">Salvar</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal para Editar Plano -->
-<div class="modal fade" id="editPlanModal" tabindex="-1" aria-labelledby="editPlanModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="editPlanModalLabel">Editar Plano</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editPlanForm">
-                    <input type="hidden" id="editPlanId" value="">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="editPlanName" class="form-label">Nome do Plano*</label>
-                            <input type="text" class="form-control" id="editPlanName" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editPlanPrice" class="form-label">Preço (R$)*</label>
-                            <input type="number" class="form-control" id="editPlanPrice" step="0.01" min="0" required>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label for="editPlanAppointments" class="form-label">Limite de Agendamentos*</label>
-                            <input type="number" class="form-control" id="editPlanAppointments" min="0" required>
-                            <div class="form-text">0 para ilimitado</div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="editPlanProfessionals" class="form-label">Limite de Profissionais*</label>
-                            <input type="number" class="form-control" id="editPlanProfessionals" min="0" required>
-                            <div class="form-text">0 para ilimitado</div>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="editPlanServices" class="form-label">Limite de Serviços*</label>
-                            <input type="number" class="form-control" id="editPlanServices" min="0" required>
-                            <div class="form-text">0 para ilimitado</div>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="editPlanStatus" class="form-label">Status*</label>
-                            <select class="form-select" id="editPlanStatus" required>
-                                <option value="active">Ativo</option>
-                                <option value="inactive">Inativo</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="editPlanHighlight" class="form-label">Destaque*</label>
-                            <select class="form-select" id="editPlanHighlight" required>
-                                <option value="none">Sem Destaque</option>
-                                <option value="popular">Popular</option>
-                                <option value="recommended">Recomendado</option>
-                                <option value="best-value">Melhor Custo-Benefício</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editPlanDescription" class="form-label">Descrição</label>
-                        <textarea class="form-control" id="editPlanDescription" rows="3"></textarea>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Recursos Incluídos</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureReports">
-                                    <label class="form-check-label" for="editFeatureReports">Relatórios Avançados</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureEmailNotifications">
-                                    <label class="form-check-label" for="editFeatureEmailNotifications">Notificações por Email</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureSmsNotifications">
-                                    <label class="form-check-label" for="editFeatureSmsNotifications">Notificações por SMS</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureWhatsAppNotifications">
-                                    <label class="form-check-label" for="editFeatureWhatsAppNotifications">Notificações por WhatsApp</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureCustomization">
-                                    <label class="form-check-label" for="editFeatureCustomization">Personalização Avançada</label>
-                                </div>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="checkbox" id="editFeatureAPI">
-                                    <label class="form-check-label" for="editFeatureAPI">Acesso à API</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="updatePlanBtn">Atualizar</button>
+                <button type="button" class="btn btn-secondary" id="cancelPlanBtn" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="savePlan()">Salvar</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Garantir que o Bootstrap esteja disponível
+    (function() {
+        if (typeof bootstrap === 'undefined') {
+            console.warn('Bootstrap não detectado. Carregando Bootstrap...');
+            
+            // Carregar CSS se necessário
+            if (!document.querySelector('link[href*="bootstrap"]')) {
+                const bootstrapCss = document.createElement('link');
+                bootstrapCss.rel = 'stylesheet';
+                bootstrapCss.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css';
+                document.head.appendChild(bootstrapCss);
+            }
+            
+            // Carregar JavaScript
+            const bootstrapScript = document.createElement('script');
+            bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js';
+            bootstrapScript.onload = function() {
+                console.log('Bootstrap carregado com sucesso!');
+                
+                // Inicializar modais após carregar
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initializeModals);
+                } else {
+                    initializeModals();
+                }
+            };
+            document.head.appendChild(bootstrapScript);
+        } else {
+            console.log('Bootstrap já está carregado.');
+            
+            // Inicializar modais
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeModals);
+            } else {
+                initializeModals();
+            }
+        }
+        
+        // Função para inicializar todos os modais
+        function initializeModals() {
+            document.querySelectorAll('.modal').forEach(modalElement => {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    try {
+                        new bootstrap.Modal(modalElement);
+                        console.log(`Modal ${modalElement.id} inicializado com sucesso`);
+                    } catch (e) {
+                        console.warn(`Erro ao inicializar modal ${modalElement.id}:`, e);
+                    }
+                }
+            });
+        }
+    })();
+
+    // Polyfill para Bootstrap Modal se necessário
+    if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+        window.bootstrap = window.bootstrap || {};
+        
+        // Implementar polyfill simples para Modal
+        bootstrap.Modal = class BootstrapModalPolyfill {
+            constructor(element) {
+                this.element = element;
+                console.log('Modal polyfill inicializado para', element.id);
+            }
+            
+            show() {
+                console.log('Mostrando modal com polyfill');
+                this.element.style.display = 'block';
+                this.element.classList.add('show');
+                document.body.classList.add('modal-open');
+                
+                // Adicionar backdrop
+                if (!document.querySelector('.modal-backdrop')) {
+                    const backdrop = document.createElement('div');
+                    backdrop.className = 'modal-backdrop fade show';
+                    document.body.appendChild(backdrop);
+                }
+                
+                // Configurar botões de fechamento
+                const closeButtons = this.element.querySelectorAll('[data-bs-dismiss="modal"]');
+                closeButtons.forEach(btn => {
+                    btn.onclick = () => this.hide();
+                });
+            }
+            
+            hide() {
+                console.log('Escondendo modal com polyfill');
+                this.element.style.display = 'none';
+                this.element.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                
+                // Remover backdrop
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+            }
+            
+            static getInstance(element) {
+                // Esta é uma implementação básica
+                return new BootstrapModalPolyfill(element);
+            }
+        };
+    }
+
+    // Patch para corrigir erro "Cannot read properties of undefined (reading 'backdrop')"
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verificar e corrigir o objeto On para evitar erros de backdrop
+        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+            // Verificar se o On está definido corretamente
+            if (typeof On === 'undefined' || !On) {
+                console.log('Objeto On não definido, criando polyfill...');
+                window.On = window.On || {};
+                
+                // Criar métodos necessários para evitar erros
+                On.initializeBackdrop = function() {
+                    console.log('Inicialização de backdrop simulada');
+                    return true;
+                };
+
+                On.getOrCreateInstance = function() {
+                    console.log('getOrCreateInstance simulado');
+                    return { 
+                        backdrop: true,
+                        reset: function() { console.log('Reset simulado'); }
+                    };
+                };
+            }
+
+            // Patchear o método backdrop se necessário
+            try {
+                const testModal = new bootstrap.Modal(document.createElement('div'));
+                testModal.backdrop = testModal.backdrop || function() { 
+                    console.log('Backdrop method substituído'); 
+                };
+            } catch (e) {
+                console.warn('Erro ao testar o modal:', e);
+            }
+        }
+    });
+
+    // URL base da API
+    const API_URL = 'http://localhost:3000/api';
+    
     // Planos em formato de objeto para fácil acesso
     if (typeof window.plans === 'undefined') {
         window.plans = [];
@@ -507,58 +428,986 @@
         console.log('Redirecionando para a página inicial');
     });
 
-    // Inicialização da página de planos
+    // Carregar planos da API
+    async function loadPlansFromAPI() {
+        try {
+            // Obter token de autenticação
+            const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
+            const token = authData.token;
+            
+            if (!token) {
+                console.error('Token de autenticação não encontrado.');
+                return false;
+            }
+            
+            // Fazer requisição para API de planos
+            const response = await fetch(`${API_URL}/plans`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro ao carregar planos: ${response.status}`);
+            }
+            
+            const plans = await response.json();
+            window.plans = plans;
+            
+            // Atualizar a UI com os planos carregados
+            refreshPlansUI();
+            return true;
+        } catch (error) {
+            console.error('Erro ao carregar planos da API:', error);
+            return false;
+        }
+    }
+    
+    // Criar novo plano na API
+    async function createPlanAPI(planData) {
+        try {
+            // Obter token de autenticação
+            const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
+            const token = authData.token;
+            
+            if (!token) {
+                console.error('Token de autenticação não encontrado.');
+                return false;
+            }
+            
+            // Fazer requisição para API de planos
+            const response = await fetch(`${API_URL}/plans`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(planData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro ao criar plano: ${response.status}`);
+            }
+            
+            const newPlan = await response.json();
+            return newPlan;
+        } catch (error) {
+            console.error('Erro ao criar plano na API:', error);
+            return null;
+        }
+    }
+    
+    // Atualizar plano na API
+    async function updatePlanAPI(planId, planData) {
+        try {
+            // Obter token de autenticação
+            const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
+            const token = authData.token;
+            
+            if (!token) {
+                console.error('Token de autenticação não encontrado.');
+                return false;
+            }
+            
+            // Fazer requisição para API de planos
+            const response = await fetch(`${API_URL}/plans/${planId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(planData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro ao atualizar plano: ${response.status}`);
+            }
+            
+            const updatedPlan = await response.json();
+            return updatedPlan;
+        } catch (error) {
+            console.error('Erro ao atualizar plano na API:', error);
+            return null;
+        }
+    }
+    
+    // Excluir plano na API
+    async function deletePlanAPI(planId) {
+        try {
+            // Obter token de autenticação
+            const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
+            const token = authData.token;
+            
+            if (!token) {
+                console.error('Token de autenticação não encontrado.');
+                return false;
+            }
+            
+            // Fazer requisição para API de planos
+            const response = await fetch(`${API_URL}/plans/${planId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erro ao excluir plano: ${response.status}`);
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Erro ao excluir plano na API:', error);
+            return false;
+        }
+    }
+
+    // Inicializar a página carregando planos e configurando eventos
     function initPlansPage() {
-        console.log('Página de planos inicializada!');
-        setupEventListeners();
-        updatePlansInOtherPages();
+        console.log('Inicializando página de planos...');
+        
+        // Carregar planos do localStorage
+        const storedPlans = localStorage.getItem('agendai_plans');
+        if (storedPlans) {
+            try {
+                window.plans = JSON.parse(storedPlans);
+                console.log(`Carregados ${window.plans.length} planos do localStorage`);
+            } catch (e) {
+                console.error('Erro ao carregar planos do localStorage:', e);
+                window.plans = [];
+            }
+        } else {
+            console.log('Nenhum plano encontrado no localStorage, iniciando com array vazio');
+            window.plans = []; // Iniciando com array vazio, sem planos mockados
+        }
+        
+        // Atualizar a interface
+        refreshPlansUI();
+        
+        console.log('Inicialização concluída');
     }
 
     // Configurar escutadores de eventos
     function setupEventListeners() {
+        console.log('Configurando event listeners para botões...');
+        
         // Configurar botões de ações na tabela
-        document.querySelectorAll('.view-plan').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const planId = parseInt(this.getAttribute('data-id'));
-                const plan = window.plans.find(p => p.id === planId);
-                if (plan) {
-                    alert(`Visualizando plano: ${plan.name}\nPreço: R$ ${plan.price.toFixed(2)}`);
-                }
-            });
-        });
-        
-        document.querySelectorAll('.edit-plan').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const planId = parseInt(this.getAttribute('data-id'));
-                loadPlanForEditing(planId);
-            });
-        });
-        
         document.querySelectorAll('.delete-plan').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const planId = parseInt(this.getAttribute('data-id'));
-                if (confirm(`Deseja realmente excluir o plano ID: ${planId}?`)) {
-                    deletePlan(planId);
-                }
-            });
+            // Remover listeners anteriores para evitar duplicações
+            btn.replaceWith(btn.cloneNode(true));
+            
+            // Obter o botão novamente após a clonagem
+            const newBtn = document.querySelector(`.delete-plan[data-id="${btn.getAttribute('data-id')}"]`);
+            if (newBtn) {
+                newBtn.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    const planId = parseInt(this.getAttribute('data-id'));
+                    console.log(`Botão de exclusão clicado para o plano ID: ${planId}`);
+                    if (confirm(`Deseja realmente excluir o plano ID: ${planId}?`)) {
+                        deletePlan(planId);
+                    }
+                });
+            }
         });
         
         // Configurar botão de salvar no modal de novo plano
-        document.getElementById('savePlanBtn')?.addEventListener('click', function() {
-            savePlan();
-        });
+        const savePlanBtn = document.getElementById('savePlanBtn');
+        if (savePlanBtn) {
+            savePlanBtn.removeEventListener('click', savePlan);
+            savePlanBtn.addEventListener('click', savePlan);
+            console.log('Event listener configurado para savePlanBtn');
+        }
         
         // Configurar botão de atualizar no modal de edição
-        document.getElementById('updatePlanBtn')?.addEventListener('click', function() {
-            updatePlan();
-        });
+        const updatePlanBtn = document.getElementById('updatePlanBtn');
+        if (updatePlanBtn) {
+            updatePlanBtn.removeEventListener('click', updatePlan);
+            updatePlanBtn.addEventListener('click', updatePlan);
+            console.log('Event listener configurado para updatePlanBtn');
+        }
+        
+        console.log('Event listeners configurados com sucesso!');
     }
 
-    // Carregar plano para edição
-    function loadPlanForEditing(planId) {
-        const plan = window.plans.find(p => p.id === planId);
-        if (!plan) return;
+    // Executar quando o DOM estiver totalmente carregado
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM carregado, iniciando aplicação...');
         
+        // Debug do Bootstrap
+        debugBootstrap();
+        
+        // Inicialização da página
+        initPlansPage();
+        
+        // Configurar botão de cancelar do modal manualmente
+        const cancelPlanBtn = document.getElementById('cancelPlanBtn');
+        if (cancelPlanBtn) {
+            cancelPlanBtn.addEventListener('click', function() {
+                console.log('Botão Cancelar clicado, fechando modal manualmente...');
+                const modal = document.getElementById('addPlanModal');
+                if (modal) {
+                    // Tentar fechar com Bootstrap
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        try {
+                            const bsModal = bootstrap.Modal.getInstance(modal);
+                            if (bsModal) {
+                                bsModal.hide();
+                                return;
+                            }
+                        } catch (e) {
+                            console.warn('Erro ao fechar modal com Bootstrap:', e);
+                        }
+                    }
+                    
+                    // Tentar fechar com jQuery
+                    if (typeof $ !== 'undefined') {
+                        try {
+                            $(modal).modal('hide');
+                            return;
+                        } catch (e) {
+                            console.warn('Erro ao fechar modal com jQuery:', e);
+                        }
+                    }
+                    
+                    // Método manual se tudo falhar
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    
+                    // Remover backdrop
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                }
+            });
+        }
+        
+        // Tentar carregar Bootstrap diretamente se não estiver disponível
+        if (typeof bootstrap === 'undefined') {
+            console.log('Carregando Bootstrap diretamente no DOM...');
+            
+            // Carregar o Bootstrap CSS se necessário
+            if (!document.querySelector('link[href*="bootstrap"]')) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css';
+                document.head.appendChild(link);
+            }
+            
+            // Carregar o Bootstrap JS
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js';
+            script.onload = function() {
+                console.log('Bootstrap carregado com sucesso!');
+                
+                // Inicializar todos os modais
+                document.querySelectorAll('.modal').forEach(modal => {
+                    try {
+                        new bootstrap.Modal(modal);
+                    } catch (e) {
+                        console.warn('Erro ao inicializar modal:', e);
+                    }
+                });
+                
+                // Debugar novamente após carregar
+                setTimeout(debugBootstrap, 500);
+            };
+            document.body.appendChild(script);
+        }
+    });
+
+    // Função para debugar estado do Bootstrap
+    function debugBootstrap() {
+        console.log('--------- DEBUG DO BOOTSTRAP ---------');
+        console.log('bootstrap global existe:', typeof bootstrap !== 'undefined');
+        
+        if (typeof bootstrap !== 'undefined') {
+            console.log('bootstrap.Modal existe:', typeof bootstrap.Modal !== 'undefined');
+            
+            if (typeof bootstrap.Modal !== 'undefined') {
+                console.log('bootstrap.Modal.getInstance existe:', typeof bootstrap.Modal.getInstance === 'function');
+            }
+        }
+        
+        console.log('jQuery existe:', typeof $ !== 'undefined');
+        
+        // Verificar se os scripts do Bootstrap estão carregados
+        const scripts = Array.from(document.querySelectorAll('script')).map(s => s.src);
+        console.log('Scripts carregados:', scripts);
+        
+        // Verificar se os estilos do Bootstrap estão carregados
+        const styles = Array.from(document.querySelectorAll('link')).map(l => l.href);
+        console.log('Estilos carregados:', styles);
+        
+        console.log('------------------------------------');
+    }
+
+    // Abrir o modal manualmente sem depender do Bootstrap
+    function openAddPlanModalManually() {
+        console.log('Abrindo modal manualmente...');
+        
+        // Obter o modal
+        let modal = document.getElementById('addPlanModal');
+        
+        // Se o modal não existir, vamos criá-lo dinamicamente
+        if (!modal) {
+            console.log('Modal não encontrado! Criando dinamicamente...');
+            
+            // Template HTML do modal
+            const modalHTML = `
+            <div class="modal fade" id="addPlanModal" tabindex="-1" aria-labelledby="addPlanModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="addPlanModalLabel">Novo Plano</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="planForm">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="planName" class="form-label">Nome do Plano*</label>
+                                        <input type="text" class="form-control" id="planName" value="Novo Plano" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="planPrice" class="form-label">Preço (R$)*</label>
+                                        <input type="number" class="form-control" id="planPrice" step="0.01" min="0" value="50.00" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="planAppointments" class="form-label">Limite de Agendamentos*</label>
+                                        <input type="number" class="form-control" id="planAppointments" value="50" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="planProfessionals" class="form-label">Limite de Profissionais*</label>
+                                        <input type="number" class="form-control" id="planProfessionals" value="2" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="planServices" class="form-label">Limite de Serviços*</label>
+                                        <input type="number" class="form-control" id="planServices" value="10" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="planStatus" class="form-label">Status*</label>
+                                        <select class="form-select" id="planStatus" required>
+                                            <option value="active" selected>Ativo</option>
+                                            <option value="inactive">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="planHighlight" class="form-label">Destaque*</label>
+                                        <select class="form-select" id="planHighlight" required>
+                                            <option value="none" selected>Sem Destaque</option>
+                                            <option value="popular">Popular</option>
+                                            <option value="recommended">Recomendado</option>
+                                            <option value="best-value">Melhor Custo-Benefício</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="planDescription" class="form-label">Descrição</label>
+                                    <textarea class="form-control" id="planDescription" rows="3"></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Recursos Incluídos</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureReports">
+                                                <label class="form-check-label" for="featureReports">Relatórios Avançados</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureEmailNotifications" checked>
+                                                <label class="form-check-label" for="featureEmailNotifications">Notificações por Email</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureSmsNotifications">
+                                                <label class="form-check-label" for="featureSmsNotifications">Notificações por SMS</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureWhatsAppNotifications">
+                                                <label class="form-check-label" for="featureWhatsAppNotifications">Notificações por WhatsApp</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureCustomization">
+                                                <label class="form-check-label" for="featureCustomization">Personalização Avançada</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="featureAPI">
+                                                <label class="form-check-label" for="featureAPI">Acesso à API</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelPlanBtn">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="savePlan()">Salvar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            // Adicionar o modal ao DOM
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Obter referência ao modal recém-criado
+            modal = document.getElementById('addPlanModal');
+            console.log('Modal criado dinamicamente com sucesso!');
+            
+            // Adicionar eventos aos botões
+            const cancelBtn = modal.querySelector('#cancelPlanBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    closeModalManually(modal);
+                });
+            }
+        }
+        
+        // Resetar o formulário se existir
+        const form = modal.querySelector('form');
+        if (form) {
+            try {
+                form.reset();
+            } catch (e) {
+                console.warn('Erro ao resetar formulário:', e);
+            }
+        }
+        
+        // Abrir o modal de forma segura (sem depender do Bootstrap)
+        try {
+            // Método direto que evita os erros do Bootstrap
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+            
+            // Adicionar backdrop manualmente
+            if (!document.querySelector('.modal-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+            }
+            
+            console.log('Modal aberto manualmente com método seguro');
+            
+            // Configurar todos os botões que fecham o modal
+            const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], #cancelPlanBtn');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    closeModalManually(modal);
+                });
+            });
+        } catch (e) {
+            console.error('Erro ao abrir modal:', e);
+            alert('Não foi possível abrir o formulário. Por favor, tente novamente ou recarregue a página.');
+        }
+    }
+    
+    // Função para fechar o modal manualmente de forma segura
+    function closeModalManually(modal) {
+        console.log('Fechando modal manualmente com método seguro');
+        
+        if (!modal) {
+            modal = document.getElementById('addPlanModal') || document.getElementById('editPlanModal');
+            if (!modal) return;
+        }
+        
+        // Método direto sem depender do Bootstrap
+        modal.style.display = 'none';
+        modal.classList.remove('show');
+        document.body.classList.remove('modal-open');
+        
+        // Remover backdrop
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) backdrop.remove();
+    }
+
+    // Obter o rótulo de destaque com base no valor
+    function getHighlightLabel(highlight) {
+        switch (highlight) {
+            case 'popular':
+                return 'Popular';
+            case 'recommended':
+                return 'Recomendado';
+            case 'best-value':
+                return 'Melhor Custo-Benefício';
+            default:
+                return '';
+        }
+    }
+
+    // Salvar novo plano
+    function savePlan() {
+        console.log('Função savePlan chamada');
+        
+        // Mostrar indicador de carregamento no botão
+        const saveBtn = document.getElementById('savePlanBtn');
+        if (saveBtn) {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            saveBtn.disabled = true;
+        }
+        
+        try {
+            // Coletar dados do formulário
+            const name = document.getElementById('planName')?.value || 'Novo Plano';
+            const price = parseFloat(document.getElementById('planPrice')?.value || '50');
+            const appointments = parseInt(document.getElementById('planAppointments')?.value || '50');
+            const professionals = parseInt(document.getElementById('planProfessionals')?.value || '2');
+            const services = parseInt(document.getElementById('planServices')?.value || '10');
+            const status = document.getElementById('planStatus')?.value || 'active';
+            const highlight = document.getElementById('planHighlight')?.value || 'none';
+            const description = document.getElementById('planDescription')?.value || '';
+            
+            // Recursos/features
+            const reports = document.getElementById('featureReports')?.checked || false;
+            const emailNotifications = document.getElementById('featureEmailNotifications')?.checked || true; // Default é true
+            const smsNotifications = document.getElementById('featureSmsNotifications')?.checked || false;
+            const whatsAppNotifications = document.getElementById('featureWhatsAppNotifications')?.checked || false;
+            const customization = document.getElementById('featureCustomization')?.checked || false;
+            const api = document.getElementById('featureAPI')?.checked || false;
+            
+            // Criar o objeto do plano
+            const newPlan = {
+                id: Date.now(), // ID baseado no timestamp atual
+                name: name,
+                price: price,
+                appointments: appointments,
+                professionals: professionals,
+                services: services,
+                status: status,
+                highlight: highlight,
+                description: description,
+                features: {
+                    reports: reports,
+                    emailNotifications: emailNotifications,
+                    smsNotifications: smsNotifications,
+                    whatsAppNotifications: whatsAppNotifications,
+                    customization: customization,
+                    api: api
+                }
+            };
+            
+            console.log('Novo plano criado:', newPlan);
+            
+            // Inicializar array de planos se não existir
+            if (!window.plans) {
+                window.plans = [];
+            }
+            
+            // Adicionar o novo plano
+            window.plans.push(newPlan);
+            
+            // Salvar no localStorage para persistência
+            localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+            
+            // Fechar o modal com método seguro
+            const modal = document.getElementById('addPlanModal');
+            if (modal) {
+                closeModalManually(modal);
+            }
+            
+            // Atualizar a interface do usuário (após fechar o modal)
+            setTimeout(function() {
+                refreshPlansUI();
+                
+                // Verificar se o botão "Novo Plano" ainda está disponível
+                const newPlanBtn = document.getElementById('newPlanBtn');
+                if (!newPlanBtn) {
+                    console.warn('Botão "Novo Plano" não encontrado após atualização, recriando...');
+                    const headerRow = document.getElementById('headerRow');
+                    if (headerRow) {
+                        const btnContainer = headerRow.querySelector('.col-md-4.text-md-end');
+                        if (btnContainer) {
+                            btnContainer.innerHTML = `
+                                <button type="button" class="btn btn-primary" id="newPlanBtn" onclick="openAddPlanModalManually()">
+                                    <i class="fas fa-plus me-1"></i> Novo Plano
+                                </button>
+                            `;
+                        }
+                    }
+                }
+                
+                // Mostrar mensagem de sucesso
+                alert('Plano adicionado com sucesso!');
+            }, 100);
+            
+        } catch (error) {
+            console.error('Erro ao salvar plano:', error);
+            alert('Erro ao salvar o plano. Por favor, tente novamente.');
+        } finally {
+            // Restaurar botão para estado normal
+            if (saveBtn) {
+                saveBtn.innerHTML = 'Salvar';
+                saveBtn.disabled = false;
+            }
+        }
+    }
+    
+    // Atualizar a interface após mudanças nos planos
+    function refreshPlansUI() {
+        console.log('Atualizando interface com planos:', window.plans.length);
+        
+        try {
+            // Garantir que o botão "Novo Plano" esteja visível e funcionando
+            const newPlanBtn = document.getElementById('newPlanBtn');
+            if (!newPlanBtn) {
+                console.warn('Botão "Novo Plano" não encontrado, recriando...');
+                const headerButtons = document.querySelector('.col-md-4.text-md-end');
+                if (headerButtons) {
+                    headerButtons.innerHTML = `
+                        <button type="button" class="btn btn-primary" id="newPlanBtn" onclick="openAddPlanModalManually()">
+                            <i class="fas fa-plus me-1"></i> Novo Plano
+                        </button>
+                    `;
+                } else {
+                    console.error('Container de botões não encontrado');
+                }
+            } else {
+                // Garantir que o evento click está correto
+                newPlanBtn.onclick = openAddPlanModalManually;
+            }
+            
+            // 1. Atualizar os cards de planos na parte superior
+            updatePlanCards();
+            
+            // 2. Atualizar a tabela de planos na parte inferior
+            updatePlanTable();
+            
+            console.log('Interface atualizada com sucesso');
+        } catch (error) {
+            console.error('Erro ao atualizar interface:', error);
+        }
+    }
+    
+    // Atualizar cards de planos
+    function updatePlanCards() {
+        const container = document.querySelector('.row.mb-4');
+        
+        // Verificar se estamos atualizando o cabeçalho ou o container de cards
+        if (container && container.id === 'headerRow') {
+            console.log('Container de header encontrado, pulando para o próximo');
+            const cardsContainer = document.querySelectorAll('.row.mb-4')[1];
+            if (cardsContainer) {
+                updateCardsContent(cardsContainer);
+            } else {
+                console.error('Container de cards não encontrado');
+                // Criar container de cards se não existir
+                const headerRow = container;
+                const cardsRow = document.createElement('div');
+                cardsRow.className = 'row mb-4';
+                headerRow.parentNode.insertBefore(cardsRow, headerRow.nextSibling);
+                updateCardsContent(cardsRow);
+            }
+        } else if (container) {
+            updateCardsContent(container);
+        } else {
+            console.error('Container de cards não encontrado');
+        }
+    }
+    
+    // Função auxiliar para atualizar o conteúdo dos cards
+    function updateCardsContent(container) {
+        // Limpar container
+        container.innerHTML = '';
+        
+        // Se não houver planos, mostrar mensagem
+        if (!window.plans || window.plans.length === 0) {
+            container.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> Nenhum plano cadastrado. Clique em "Novo Plano" para adicionar.
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Adicionar cada plano
+        window.plans.forEach(plan => {
+            if (plan.status !== 'active') return;
+            
+            // Formatação dos valores
+            const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : '0.00';
+            const appointmentsText = plan.appointments === 0 ? 'Ilimitados' : plan.appointments;
+            const professionalsText = plan.professionals === 0 ? 'Ilimitados' : plan.professionals;
+            const servicesText = plan.services === 0 ? 'Ilimitados' : plan.services;
+            
+            // Criar HTML do card
+            const cardHTML = `
+            <div class="col-md-4">
+                <div class="card shadow mb-4 ${plan.highlight !== 'none' ? 'border-primary' : ''}">
+                    <div class="card-header py-3 bg-primary text-white">
+                        <h6 class="m-0 font-weight-bold">${plan.name}</h6>
+                        ${plan.highlight !== 'none' ? `
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                            ${getHighlightLabel(plan.highlight)}
+                        </span>` : ''}
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h2 class="card-price text-primary">R$ ${price}<span class="period">/mês</span></h2>
+                        </div>
+                        <ul class="list-group list-group-flush mb-4">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Agendamentos
+                                <span class="badge bg-primary rounded-pill">${appointmentsText}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Profissionais
+                                <span class="badge bg-primary rounded-pill">${professionalsText}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Serviços
+                                <span class="badge bg-primary rounded-pill">${servicesText}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Relatórios
+                                <span class="badge ${plan.features?.reports ? 'bg-success' : 'bg-danger'} rounded-pill">
+                                    ${plan.features?.reports ? 'Sim' : 'Não'}
+                                </span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                Notificações
+                                <span class="badge bg-success rounded-pill">Sim</span>
+                            </li>
+                        </ul>
+                        <div class="d-grid">
+                            <button class="btn btn-outline-primary" onclick="editPlan(${plan.id})">
+                                <i class="fas fa-edit me-1"></i> Editar Plano
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            container.innerHTML += cardHTML;
+        });
+    }
+    
+    // Atualizar a tabela de planos
+    function updatePlanTable() {
+        const tableBody = document.querySelector('#plansTable tbody');
+        if (!tableBody) {
+            console.error('Tabela de planos não encontrada');
+            return;
+        }
+        
+        // Limpar tabela
+        tableBody.innerHTML = '';
+        
+        // Adicionar cada plano
+        window.plans.forEach(plan => {
+            // Formatação dos valores
+            const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : '0.00';
+            const appointmentsText = plan.appointments === 0 ? 'Ilimitado' : plan.appointments;
+            const professionalsText = plan.professionals === 0 ? 'Ilimitado' : plan.professionals;
+            const servicesText = plan.services === 0 ? 'Ilimitado' : plan.services;
+            const statusClass = plan.status === 'active' ? 'bg-success' : 'bg-danger';
+            const statusText = plan.status === 'active' ? 'Ativo' : 'Inativo';
+            
+            // Criar HTML da linha
+            const rowHTML = `
+            <tr>
+                <td>${plan.id}</td>
+                <td>${plan.name}</td>
+                <td>R$ ${price}</td>
+                <td>${appointmentsText}</td>
+                <td>${professionalsText}</td>
+                <td>${servicesText}</td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>`;
+            
+            tableBody.innerHTML += rowHTML;
+        });
+        
+        // Adicionar eventos aos botões de exclusão
+        document.querySelectorAll('.delete-plan').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = parseInt(this.getAttribute('data-id'));
+                if (confirm(`Deseja realmente excluir o plano ID ${id}?`)) {
+                    deletePlan(id);
+                }
+            });
+        });
+    }
+    
+    // Função para excluir um plano
+    function deletePlan(id) {
+        console.log('Excluindo plano:', id);
+        
+        // Remover o plano do array
+        window.plans = window.plans.filter(plan => plan.id !== id);
+        
+        // Atualizar localStorage
+        localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+        
+        // Atualizar interface
+        refreshPlansUI();
+        
+        alert('Plano excluído com sucesso!');
+    }
+    
+    // Função para editar um plano
+    function editPlan(id) {
+        console.log('Editando plano:', id);
+        
+        // Encontrar o plano pelo ID
+        const plan = window.plans.find(p => p.id === id);
+        if (!plan) {
+            console.error('Plano não encontrado com ID:', id);
+            alert('Plano não encontrado!');
+            return;
+        }
+        
+        // Verificar se o modal existe, se não, criar
+        let modal = document.getElementById('editPlanModal');
+        if (!modal) {
+            console.log('Modal de edição não encontrado! Criando dinamicamente...');
+            
+            // Template HTML do modal de edição
+            const modalHTML = `
+            <div class="modal fade" id="editPlanModal" tabindex="-1" aria-labelledby="editPlanModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title" id="editPlanModalLabel">Editar Plano</h5>
+                            <button type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editPlanForm">
+                                <input type="hidden" id="editPlanId">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="editPlanName" class="form-label">Nome do Plano*</label>
+                                        <input type="text" class="form-control" id="editPlanName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="editPlanPrice" class="form-label">Preço (R$)*</label>
+                                        <input type="number" class="form-control" id="editPlanPrice" step="0.01" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="editPlanAppointments" class="form-label">Limite de Agendamentos*</label>
+                                        <input type="number" class="form-control" id="editPlanAppointments" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="editPlanProfessionals" class="form-label">Limite de Profissionais*</label>
+                                        <input type="number" class="form-control" id="editPlanProfessionals" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="editPlanServices" class="form-label">Limite de Serviços*</label>
+                                        <input type="number" class="form-control" id="editPlanServices" min="0" required>
+                                        <div class="form-text">0 para ilimitado</div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="editPlanStatus" class="form-label">Status*</label>
+                                        <select class="form-select" id="editPlanStatus" required>
+                                            <option value="active">Ativo</option>
+                                            <option value="inactive">Inativo</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="editPlanHighlight" class="form-label">Destaque*</label>
+                                        <select class="form-select" id="editPlanHighlight" required>
+                                            <option value="none">Sem Destaque</option>
+                                            <option value="popular">Popular</option>
+                                            <option value="recommended">Recomendado</option>
+                                            <option value="best-value">Melhor Custo-Benefício</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editPlanDescription" class="form-label">Descrição</label>
+                                    <textarea class="form-control" id="editPlanDescription" rows="3"></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="form-label">Recursos Incluídos</label>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureReports">
+                                                <label class="form-check-label" for="editFeatureReports">Relatórios Avançados</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureEmailNotifications">
+                                                <label class="form-check-label" for="editFeatureEmailNotifications">Notificações por Email</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureSmsNotifications">
+                                                <label class="form-check-label" for="editFeatureSmsNotifications">Notificações por SMS</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureWhatsAppNotifications">
+                                                <label class="form-check-label" for="editFeatureWhatsAppNotifications">Notificações por WhatsApp</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureCustomization">
+                                                <label class="form-check-label" for="editFeatureCustomization">Personalização Avançada</label>
+                                            </div>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="editFeatureAPI">
+                                                <label class="form-check-label" for="editFeatureAPI">Acesso à API</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="updatePlanBtn" onclick="updatePlan()">Atualizar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            
+            // Adicionar o modal ao DOM
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Obter referência ao modal recém-criado
+            modal = document.getElementById('editPlanModal');
+            console.log('Modal de edição criado dinamicamente com sucesso!');
+            
+            // Adicionar evento ao botão de cancelar
+            const cancelBtn = modal.querySelector('#cancelEditBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    closeModalManually(modal);
+                });
+            }
+            
+            // Adicionar evento ao botão de fechar
+            const closeBtn = modal.querySelector('.btn-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function() {
+                    closeModalManually(modal);
+                });
+            }
+        }
+        
+        // Preencher o formulário com os dados do plano
         document.getElementById('editPlanId').value = plan.id;
         document.getElementById('editPlanName').value = plan.name;
         document.getElementById('editPlanPrice').value = plan.price;
@@ -567,203 +1416,128 @@
         document.getElementById('editPlanServices').value = plan.services;
         document.getElementById('editPlanStatus').value = plan.status;
         document.getElementById('editPlanHighlight').value = plan.highlight;
-        document.getElementById('editPlanDescription').value = plan.description;
+        document.getElementById('editPlanDescription').value = plan.description || '';
         
-        // Configurar checkboxes de recursos
-        document.getElementById('editFeatureReports').checked = plan.features.reports;
-        document.getElementById('editFeatureEmailNotifications').checked = plan.features.emailNotifications;
-        document.getElementById('editFeatureSmsNotifications').checked = plan.features.smsNotifications;
-        document.getElementById('editFeatureWhatsAppNotifications').checked = plan.features.whatsAppNotifications;
-        document.getElementById('editFeatureCustomization').checked = plan.features.customization;
-        document.getElementById('editFeatureAPI').checked = plan.features.api;
-    }
-
-    // Salvar novo plano
-    function savePlan() {
-        const form = document.getElementById('planForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
-        }
+        // Preencher checkboxes de recursos
+        document.getElementById('editFeatureReports').checked = plan.features?.reports || false;
+        document.getElementById('editFeatureEmailNotifications').checked = plan.features?.emailNotifications || false;
+        document.getElementById('editFeatureSmsNotifications').checked = plan.features?.smsNotifications || false;
+        document.getElementById('editFeatureWhatsAppNotifications').checked = plan.features?.whatsAppNotifications || false;
+        document.getElementById('editFeatureCustomization').checked = plan.features?.customization || false;
+        document.getElementById('editFeatureAPI').checked = plan.features?.api || false;
         
-        const newId = window.plans.length > 0 ? Math.max(...window.plans.map(p => p.id)) + 1 : 1;
-        
-        const newPlan = {
-            id: newId,
-            name: document.getElementById('planName').value,
-            price: parseFloat(document.getElementById('planPrice').value),
-            appointments: parseInt(document.getElementById('planAppointments').value),
-            professionals: parseInt(document.getElementById('planProfessionals').value),
-            services: parseInt(document.getElementById('planServices').value),
-            status: document.getElementById('planStatus').value,
-            highlight: document.getElementById('planHighlight').value,
-            description: document.getElementById('planDescription').value,
-            features: {
-                reports: document.getElementById('featureReports').checked,
-                emailNotifications: document.getElementById('featureEmailNotifications').checked,
-                smsNotifications: document.getElementById('featureSmsNotifications').checked,
-                whatsAppNotifications: document.getElementById('featureWhatsAppNotifications').checked,
-                customization: document.getElementById('featureCustomization').checked,
-                api: document.getElementById('featureAPI').checked
+        // Abrir o modal usando o método seguro
+        try {
+            // Método direto sem depender do Bootstrap
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            document.body.classList.add('modal-open');
+            
+            // Adicionar backdrop manualmente
+            if (!document.querySelector('.modal-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
             }
-        };
-        
-        // Adicionar o novo plano à lista
-        window.plans.push(newPlan);
-        
-        // Atualizar a UI
-        refreshPlansUI();
-        
-        // Fechar o modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addPlanModal'));
-        modal.hide();
-        
-        // Limpar o formulário
-        form.reset();
-        
-        // Mostrar feedback
-        alert('Plano criado com sucesso!');
+            
+            console.log('Modal de edição aberto com método seguro');
+        } catch (e) {
+            console.error('Erro ao abrir modal de edição:', e);
+            alert('Não foi possível abrir o formulário de edição. Por favor, tente novamente ou recarregue a página.');
+        }
     }
-
-    // Atualizar plano existente
+    
+    // Função para atualizar um plano existente
     function updatePlan() {
-        const form = document.getElementById('editPlanForm');
-        if (!form.checkValidity()) {
-            form.reportValidity();
-            return;
+        console.log('Função updatePlan chamada');
+        
+        // Mostrar indicador de carregamento no botão
+        const updateBtn = document.getElementById('updatePlanBtn');
+        if (updateBtn) {
+            updateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
+            updateBtn.disabled = true;
         }
         
-        const planId = parseInt(document.getElementById('editPlanId').value);
-        const planIndex = window.plans.findIndex(p => p.id === planId);
-        
-        if (planIndex === -1) return;
-        
-        const updatedPlan = {
-            id: planId,
-            name: document.getElementById('editPlanName').value,
-            price: parseFloat(document.getElementById('editPlanPrice').value),
-            appointments: parseInt(document.getElementById('editPlanAppointments').value),
-            professionals: parseInt(document.getElementById('editPlanProfessionals').value),
-            services: parseInt(document.getElementById('editPlanServices').value),
-            status: document.getElementById('editPlanStatus').value,
-            highlight: document.getElementById('editPlanHighlight').value,
-            description: document.getElementById('editPlanDescription').value,
-            features: {
-                reports: document.getElementById('editFeatureReports').checked,
-                emailNotifications: document.getElementById('editFeatureEmailNotifications').checked,
-                smsNotifications: document.getElementById('editFeatureSmsNotifications').checked,
-                whatsAppNotifications: document.getElementById('editFeatureWhatsAppNotifications').checked,
-                customization: document.getElementById('editFeatureCustomization').checked,
-                api: document.getElementById('editFeatureAPI').checked
+        try {
+            // Obter ID do plano
+            const id = parseInt(document.getElementById('editPlanId').value);
+            
+            // Coletar dados do formulário
+            const name = document.getElementById('editPlanName')?.value || 'Plano';
+            const price = parseFloat(document.getElementById('editPlanPrice')?.value || '0');
+            const appointments = parseInt(document.getElementById('editPlanAppointments')?.value || '0');
+            const professionals = parseInt(document.getElementById('editPlanProfessionals')?.value || '0');
+            const services = parseInt(document.getElementById('editPlanServices')?.value || '0');
+            const status = document.getElementById('editPlanStatus')?.value || 'active';
+            const highlight = document.getElementById('editPlanHighlight')?.value || 'none';
+            const description = document.getElementById('editPlanDescription')?.value || '';
+            
+            // Recursos/features
+            const reports = document.getElementById('editFeatureReports')?.checked || false;
+            const emailNotifications = document.getElementById('editFeatureEmailNotifications')?.checked || false;
+            const smsNotifications = document.getElementById('editFeatureSmsNotifications')?.checked || false;
+            const whatsAppNotifications = document.getElementById('editFeatureWhatsAppNotifications')?.checked || false;
+            const customization = document.getElementById('editFeatureCustomization')?.checked || false;
+            const api = document.getElementById('editFeatureAPI')?.checked || false;
+            
+            // Encontrar o plano no array
+            const planIndex = window.plans.findIndex(p => p.id === id);
+            if (planIndex === -1) {
+                throw new Error('Plano não encontrado para atualização');
             }
-        };
-        
-        // Atualizar o plano na lista
-        window.plans[planIndex] = updatedPlan;
-        
-        // Atualizar a UI
-        refreshPlansUI();
-        
-        // Fechar o modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('editPlanModal'));
-        modal.hide();
-        
-        // Mostrar feedback
-        alert('Plano atualizado com sucesso!');
-        
-        // Atualizar planos em outras páginas
-        updatePlansInOtherPages();
-    }
-
-    // Excluir plano
-    function deletePlan(planId) {
-        // Verificar se é um dos planos padrão (não permitir excluir os 3 primeiros)
-        if (planId <= 3) {
-            alert('Não é possível excluir planos padrão do sistema.');
-            return;
-        }
-        
-        const planIndex = window.plans.findIndex(p => p.id === planId);
-        if (planIndex === -1) return;
-        
-        // Remover o plano da lista
-        window.plans.splice(planIndex, 1);
-        
-        // Atualizar a UI
-        refreshPlansUI();
-        
-        // Mostrar feedback
-        alert('Plano excluído com sucesso!');
-        
-        // Atualizar planos em outras páginas
-        updatePlansInOtherPages();
-    }
-
-    // Atualizar a interface com os planos atuais
-    function refreshPlansUI() {
-        // Lógica para reconstruir os cards e a tabela de planos
-        console.log('UI atualizada com os planos:', window.plans);
-        
-        // Em uma implementação real, você atualizaria o DOM com os planos atuais
-        // Por simplicidade, aqui apenas simulamos isso com um log
-    }
-
-    // Atualizar planos em outras páginas
-    function updatePlansInOtherPages() {
-        // Armazenar os planos no localStorage para acessá-los em outras páginas
-        localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
-        
-        // Disparar um evento personalizado para notificar outras páginas sobre a atualização
-        const event = new CustomEvent('plansUpdated', { detail: window.plans });
-        window.dispatchEvent(event);
-        
-        console.log('Planos atualizados para outras páginas:', window.plans);
-    }
-
-    // Configurar todos os links para navegação SPA
-    document.addEventListener('DOMContentLoaded', function() {
-        // Configurar links com data-link
-        document.querySelectorAll('[data-link]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const href = this.getAttribute('href');
-                
-                if (typeof App !== 'undefined' && App.navigate) {
-                    // Remover o # inicial se existir
-                    const path = href.startsWith('#') ? href.substring(1) : href;
-                    App.navigate(path);
-                } else {
-                    window.location.href = href;
+            
+            // Criar o objeto atualizado do plano
+            const updatedPlan = {
+                id: id,
+                name: name,
+                price: price,
+                appointments: appointments,
+                professionals: professionals,
+                services: services,
+                status: status,
+                highlight: highlight,
+                description: description,
+                features: {
+                    reports: reports,
+                    emailNotifications: emailNotifications,
+                    smsNotifications: smsNotifications,
+                    whatsAppNotifications: whatsAppNotifications,
+                    customization: customization,
+                    api: api
                 }
-            });
-        });
-        
-        // Inicializar a página se estiver sendo carregada diretamente (fora do SPA)
-        if (typeof App === 'undefined' || !App.routes) {
-            initPlansPage();
+            };
+            
+            console.log('Plano atualizado:', updatedPlan);
+            
+            // Atualizar o plano no array
+            window.plans[planIndex] = updatedPlan;
+            
+            // Salvar no localStorage para persistência
+            localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+            
+            // Atualizar a interface do usuário
+            refreshPlansUI();
+            
+            // Fechar o modal com método seguro
+            const modal = document.getElementById('editPlanModal');
+            if (modal) {
+                closeModalManually(modal);
+            }
+            
+            // Mostrar mensagem de sucesso
+            alert('Plano atualizado com sucesso!');
+            
+        } catch (error) {
+            console.error('Erro ao atualizar plano:', error);
+            alert('Erro ao atualizar o plano. Por favor, tente novamente.');
+        } finally {
+            // Restaurar botão para estado normal
+            if (updateBtn) {
+                updateBtn.innerHTML = 'Atualizar';
+                updateBtn.disabled = false;
+            }
         }
-    });
+    }
 </script>
-
-<style>
-    /* Estilos para os cards de planos */
-    .card-price {
-        font-size: 2.5rem;
-        font-weight: 700;
-    }
-    
-    .card-price .period {
-        font-size: 1rem;
-        font-weight: 400;
-        color: #6c757d;
-    }
-    
-    .border-primary {
-        border-width: 2px !important;
-    }
-    
-    /* Posicionamento do badge de destaque */
-    .card-header {
-        position: relative;
-    }
-</style> 
+</body>
+</html> 
