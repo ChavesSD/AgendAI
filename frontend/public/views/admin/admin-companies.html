@@ -464,6 +464,9 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página de empresas carregada!');
         
+        // Carregar as empresas existentes
+        loadCompanies();
+        
         // Verificar se o modal existe e está corretamente configurado
         setTimeout(function() {
             const modalElement = document.getElementById('addCompanyModal');
@@ -674,8 +677,33 @@
                 // Validar o formulário
                 const form = document.getElementById('companyForm');
                 if (form && form.checkValidity()) {
+                    // Coletar dados do formulário para salvar a empresa
+                    const companyData = {
+                        id: Math.floor(Math.random() * 1000) + 1, // ID aleatório para simulação
+                        name: document.getElementById('companyName')?.value,
+                        cnpj: document.getElementById('companyCNPJ')?.value,
+                        email: document.getElementById('companyEmail')?.value,
+                        phone: document.getElementById('companyPhone')?.value,
+                        plan: document.getElementById('companyPlan')?.value,
+                        planName: document.getElementById('companyPlan')?.options[document.getElementById('companyPlan')?.selectedIndex]?.text || 'Plano não especificado',
+                        status: document.getElementById('companyStatus')?.value,
+                        statusText: document.getElementById('companyStatus')?.options[document.getElementById('companyStatus')?.selectedIndex]?.text || 'Status não especificado',
+                        address: document.getElementById('companyAddress')?.value,
+                        city: document.getElementById('companyCity')?.value,
+                        state: document.getElementById('companyState')?.value,
+                        zip: document.getElementById('companyZip')?.value,
+                        createdAt: new Date().toISOString().split('T')[0] // Data atual
+                    };
+                    
+                    console.log('Dados da empresa coletados:', companyData);
+                    
+                    // Salvar a empresa no localStorage
+                    saveCompany(companyData);
+                    
                     alert('Empresa cadastrada com sucesso!');
-                    // Aqui você pode fazer a requisição para salvar a empresa
+                    
+                    // Atualizar a tabela de empresas
+                    loadCompanies();
                     
                     // Fechando o modal após o cadastro de forma segura
                     try {
@@ -855,6 +883,352 @@
                 console.error('💥 Falha total ao tentar exibir o modal:', e);
                 alert('Não foi possível abrir o formulário. Por favor, tente novamente ou atualize a página.');
             }
+        }
+    }
+    
+    // Função para salvar empresa no localStorage
+    function saveCompany(companyData) {
+        try {
+            // Obter empresas existentes
+            let companies = [];
+            const storedCompanies = localStorage.getItem('agendai_companies');
+            
+            if (storedCompanies) {
+                companies = JSON.parse(storedCompanies);
+            }
+            
+            // Verificar se é uma atualização ou uma nova empresa
+            const existingIndex = companies.findIndex(company => company.id === companyData.id);
+            
+            if (existingIndex >= 0) {
+                // Atualizar empresa existente
+                companies[existingIndex] = companyData;
+                console.log(`Empresa ID ${companyData.id} atualizada no localStorage`);
+            } else {
+                // Adicionar nova empresa
+                companies.push(companyData);
+                console.log(`Nova empresa ID ${companyData.id} adicionada ao localStorage`);
+            }
+            
+            // Salvar no localStorage
+            localStorage.setItem('agendai_companies', JSON.stringify(companies));
+            console.log(`Total de ${companies.length} empresas salvas no localStorage`);
+            
+            return true;
+        } catch (error) {
+            console.error('Erro ao salvar empresa:', error);
+            return false;
+        }
+    }
+    
+    // Função para carregar empresas do localStorage e exibir na tabela
+    function loadCompanies() {
+        console.log('🔄 Carregando empresas do localStorage...');
+        
+        try {
+            // Obter referência à tabela
+            const tableBody = document.querySelector('#companiesTable tbody');
+            if (!tableBody) {
+                console.error('❌ Tabela de empresas não encontrada no DOM!');
+                return;
+            }
+            
+            // Limpar tabela atual
+            tableBody.innerHTML = '';
+            
+            // Obter empresas do localStorage
+            let companies = [];
+            const storedCompanies = localStorage.getItem('agendai_companies');
+            
+            if (storedCompanies) {
+                companies = JSON.parse(storedCompanies);
+                console.log(`📋 ${companies.length} empresas encontradas no localStorage`);
+            } else {
+                console.log('📋 Nenhuma empresa encontrada no localStorage');
+            }
+            
+            if (companies.length === 0) {
+                // Se não há empresas, mostrar uma linha informativa
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center py-4">
+                            <div class="text-muted">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Nenhuma empresa cadastrada. Use o botão "Nova Empresa" para adicionar.
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // Mapear status para texto legível e classes CSS
+            const statusMap = {
+                'active': { text: 'Ativo', class: 'success' },
+                'inactive': { text: 'Inativo', class: 'danger' },
+                'trial': { text: 'Em teste', class: 'warning' }
+            };
+            
+            // Adicionar cada empresa à tabela
+            companies.forEach(company => {
+                // Determinar texto e classe do status
+                const status = statusMap[company.status] || { text: company.status, class: 'secondary' };
+                
+                // Obter texto do plano
+                let planText = company.planName;
+                if (!planText) {
+                    // Tentar obter do select de planos
+                    const planSelect = document.getElementById('companyPlan');
+                    if (planSelect) {
+                        for (let i = 0; i < planSelect.options.length; i++) {
+                            if (planSelect.options[i].value === company.plan) {
+                                planText = planSelect.options[i].text;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Se ainda não encontrou, usar valor padrão
+                    if (!planText) {
+                        planText = `Plano ${company.plan}`;
+                    }
+                }
+                
+                // Criar linha na tabela
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${company.id}</td>
+                    <td>${company.name}</td>
+                    <td>${company.cnpj}</td>
+                    <td>${company.email}</td>
+                    <td>${planText}</td>
+                    <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                    <td>${company.createdAt}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button type="button" class="btn btn-info view-company" data-id="${company.id}" title="Visualizar">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-primary edit-company" data-id="${company.id}" title="Editar">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger delete-company" data-id="${company.id}" title="Excluir">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                // Adicionar a linha à tabela
+                tableBody.appendChild(row);
+            });
+            
+            // Configurar eventos para os botões de ação
+            document.querySelectorAll('.view-company').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const companyId = Number(this.getAttribute('data-id'));
+                    viewCompany(companyId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-company').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const companyId = Number(this.getAttribute('data-id'));
+                    editCompany(companyId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-company').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const companyId = Number(this.getAttribute('data-id'));
+                    deleteCompany(companyId);
+                });
+            });
+            
+            console.log('✅ Tabela de empresas atualizada com sucesso!');
+        } catch (error) {
+            console.error('❌ Erro ao carregar empresas:', error);
+        }
+    }
+    
+    // Função para excluir uma empresa
+    function deleteCompany(companyId) {
+        if (confirm(`Deseja realmente excluir a empresa ID: ${companyId}?`)) {
+            try {
+                // Obter empresas existentes
+                let companies = [];
+                const storedCompanies = localStorage.getItem('agendai_companies');
+                
+                if (storedCompanies) {
+                    companies = JSON.parse(storedCompanies);
+                }
+                
+                // Filtrar a empresa a ser excluída
+                const filteredCompanies = companies.filter(company => company.id !== companyId);
+                
+                // Verificar se alguma empresa foi excluída
+                if (filteredCompanies.length < companies.length) {
+                    // Salvar no localStorage
+                    localStorage.setItem('agendai_companies', JSON.stringify(filteredCompanies));
+                    console.log(`Empresa ID ${companyId} excluída com sucesso`);
+                    
+                    // Atualizar a tabela
+                    loadCompanies();
+                    
+                    alert('Empresa excluída com sucesso!');
+                    return true;
+                } else {
+                    console.error(`Empresa ID ${companyId} não encontrada`);
+                    alert('Empresa não encontrada!');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Erro ao excluir empresa:', error);
+                alert('Erro ao excluir empresa. Tente novamente.');
+                return false;
+            }
+        }
+        return false;
+    }
+    
+    // Função para visualizar detalhes de uma empresa
+    function viewCompany(companyId) {
+        try {
+            // Obter empresas existentes
+            const storedCompanies = localStorage.getItem('agendai_companies');
+            
+            if (storedCompanies) {
+                const companies = JSON.parse(storedCompanies);
+                
+                // Encontrar a empresa pelo ID
+                const company = companies.find(company => company.id === companyId);
+                
+                if (company) {
+                    // Formatar informações para exibição
+                    const details = `
+                        Nome: ${company.name}
+                        CNPJ: ${company.cnpj}
+                        Email: ${company.email}
+                        Telefone: ${company.phone}
+                        Plano: ${company.planName || company.plan}
+                        Status: ${company.statusText || company.status}
+                        Endereço: ${company.address}, ${company.city}/${company.state} - ${company.zip}
+                        Data de Cadastro: ${company.createdAt}
+                    `;
+                    
+                    alert(`Detalhes da Empresa:\n\n${details}`);
+                    return true;
+                } else {
+                    console.error(`Empresa ID ${companyId} não encontrada`);
+                    alert('Empresa não encontrada!');
+                    return false;
+                }
+            } else {
+                console.error('Nenhuma empresa encontrada no localStorage');
+                alert('Nenhuma empresa cadastrada!');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erro ao visualizar empresa:', error);
+            alert('Erro ao visualizar empresa. Tente novamente.');
+            return false;
+        }
+    }
+    
+    // Função para editar uma empresa (abre o modal com os dados preenchidos)
+    function editCompany(companyId) {
+        try {
+            // Obter empresas existentes
+            const storedCompanies = localStorage.getItem('agendai_companies');
+            
+            if (storedCompanies) {
+                const companies = JSON.parse(storedCompanies);
+                
+                // Encontrar a empresa pelo ID
+                const company = companies.find(company => company.id === companyId);
+                
+                if (company) {
+                    // Abrir o modal
+                    const modalElement = document.getElementById('addCompanyModal');
+                    if (!modalElement) {
+                        console.error('Modal não encontrado!');
+                        alert('Erro ao abrir o formulário de edição. Tente novamente.');
+                        return false;
+                    }
+                    
+                    // Preencher o formulário com os dados da empresa
+                    document.getElementById('companyName').value = company.name || '';
+                    document.getElementById('companyCNPJ').value = company.cnpj || '';
+                    document.getElementById('companyEmail').value = company.email || '';
+                    document.getElementById('companyPhone').value = company.phone || '';
+                    document.getElementById('companyAddress').value = company.address || '';
+                    document.getElementById('companyCity').value = company.city || '';
+                    document.getElementById('companyState').value = company.state || '';
+                    document.getElementById('companyZip').value = company.zip || '';
+                    
+                    if (company.plan) {
+                        const planSelect = document.getElementById('companyPlan');
+                        for (let i = 0; i < planSelect.options.length; i++) {
+                            if (planSelect.options[i].value == company.plan) {
+                                planSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    if (company.status) {
+                        const statusSelect = document.getElementById('companyStatus');
+                        for (let i = 0; i < statusSelect.options.length; i++) {
+                            if (statusSelect.options[i].value === company.status) {
+                                statusSelect.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Armazenar o ID da empresa no formulário para uso posterior
+                    document.getElementById('companyForm').setAttribute('data-company-id', company.id);
+                    
+                    // Alterar o título do modal
+                    document.getElementById('addCompanyModalLabel').textContent = 'Editar Empresa';
+                    
+                    // Exibir o modal
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Adicionar backdrop se não existir
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
+                    }
+                    
+                    // Tentar usar o Bootstrap se disponível
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        try {
+                            const bsModal = new bootstrap.Modal(modalElement);
+                            bsModal.show();
+                        } catch (e) {
+                            console.warn('Erro ao usar Bootstrap Modal:', e);
+                        }
+                    }
+                    
+                    return true;
+                } else {
+                    console.error(`Empresa ID ${companyId} não encontrada`);
+                    alert('Empresa não encontrada!');
+                    return false;
+                }
+            } else {
+                console.error('Nenhuma empresa encontrada no localStorage');
+                alert('Nenhuma empresa cadastrada!');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erro ao editar empresa:', error);
+            alert('Erro ao editar empresa. Tente novamente.');
+            return false;
         }
     }
 </script> 
