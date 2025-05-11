@@ -5,6 +5,59 @@
     window.addEventListener('DOMContentLoaded', function() {
         console.log('Verificando disponibilidade do Bootstrap...');
         
+        // Verificar se o Bootstrap ou seu script já está incluído
+        if (typeof bootstrap === 'undefined') {
+            console.log('🚨 Bootstrap não detectado. Carregando versão CDN...');
+            
+            // Carregar CSS do Bootstrap se não estiver presente
+            if (!document.querySelector('link[href*="bootstrap"]')) {
+                const bootstrapCSS = document.createElement('link');
+                bootstrapCSS.rel = 'stylesheet';
+                bootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css';
+                document.head.appendChild(bootstrapCSS);
+                console.log('✅ CSS do Bootstrap carregado via CDN');
+            }
+            
+            // Carregar JavaScript do Bootstrap
+            const bootstrapScript = document.createElement('script');
+            bootstrapScript.src = 'https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js';
+            bootstrapScript.onload = function() {
+                console.log('✅ JavaScript do Bootstrap carregado via CDN');
+                
+                // Inicializar manipuladores após carregar
+                initializeModalHandlers();
+            };
+            document.body.appendChild(bootstrapScript);
+        } else {
+            console.log('✅ Bootstrap já está disponível');
+            
+            // Bootstrap já está carregado, inicializar manipuladores diretamente
+            initializeModalHandlers();
+        }
+        
+        function initializeModalHandlers() {
+            // Garantir que todos os elementos data-bs-dismiss funcionem
+            document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+                button.addEventListener('click', function() {
+                    const target = document.querySelector(this.getAttribute('data-bs-target')) || 
+                                  this.closest('.modal');
+                    if (target) {
+                        // Tentar fechar o modal usando Bootstrap
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                            const modal = bootstrap.Modal.getInstance(target);
+                            if (modal) modal.hide();
+                        } else {
+                            // Fechar manualmente
+                            target.style.display = 'none';
+                            target.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            document.querySelector('.modal-backdrop')?.remove();
+                        }
+                    }
+                });
+            });
+        }
+        
         // Se o bootstrap não estiver definido, criar um polyfill
         if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
             console.log('Bootstrap Modal não detectado. Criando polyfill...');
@@ -54,27 +107,6 @@
             
             console.log('Polyfill para Bootstrap Modal criado com sucesso!');
         }
-        
-        // Garantir que todos os elementos data-bs-dismiss funcionem
-        document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
-            button.addEventListener('click', function() {
-                const target = document.querySelector(this.getAttribute('data-bs-target')) || 
-                              this.closest('.modal');
-                if (target) {
-                    // Tentar fechar o modal usando Bootstrap
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        const modal = bootstrap.Modal.getInstance(target);
-                        if (modal) modal.hide();
-                    } else {
-                        // Fechar manualmente
-                        target.style.display = 'none';
-                        target.classList.remove('show');
-                        document.body.classList.remove('modal-open');
-                        document.querySelector('.modal-backdrop')?.remove();
-                    }
-                }
-            });
-        });
     });
 </script>
 
@@ -149,6 +181,10 @@
                 <div class="col-md-4 text-md-end">
                     <button type="button" class="btn btn-primary" id="newCompanyBtn">
                         <i class="fas fa-plus me-1"></i> Nova Empresa
+                    </button>
+                    <!-- Botão alternativo para emergência (normalmente invisível) -->
+                    <button type="button" class="btn btn-outline-primary ms-2" id="emergencyNewCompanyBtn" style="display: none;">
+                        <i class="fas fa-plus me-1"></i> Abrir Formulário (Alt)
                     </button>
                 </div>
             </div>
@@ -428,6 +464,45 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Página de empresas carregada!');
         
+        // Verificar se o modal existe e está corretamente configurado
+        setTimeout(function() {
+            const modalElement = document.getElementById('addCompanyModal');
+            if (modalElement) {
+                console.log('✅ Modal encontrado no DOM durante inicialização');
+                
+                // Verificar se os botões de fechar estão corretamente configurados
+                modalElement.querySelectorAll('[data-bs-dismiss="modal"], button.btn-close, #cancelBtn').forEach(btn => {
+                    console.log('Configurando botão de fechar:', btn);
+                    
+                    // Configurar manipulador direto
+                    btn.onclick = function() {
+                        console.log('🚪 Botão de fechar clicado (manipulador direto)');
+                        modalElement.style.display = 'none';
+                        modalElement.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        document.querySelector('.modal-backdrop')?.remove();
+                        return false; // Prevenir comportamento padrão
+                    };
+                });
+                
+                // Verificar se o botão de salvar está corretamente configurado
+                const saveBtn = document.getElementById('saveCompanyBtn');
+                if (saveBtn) {
+                    console.log('✅ Botão salvar encontrado durante inicialização');
+                }
+                
+                // Garantir que o botão Nova Empresa está configurado
+                const newCompanyBtn = document.getElementById('newCompanyBtn');
+                if (newCompanyBtn) {
+                    console.log('✅ Botão Nova Empresa encontrado durante inicialização');
+                } else {
+                    console.error('❌ Botão Nova Empresa NÃO encontrado durante inicialização!');
+                }
+            } else {
+                console.error('❌ Modal NÃO encontrado no DOM durante inicialização!');
+            }
+        }, 1000); // Verificar após 1 segundo para dar tempo de carregar tudo
+        
         // Carregar planos disponíveis no select
         loadAvailablePlans();
         
@@ -436,9 +511,95 @@
             loadAvailablePlans();
         });
         
+        // Controle de falhas do botão principal
+        let mainButtonFailCount = 0;
+        
         // Configurar botão Nova Empresa para abrir o modal de forma segura
         document.getElementById('newCompanyBtn')?.addEventListener('click', function() {
-            openAddCompanyModal();
+            console.log('🖱️ Clique detectado no botão Nova Empresa');
+            
+            // Verificar se o botão está funcionando corretamente
+            try {
+                // Método direto - chamar a função
+                openAddCompanyModal();
+                
+                // Verificação de segurança - tentar abrir o modal diretamente caso a função falhe
+                setTimeout(function() {
+                    const modalElement = document.getElementById('addCompanyModal');
+                    if (modalElement && modalElement.style.display !== 'block') {
+                        console.log('⚠️ Modal não foi aberto pela função, tentando método alternativo');
+                        mainButtonFailCount++;
+                        
+                        // Se falhar mais de uma vez, mostrar o botão alternativo
+                        if (mainButtonFailCount >= 2) {
+                            const emergencyBtn = document.getElementById('emergencyNewCompanyBtn');
+                            if (emergencyBtn) {
+                                emergencyBtn.style.display = 'inline-block';
+                                console.log('🚨 Ativando botão de emergência após falhas repetidas');
+                            }
+                        }
+                        
+                        modalElement.style.display = 'block';
+                        modalElement.classList.add('show');
+                        document.body.classList.add('modal-open');
+                        
+                        // Criar backdrop se necessário
+                        if (!document.querySelector('.modal-backdrop')) {
+                            const backdrop = document.createElement('div');
+                            backdrop.className = 'modal-backdrop fade show';
+                            document.body.appendChild(backdrop);
+                        }
+                    }
+                }, 500); // Aguardar meio segundo para verificar se o modal abriu
+            } catch (error) {
+                console.error('❌ Erro ao tentar abrir o modal via evento de clique:', error);
+                alert('Ocorreu um erro ao abrir o formulário. Tente novamente ou atualize a página.');
+                
+                // Mostrar botão de emergência em caso de erro
+                const emergencyBtn = document.getElementById('emergencyNewCompanyBtn');
+                if (emergencyBtn) {
+                    emergencyBtn.style.display = 'inline-block';
+                    console.log('🚨 Ativando botão de emergência após erro');
+                }
+            }
+        });
+        
+        // Configurar botão de emergência para abrir o modal diretamente
+        document.getElementById('emergencyNewCompanyBtn')?.addEventListener('click', function() {
+            console.log('🆘 Clique no botão de emergência');
+            
+            try {
+                // Abordagem super direta - sem usar a função padrão
+                const modalElement = document.getElementById('addCompanyModal');
+                if (modalElement) {
+                    // Limpar formulário manualmente
+                    const form = document.getElementById('companyForm');
+                    if (form) form.reset();
+                    
+                    // Tentar carregar planos
+                    loadAvailablePlans();
+                    
+                    // Exibir modal diretamente
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Adicionar backdrop manualmente
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
+                    }
+                    
+                    console.log('✅ Modal aberto pelo método de emergência');
+                } else {
+                    console.error('❌ Modal não encontrado mesmo com método de emergência');
+                    alert('Formulário não encontrado. Por favor, atualize a página e tente novamente.');
+                }
+            } catch (error) {
+                console.error('💥 Erro no método de emergência:', error);
+                alert('Erro crítico. Por favor, atualize a página e tente novamente.');
+            }
         });
         
         // Configurar todos os links do sidebar para funcionarem corretamente
@@ -506,48 +667,52 @@
         });
         
         // Manipulador para o botão salvar no modal de nova empresa
-        document.getElementById('saveCompanyBtn')?.addEventListener('click', function() {
-            // Validar o formulário
-            const form = document.getElementById('companyForm');
-            if (form.checkValidity()) {
-                alert('Empresa cadastrada com sucesso!');
-                // Aqui você pode fazer a requisição para salvar a empresa
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'saveCompanyBtn') {
+                console.log('📎 Botão salvar clicado via delegação no HTML original');
                 
-                // Fechando o modal após o cadastro de forma segura
-                try {
-                    // Tentar fechar usando Bootstrap
-                    const modalElement = document.getElementById('addCompanyModal');
-                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        // Método 1: Tentar obter instância existente
-                        let modalInstance = bootstrap.Modal.getInstance(modalElement);
-                        if (modalInstance) {
-                            modalInstance.hide();
+                // Validar o formulário
+                const form = document.getElementById('companyForm');
+                if (form && form.checkValidity()) {
+                    alert('Empresa cadastrada com sucesso!');
+                    // Aqui você pode fazer a requisição para salvar a empresa
+                    
+                    // Fechando o modal após o cadastro de forma segura
+                    try {
+                        // Tentar fechar usando Bootstrap
+                        const modalElement = document.getElementById('addCompanyModal');
+                        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                            // Método 1: Tentar obter instância existente
+                            let modalInstance = bootstrap.Modal.getInstance(modalElement);
+                            if (modalInstance) {
+                                modalInstance.hide();
+                            } else {
+                                // Método 2: Criar nova instância e fechar
+                                modalInstance = new bootstrap.Modal(modalElement);
+                                modalInstance.hide();
+                            }
                         } else {
-                            // Método 2: Criar nova instância e fechar
-                            modalInstance = new bootstrap.Modal(modalElement);
-                            modalInstance.hide();
+                            // Método alternativo: fechar manualmente se Bootstrap não estiver disponível
+                            modalElement.classList.remove('show');
+                            modalElement.style.display = 'none';
+                            document.body.classList.remove('modal-open');
+                            
+                            // Remover backdrop manualmente
+                            const backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) backdrop.remove();
                         }
-                    } else {
-                        // Método alternativo: fechar manualmente se Bootstrap não estiver disponível
-                        modalElement.classList.remove('show');
-                        modalElement.style.display = 'none';
+                        console.log('Modal fechado com sucesso');
+                    } catch (error) {
+                        console.error('Erro ao fechar modal:', error);
+                        // Tente fechar manualmente como último recurso
+                        document.getElementById('addCompanyModal').style.display = 'none';
+                        document.querySelector('.modal-backdrop')?.remove();
                         document.body.classList.remove('modal-open');
-                        
-                        // Remover backdrop manualmente
-                        const backdrop = document.querySelector('.modal-backdrop');
-                        if (backdrop) backdrop.remove();
                     }
-                    console.log('Modal fechado com sucesso');
-                } catch (error) {
-                    console.error('Erro ao fechar modal:', error);
-                    // Tente fechar manualmente como último recurso
-                    document.getElementById('addCompanyModal').style.display = 'none';
-                    document.querySelector('.modal-backdrop')?.remove();
-                    document.body.classList.remove('modal-open');
+                } else if (form) {
+                    // Força a validação do formulário pelo navegador
+                    form.reportValidity();
                 }
-            } else {
-                // Força a validação do formulário pelo navegador
-                form.reportValidity();
             }
         });
     });
@@ -597,66 +762,99 @@
 
     // Função para abrir o modal de nova empresa de forma segura
     function openAddCompanyModal() {
-        console.log('Abrindo modal de nova empresa...');
+        console.log('🚀 Iniciando abertura do modal de cadastro de nova empresa...');
         
         try {
             // Obter referência ao modal
             const modalElement = document.getElementById('addCompanyModal');
+            if (!modalElement) {
+                console.error('❌ Modal não encontrado no DOM!');
+                alert('Erro ao abrir o formulário de cadastro. Modal não encontrado.');
+                return;
+            }
+            
+            console.log('📌 Modal encontrado no DOM:', modalElement);
             
             // Limpar o formulário se já existir
             const form = document.getElementById('companyForm');
             if (form) {
                 try {
+                    console.log('🧹 Limpando formulário...');
                     form.reset();
-                } catch (e) {
-                    console.warn('Erro ao resetar formulário:', e);
-                }
-            }
-            
-            // Tentar abrir com Bootstrap
-            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                let modal;
-                
-                // Tentar obter instância existente primeiro
-                try {
-                    modal = bootstrap.Modal.getInstance(modalElement);
-                    if (modal) {
-                        modal.show();
-                        console.log('Modal aberto usando instância existente do Bootstrap');
-                        return;
+                    
+                    // Verificar se o select de planos tem opções
+                    const planSelect = document.getElementById('companyPlan');
+                    if (planSelect && planSelect.options.length <= 1) {
+                        console.log('⚠️ Select de planos vazio, carregando planos...');
+                        loadAvailablePlans();
                     }
                 } catch (e) {
-                    console.warn('Erro ao obter instância do modal:', e);
-                }
-                
-                // Se não conseguir obter instância, criar uma nova
-                try {
-                    modal = new bootstrap.Modal(modalElement);
-                    modal.show();
-                    console.log('Modal aberto usando nova instância do Bootstrap');
-                    return;
-                } catch (e) {
-                    console.warn('Erro ao criar nova instância do modal:', e);
+                    console.warn('⚠️ Erro ao resetar formulário:', e);
                 }
             }
             
-            // Método fallback - abrir manualmente
+            console.log('🧪 Verificando disponibilidade do Bootstrap...');
+            console.log('Bootstrap disponível?', typeof bootstrap !== 'undefined');
+            console.log('Bootstrap.Modal disponível?', typeof bootstrap !== 'undefined' && bootstrap.Modal);
+            
+            // ABORDAGEM DIRETA: Tentar exibir o modal da maneira mais simples possível
+            // Esta abordagem força a exibição do modal independentemente do estado do Bootstrap
             modalElement.style.display = 'block';
             modalElement.classList.add('show');
             document.body.classList.add('modal-open');
-            
+                
             // Adicionar backdrop se não existir
             if (!document.querySelector('.modal-backdrop')) {
+                console.log('🎭 Adicionando backdrop manualmente');
                 const backdrop = document.createElement('div');
                 backdrop.className = 'modal-backdrop fade show';
                 document.body.appendChild(backdrop);
             }
             
-            console.log('Modal aberto manualmente como fallback');
+            // Agora, tentar usar o Bootstrap como camada adicional
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                try {
+                    console.log('🔄 Tentando usar API do Bootstrap para garantir exibição');
+                    const bootstrapModal = new bootstrap.Modal(modalElement);
+                    bootstrapModal.show();
+                } catch (e) {
+                    console.log('ℹ️ Não foi possível usar API do Bootstrap, mas o modal já deve estar visível manualmente');
+                }
+            }
+            
+            // Garantir que os botões de fechar funcionem
+            modalElement.querySelectorAll('[data-bs-dismiss="modal"], button.btn-close, #cancelBtn').forEach(btn => {
+                // Remover listeners anteriores para evitar duplicação
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+                
+                newBtn.addEventListener('click', function() {
+                    console.log('🚪 Botão de fechar clicado, fechando modal manualmente');
+                    modalElement.style.display = 'none';
+                    modalElement.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    document.querySelector('.modal-backdrop')?.remove();
+                });
+            });
+            
+            console.log('✅ Modal aberto manualmente com sucesso!');
             
         } catch (error) {
-            console.error('Erro ao abrir modal:', error);
-            alert('Não foi possível abrir o formulário. Por favor, tente novamente ou atualize a página.');
+            console.error('❌ Erro fatal ao abrir modal:', error);
+            
+            // Implementação super emergencial como último recurso
+            try {
+                const modalElement = document.getElementById('addCompanyModal');
+                if (modalElement) {
+                    modalElement.style.display = 'block';
+                    modalElement.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                    modalElement.style.zIndex = '9999';
+                    console.log('⚠️ Aplicada solução de emergência para exibir o modal');
+                }
+            } catch (e) {
+                console.error('💥 Falha total ao tentar exibir o modal:', e);
+                alert('Não foi possível abrir o formulário. Por favor, tente novamente ou atualize a página.');
+            }
         }
     }
 </script> 
