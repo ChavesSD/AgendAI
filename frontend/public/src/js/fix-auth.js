@@ -7,6 +7,16 @@
     // Verificar se existe token
     const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
     
+    // Verificar se estamos em uma página de login
+    const isLoginPage = window.location.hash === '#/login' || window.location.pathname === '/login';
+    
+    // Se estivermos na página de login e já tivermos um token, redirecionar para o dashboard
+    if (isLoginPage && authData.token) {
+        console.log('Usuário já autenticado e na página de login. Redirecionando para dashboard...');
+        window.location.hash = '#/admin/dashboard';
+        return;
+    }
+    
     if (!authData.token) {
         console.log('Token não encontrado. Criando token temporário para desenvolvimento...');
         
@@ -26,9 +36,17 @@
         localStorage.setItem('agendai_auth', JSON.stringify(tempAuthData));
         console.log('Token temporário de administrador criado para desenvolvimento');
         
-        // Atualizar página para aplicar o token
-        window.location.reload();
+        // Redirecionar para o dashboard em vez de recarregar a página inteira
+        if (window.location.hash !== '#/admin/dashboard') {
+            window.location.hash = '#/admin/dashboard';
+        }
     } else {
         console.log('Token de autenticação já existe:', authData.token.substring(0, 20) + '...');
+        
+        // Verificar se estamos na página inicial ou raiz e redirecionar para o dashboard
+        if (window.location.hash === '' || window.location.hash === '#/' || window.location.hash === '#/login') {
+            console.log('Redirecionando para o dashboard...');
+            window.location.hash = '#/admin/dashboard';
+        }
     }
 })(); 
