@@ -411,47 +411,77 @@
                 
                 const form = document.getElementById('companyForm');
                 if (form && form.checkValidity()) {
-                    // Coletar dados do formulário
+                    // Obter dados do formulário
                     const companyData = {
-                        name: document.getElementById('companyName')?.value,
-                        cnpj: document.getElementById('companyCNPJ')?.value,
-                        email: document.getElementById('companyEmail')?.value,
-                        phone: document.getElementById('companyPhone')?.value,
-                        plan: document.getElementById('companyPlan')?.value,
-                        status: document.getElementById('companyStatus')?.value,
-                        address: document.getElementById('companyAddress')?.value,
-                        city: document.getElementById('companyCity')?.value,
-                        state: document.getElementById('companyState')?.value,
-                        zip: document.getElementById('companyZip')?.value
+                        id: Date.now(), // Usar timestamp como ID temporário
+                        name: document.getElementById('companyName').value,
+                        cnpj: document.getElementById('companyCNPJ').value,
+                        email: document.getElementById('companyEmail').value,
+                        phone: document.getElementById('companyPhone').value,
+                        address: document.getElementById('companyAddress').value,
+                        city: document.getElementById('companyCity').value,
+                        state: document.getElementById('companyState').value,
+                        zip: document.getElementById('companyZip').value,
+                        plan: document.getElementById('companyPlan').value,
+                        planName: document.getElementById('companyPlan').options[document.getElementById('companyPlan').selectedIndex].text,
+                        status: document.getElementById('companyStatus').value,
+                        statusText: document.getElementById('companyStatus').options[document.getElementById('companyStatus').selectedIndex].text,
+                        createdAt: new Date().toLocaleDateString('pt-BR')
                     };
                     
-                    console.log('Dados da empresa coletados:', companyData);
+                    // Salvar empresa utilizando o sistema de persistência
+                    console.log('Dados da empresa antes de salvar:', companyData);
                     
-                    // Simular salvamento bem-sucedido
-                    setTimeout(function() {
-                        alert('Empresa cadastrada com sucesso!');
+                    // Usar o novo sistema de persistência se estiver disponível
+                    if (window.CompaniesStorage && typeof window.CompaniesStorage.saveCompanies === 'function') {
+                        // Obter lista atual de empresas
+                        let companies = Array.isArray(window.companies) ? window.companies : [];
                         
-                        // Fechar o modal após o cadastro
-                        closeModalManually(modal);
+                        // Adicionar a nova empresa
+                        companies.push(companyData);
                         
-                        // Atualizar a lista de empresas (simulado)
-                        try {
-                            if (typeof loadCompanies === 'function') {
-                                loadCompanies();
+                        // Salvar através do sistema de persistência
+                        window.CompaniesStorage.saveCompanies(companies);
+                        console.log('Empresa salva usando sistema de persistência CompaniesStorage');
+                    } else {
+                        // Fallback para a função saveCompany global
+                        if (typeof saveCompany === 'function') {
+                            saveCompany(companyData);
+                            console.log('Empresa salva usando função saveCompany global');
+                        } else {
+                            // Fallback direto para localStorage em último caso
+                            try {
+                                const storedCompanies = localStorage.getItem('agendai_companies');
+                                let companies = storedCompanies ? JSON.parse(storedCompanies) : [];
+                                companies.push(companyData);
+                                localStorage.setItem('agendai_companies', JSON.stringify(companies));
+                                console.log('Empresa salva diretamente no localStorage');
+                            } catch (error) {
+                                console.error('Erro ao salvar empresa:', error);
                             }
-                        } catch (e) {
-                            console.warn('Não foi possível atualizar a lista de empresas:', e);
                         }
-                    }, 500);
-                } else if (form) {
-                    console.log('Formulário inválido, mostrando alertas de validação');
-                    form.reportValidity();
+                    }
+                    
+                    // Fechar o modal
+                    closeModal(modal);
+                    
+                    // Mostrar mensagem de sucesso
+                    alert('Empresa cadastrada com sucesso!');
+                    
+                    // Recarregar lista de empresas
+                    if (typeof loadCompanies === 'function') {
+                        loadCompanies();
+                    }
+                } else {
+                    console.error('Formulário inválido!');
+                    // Destacar campos obrigatórios
+                    form.classList.add('was-validated');
                 }
             });
             
-            console.log('Botão de salvar configurado com sucesso');
+            console.log('✅ Botão Salvar configurado com sucesso!');
         } else {
-            console.error('Botão de salvar não encontrado no modal!');
+            console.error('❌ Botão Salvar não encontrado no modal!');
         }
     }
     

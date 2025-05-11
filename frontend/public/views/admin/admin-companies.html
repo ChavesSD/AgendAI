@@ -890,12 +890,7 @@
     function saveCompany(companyData) {
         try {
             // Obter empresas existentes
-            let companies = [];
-            const storedCompanies = localStorage.getItem('agendai_companies');
-            
-            if (storedCompanies) {
-                companies = JSON.parse(storedCompanies);
-            }
+            let companies = Array.isArray(window.companies) ? window.companies : [];
             
             // Verificar se é uma atualização ou uma nova empresa
             const existingIndex = companies.findIndex(company => company.id === companyData.id);
@@ -903,16 +898,16 @@
             if (existingIndex >= 0) {
                 // Atualizar empresa existente
                 companies[existingIndex] = companyData;
-                console.log(`Empresa ID ${companyData.id} atualizada no localStorage`);
+                console.log(`Empresa ID ${companyData.id} atualizada`);
             } else {
                 // Adicionar nova empresa
                 companies.push(companyData);
-                console.log(`Nova empresa ID ${companyData.id} adicionada ao localStorage`);
+                console.log(`Nova empresa ID ${companyData.id} adicionada`);
             }
             
-            // Salvar no localStorage
-            localStorage.setItem('agendai_companies', JSON.stringify(companies));
-            console.log(`Total de ${companies.length} empresas salvas no localStorage`);
+            // Salvar de forma persistente usando o novo sistema
+            window.CompaniesStorage.saveCompanies(companies);
+            console.log(`Total de ${companies.length} empresas salvas de forma persistente`);
             
             return true;
         } catch (error) {
@@ -923,7 +918,7 @@
     
     // Função para carregar empresas do localStorage e exibir na tabela
     function loadCompanies() {
-        console.log('🔄 Carregando empresas do localStorage...');
+        console.log('🔄 Carregando empresas para a tabela...');
         
         try {
             // Obter referência à tabela
@@ -936,16 +931,11 @@
             // Limpar tabela atual
             tableBody.innerHTML = '';
             
-            // Obter empresas do localStorage
-            let companies = [];
-            const storedCompanies = localStorage.getItem('agendai_companies');
+            // Obter empresas do sistema de armazenamento persistente
+            window.CompaniesStorage.ensureIntegrity();
+            let companies = window.companies || [];
             
-            if (storedCompanies) {
-                companies = JSON.parse(storedCompanies);
-                console.log(`📋 ${companies.length} empresas encontradas no localStorage`);
-            } else {
-                console.log('📋 Nenhuma empresa encontrada no localStorage');
-            }
+            console.log(`📋 ${companies.length} empresas encontradas para exibição`);
             
             if (companies.length === 0) {
                 // Se não há empresas, mostrar uma linha informativa
@@ -1231,4 +1221,227 @@
             return false;
         }
     }
+
+    // SOLUÇÃO DEFINITIVA - STORAGE PERSISTENTE PARA EMPRESAS
+    (function() {
+        // Criar um objeto de armazenamento persistente dedicado às empresas
+        window.CompaniesStorage = {
+            // Armazenar o último estado conhecido das empresas
+            _cachedCompanies: null,
+            
+            // Salvar empresas em múltiplos mecanismos para máxima persistência
+            saveCompanies: function(companies) {
+                if (!Array.isArray(companies)) {
+                    console.error('Tentativa de salvar dados inválidos como empresas:', companies);
+                    return false;
+                }
+                
+                console.log(`===== SALVANDO ${companies.length} EMPRESAS DE FORMA PERSISTENTE =====`);
+                
+                try {
+                    // 1. Armazenar em localStorage
+                    localStorage.setItem('agendai_companies', JSON.stringify(companies));
+                    
+                    // 2. Armazenar em sessionStorage como backup
+                    sessionStorage.setItem('agendai_companies_backup', JSON.stringify(companies));
+                    
+                    // 3. Armazenar em cache interno
+                    this._cachedCompanies = [...companies];
+                    
+                    // 4. Atualizar variável global window.companies
+                    window.companies = companies;
+                    
+                    console.log(`Empresas salvas com sucesso em todos os mecanismos de persistência (${companies.length} empresas)`);
+                    return true;
+                } catch (error) {
+                    console.error('Erro ao salvar empresas de forma persistente:', error);
+                    return false;
+                }
+            },
+            
+            // Carregar empresas da fonte mais confiável disponível
+            loadCompanies: function() {
+                console.log('===== CARREGANDO EMPRESAS DE FORMA PERSISTENTE =====');
+                
+                try {
+                    // Tentar obter de localStorage primeiro
+                    const localData = localStorage.getItem('agendai_companies');
+                    
+                    if (localData) {
+                        try {
+                            const parsedLocal = JSON.parse(localData);
+                            if (Array.isArray(parsedLocal) && parsedLocal.length > 0) {
+                                console.log(`Empresas carregadas do localStorage (${parsedLocal.length} empresas)`);
+                                this._cachedCompanies = parsedLocal;
+                                window.companies = parsedLocal;
+                                return parsedLocal;
+                            }
+                        } catch (e) {
+                            console.error('Erro ao carregar do localStorage:', e);
+                        }
+                    }
+                    
+                    // Se localStorage falhar, tentar sessionStorage
+                    const sessionData = sessionStorage.getItem('agendai_companies_backup');
+                    if (sessionData) {
+                        try {
+                            const parsedSession = JSON.parse(sessionData);
+                            if (Array.isArray(parsedSession) && parsedSession.length > 0) {
+                                console.log(`Empresas carregadas do sessionStorage (${parsedSession.length} empresas)`);
+                                this._cachedCompanies = parsedSession;
+                                window.companies = parsedSession;
+                                // Reestabelecer em localStorage
+                                localStorage.setItem('agendai_companies', sessionData);
+                                return parsedSession;
+                            }
+                        } catch (e) {
+                            console.error('Erro ao carregar do sessionStorage:', e);
+                        }
+                    }
+                    
+                    // Se nenhum armazenamento tiver dados, usar cache interno
+                    if (Array.isArray(this._cachedCompanies) && this._cachedCompanies.length > 0) {
+                        console.log(`Empresas carregadas do cache interno (${this._cachedCompanies.length} empresas)`);
+                        window.companies = this._cachedCompanies;
+                        return this._cachedCompanies;
+                    }
+                    
+                    // Se todas as tentativas falharem, retornar array vazio
+                    console.warn('Nenhuma empresa encontrada em nenhum mecanismo de persistência');
+                    window.companies = [];
+                    return [];
+                } catch (error) {
+                    console.error('Erro ao carregar empresas:', error);
+                    window.companies = [];
+                    return [];
+                }
+            },
+            
+            // Verificar integridade e restaurar se necessário
+            ensureIntegrity: function() {
+                // Verificar se window.companies está intacto
+                if (!Array.isArray(window.companies)) {
+                    console.warn('window.companies não é um array, restaurando...');
+                    this.loadCompanies();
+                } else if (window.companies.length === 0) {
+                    // Verificar se temos dados em alguma fonte de persistência
+                    const hasLocalData = localStorage.getItem('agendai_companies') !== null;
+                    const hasSessionData = sessionStorage.getItem('agendai_companies_backup') !== null;
+                    const hasCachedData = Array.isArray(this._cachedCompanies) && this._cachedCompanies.length > 0;
+                    
+                    if (hasLocalData || hasSessionData || hasCachedData) {
+                        console.warn('window.companies está vazio mas existem dados persistentes, restaurando...');
+                        this.loadCompanies();
+                    }
+                }
+                
+                return window.companies;
+            }
+        };
+        
+        // Inicializar: Carregar empresas imediatamente
+        window.CompaniesStorage.loadCompanies();
+        
+        // Configurar verificação de integridade periódica (a cada 2 segundos)
+        setInterval(function() {
+            window.CompaniesStorage.ensureIntegrity();
+        }, 2000);
+        
+        // Adicionar um evento de antes de descarregar a página para garantir persistência
+        window.addEventListener('beforeunload', function() {
+            // Garantir que as empresas sejam salvas antes de sair
+            if (Array.isArray(window.companies) && window.companies.length > 0) {
+                window.CompaniesStorage.saveCompanies(window.companies);
+            }
+        });
+        
+        console.log('Sistema de persistência de empresas inicializado com sucesso');
+    })();
+
+    // Script de diagnóstico e correção executado antes de qualquer operação
+    (function() {
+        // Função para garantir que window.companies sempre exista e seja um array válido
+        window.ensureWindowCompaniesExists = function() {
+            console.log('------ DEBUGGING: Verificando integridade de window.companies...');
+            
+            // Verificar se window.companies existe e é um array
+            if (typeof window.companies === 'undefined' || window.companies === null) {
+                console.warn('------ DEBUGGING: ⚠️ window.companies não existe, inicializando como array vazio');
+                window.companies = [];
+            } else if (!Array.isArray(window.companies)) {
+                console.warn('------ DEBUGGING: ⚠️ window.companies não é um array, corrigindo');
+                window.companies = [];
+            }
+            
+            // Tentar carregar do localStorage se existir dados lá
+            try {
+                const storedCompaniesJson = localStorage.getItem('agendai_companies');
+                if (storedCompaniesJson) {
+                    const storedCompanies = JSON.parse(storedCompaniesJson);
+                    if (Array.isArray(storedCompanies) && storedCompanies.length > 0) {
+                        // Se window.companies está vazio mas temos dados no localStorage, restaurar
+                        if (window.companies.length === 0) {
+                            console.log(`------ DEBUGGING: Restaurando ${storedCompanies.length} empresas do localStorage para window.companies`);
+                            window.companies = storedCompanies;
+                        }
+                        // Se temos dados em ambos, mas quantidades diferentes, preferir o maior conjunto
+                        else if (window.companies.length < storedCompanies.length) {
+                            console.log(`------ DEBUGGING: Restaurando maior conjunto (${storedCompanies.length} > ${window.companies.length}) do localStorage`);
+                            window.companies = storedCompanies;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('------ DEBUGGING: Erro ao tentar restaurar do localStorage:', e);
+            }
+            
+            // Garantir que localStorage está sincronizado com window.companies
+            if (window.companies.length > 0) {
+                try {
+                    localStorage.setItem('agendai_companies', JSON.stringify(window.companies));
+                    console.log('------ DEBUGGING: localStorage sincronizado com', window.companies.length, 'empresas');
+                } catch (e) {
+                    console.error('------ DEBUGGING: Erro ao sincronizar com localStorage:', e);
+                }
+            }
+            
+            console.log('------ DEBUGGING: Verificação de integridade concluída, window.companies contém', window.companies.length, 'empresas');
+            return window.companies;
+        };
+        
+        // Executar imediatamente
+        window.ensureWindowCompaniesExists();
+        
+        // Adicionar verificações periódicas a cada 5 segundos
+        setInterval(window.ensureWindowCompaniesExists, 5000);
+    })();
+
+    // DIAGNÓSTICO DE PERSISTÊNCIA DE EMPRESAS
+    (function() {
+        try {
+            console.log('');
+            console.log('===== DIAGNÓSTICO DE PERSISTÊNCIA DE EMPRESAS =====');
+            const storedCompanies = localStorage.getItem('agendai_companies');
+            if (storedCompanies) {
+                try {
+                    const companiesData = JSON.parse(storedCompanies);
+                    if (Array.isArray(companiesData)) {
+                        console.log(`✅ localStorage contém ${companiesData.length} empresas:`, companiesData);
+                    } else {
+                        console.error('❌ localStorage contém dados inválidos (não é um array):', companiesData);
+                    }
+                } catch (e) {
+                    console.error('❌ Erro ao analisar dados do localStorage:', e);
+                }
+            } else {
+                console.warn('⚠️ localStorage não contém empresas');
+            }
+
+            console.log('window.companies antes da inicialização:', typeof window.companies !== 'undefined' ? window.companies : 'indefinido');
+            console.log('===== FIM DO DIAGNÓSTICO =====');
+            console.log('');
+        } catch (e) {
+            console.error('Erro durante diagnóstico:', e);
+        }
+    })();
 </script> 
