@@ -15,6 +15,13 @@ const path = require('path');
 const rateLimit = require('express-rate-limit');
 const fs = require('fs');
 
+// Importar rotas
+const authRoutes = require('./routes/auth');
+const plansRoutes = require('./routes/plans');
+
+// Importar middlewares
+const { authenticateToken, checkRole } = require('./middlewares/auth');
+
 // Criar o app Express
 const app = express();
 
@@ -40,6 +47,9 @@ async function initDb() {
         const connection = await pool.getConnection();
         connection.release();
         
+        // Verificar e criar tabelas necessárias
+        await createTablesIfNotExist();
+        
         return true;
     } catch (error) {
         console.error('Erro ao conectar ao banco de dados:', error);
@@ -47,41 +57,52 @@ async function initDb() {
     }
 }
 
-// Middleware para verificar autenticação
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    
-    if (!token) {
-        return res.status(401).json({ error: 'Acesso não autorizado' });
+// Criar as tabelas necessárias se não existirem
+async function createTablesIfNotExist() {
+    try {
+        const connection = await pool.getConnection();
+        
+        // Tabela de planos
+        await connection.query(`
+            CREATE TABLE IF NOT EXISTS plans (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(100) NOT NULL,
+                price DECIMAL(10,2) NOT NULL,
+                appointments INT NOT NULL DEFAULT 0,
+                professionals INT NOT NULL DEFAULT 0,
+                services INT NOT NULL DEFAULT 0,
+                status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+                highlight ENUM('none', 'popular', 'recommended', 'best-value') NOT NULL DEFAULT 'none',
+                description TEXT,
+                features JSON,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        
+        console.log('Tabelas verificadas/criadas com sucesso');
+        connection.release();
+    } catch (error) {
+        console.error('Erro ao criar tabelas:', error);
+        throw error;
     }
-    
-    jwt.verify(token, config.auth.jwtSecret, (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Token inválido ou expirado' });
-        }
-        
-        req.user = user;
-        next();
+}
+
+// Rota para verificação de status do servidor
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        message: 'Servidor AgendAI está funcionando corretamente',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0'
     });
-}
+});
 
-// Middleware para verificar tipo de usuário
-function checkRole(roles) {
-    return (req, res, next) => {
-        if (!req.user) {
-            return res.status(401).json({ error: 'Usuário não autenticado' });
-        }
-        
-        if (!roles.includes(req.user.role)) {
-            return res.status(403).json({ error: 'Acesso não permitido para este tipo de usuário' });
-        }
-        
-        next();
-    };
-}
+// Configurar rotas da API
+app.use('/api/auth', authRoutes);
+app.use('/api/plans', plansRoutes);
 
-// Endpoint de login
+// Endpoint de login (mantido para compatibilidade)
 app.post('/api/auth/login', async (req, res) => {
     const { email, password } = req.body;
     

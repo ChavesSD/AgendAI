@@ -1,3 +1,4 @@
+/*
 /**
  * reset-data.js
  * Script para limpar todos os dados mockados do localStorage quando o sistema é iniciado

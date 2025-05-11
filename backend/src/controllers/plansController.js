@@ -26,11 +26,17 @@ exports.getAllPlans = async (req, res) => {
             'SELECT * FROM plans ORDER BY price ASC'
         );
 
-        // Converter features de JSON para objeto
+        // Converter features de JSON para objeto (robusto)
         const plans = rows.map(plan => {
+            let featuresObj = {};
+            try {
+                featuresObj = plan.features ? JSON.parse(plan.features) : {};
+            } catch (e) {
+                featuresObj = {};
+            }
             return {
                 ...plan,
-                features: plan.features ? JSON.parse(plan.features) : {}
+                features: featuresObj
             };
         });
 

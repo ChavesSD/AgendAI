@@ -74,8 +74,63 @@
         // Verificar se todas as dependências estão disponíveis
         window.AgendAIDependencies = {
             bootstrap: typeof bootstrap !== 'undefined',
-            chart: typeof Chart !== 'undefined'
+            chart: typeof Chart !== 'undefined',
+            jquery: typeof jQuery !== 'undefined'
         };
+        
+        // Função para carregar dependências faltantes
+        function loadMissingDependencies(callback) {
+            const requiredLibraries = [];
+            
+            // Verificar jQuery
+            if (typeof jQuery === 'undefined') {
+                console.log('jQuery não encontrado, carregando...');
+                requiredLibraries.push({
+                    name: 'jQuery',
+                    src: 'https://code.jquery.com/jquery-3.7.1.min.js'
+                });
+            }
+            
+            // Verificar Bootstrap
+            if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+                console.log('Bootstrap não encontrado, carregando...');
+                requiredLibraries.push({
+                    name: 'Bootstrap',
+                    src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js'
+                });
+            }
+            
+            // Se todas as bibliotecas já estiverem carregadas
+            if (requiredLibraries.length === 0) {
+                console.log('Todas as bibliotecas já estão carregadas');
+                if (callback) callback();
+                return;
+            }
+            
+            let librariesLoaded = 0;
+            
+            // Carregar as bibliotecas necessárias
+            requiredLibraries.forEach(lib => {
+                const script = document.createElement('script');
+                script.src = lib.src;
+                script.onload = () => {
+                    console.log(`${lib.name} carregado com sucesso`);
+                    librariesLoaded++;
+                    
+                    if (librariesLoaded === requiredLibraries.length) {
+                        console.log('Todas as bibliotecas foram carregadas');
+                        // Aguardar um pouco para garantir que as bibliotecas estejam inicializadas
+                        setTimeout(() => {
+                            if (callback) callback();
+                        }, 100);
+                    }
+                };
+                script.onerror = () => {
+                    console.error(`Erro ao carregar ${lib.name}`);
+                };
+                document.head.appendChild(script);
+            });
+        }
         
         // Verificar dependências
         function checkDependencies() {
@@ -83,8 +138,18 @@
             const allLoaded = Object.values(window.AgendAIDependencies).every(dep => dep === true);
             
             if (!allLoaded) {
-                console.warn('Nem todas as dependências foram carregadas. Aguardando...');
-                setTimeout(checkDependencies, 100); // Tentar novamente
+                console.warn('Nem todas as dependências foram carregadas. Carregando automaticamente...');
+                loadMissingDependencies(() => {
+                    // Atualizar status de dependências
+                    window.AgendAIDependencies = {
+                        bootstrap: typeof bootstrap !== 'undefined',
+                        chart: typeof Chart !== 'undefined',
+                        jquery: typeof jQuery !== 'undefined'
+                    };
+                    
+                    console.log('Dependências atualizadas:', window.AgendAIDependencies);
+                    initApp();
+                });
                 return false;
             }
             
@@ -98,7 +163,25 @@
                 // Carregar o aplicativo principal
                 const scriptApp = document.createElement('script');
                 scriptApp.src = '/public/src/js/app.js';
-                scriptApp.onload = () => console.log('App.js carregado com sucesso');
+                scriptApp.onload = () => {
+                    console.log('App.js carregado com sucesso');
+                    
+                    // Carregar o script de correção de autenticação após o app.js
+                    const scriptFixAuth = document.createElement('script');
+                    scriptFixAuth.src = '/public/src/js/fix-auth.js';
+                    scriptFixAuth.onload = () => {
+                        console.log('Script de correção de autenticação carregado com sucesso');
+                        
+                        // Carregar o script de correção do modal de empresa
+                        const scriptFixCompanyModal = document.createElement('script');
+                        scriptFixCompanyModal.src = '/public/src/js/fix-company-modal.js';
+                        scriptFixCompanyModal.onload = () => console.log('Script de correção do modal de empresa carregado com sucesso');
+                        scriptFixCompanyModal.onerror = (e) => console.error('Erro ao carregar script de correção do modal de empresa:', e);
+                        document.body.appendChild(scriptFixCompanyModal);
+                    };
+                    scriptFixAuth.onerror = (e) => console.error('Erro ao carregar script de correção de autenticação:', e);
+                    document.body.appendChild(scriptFixAuth);
+                };
                 scriptApp.onerror = (e) => console.error('Erro ao carregar app.js:', e);
                 document.body.appendChild(scriptApp);
             }
@@ -107,5 +190,8 @@
         // Iniciar carregamento quando o DOM estiver pronto
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
+    
+    <!-- Script de correção para botões de exclusão de planos -->
+    <script src="/public/js/plan-actions-fix.js"></script>
 </body>
 </html> 
