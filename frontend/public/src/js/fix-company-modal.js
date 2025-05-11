@@ -407,7 +407,7 @@
             
             // Adicionar novo evento com implementação completa
             newButton.addEventListener('click', function() {
-                console.log('Botão Salvar clicado! Processando dados do formulário...');
+                console.log('🔵 Botão Salvar clicado! Processando dados do formulário...');
                 
                 const form = document.getElementById('companyForm');
                 if (form && form.checkValidity()) {
@@ -429,36 +429,38 @@
                         createdAt: new Date().toLocaleDateString('pt-BR')
                     };
                     
-                    // Salvar empresa utilizando o sistema de persistência
-                    console.log('Dados da empresa antes de salvar:', companyData);
+                    // Salvar empresa utilizando a função global saveCompany
+                    console.log('📋 Dados da empresa para salvar:', companyData);
                     
-                    // Usar o novo sistema de persistência se estiver disponível
-                    if (window.CompaniesStorage && typeof window.CompaniesStorage.saveCompanies === 'function') {
-                        // Obter lista atual de empresas
-                        let companies = Array.isArray(window.companies) ? window.companies : [];
-                        
-                        // Adicionar a nova empresa
-                        companies.push(companyData);
-                        
-                        // Salvar através do sistema de persistência
-                        window.CompaniesStorage.saveCompanies(companies);
-                        console.log('Empresa salva usando sistema de persistência CompaniesStorage');
-                    } else {
-                        // Fallback para a função saveCompany global
-                        if (typeof saveCompany === 'function') {
-                            saveCompany(companyData);
-                            console.log('Empresa salva usando função saveCompany global');
-                        } else {
-                            // Fallback direto para localStorage em último caso
-                            try {
-                                const storedCompanies = localStorage.getItem('agendai_companies');
-                                let companies = storedCompanies ? JSON.parse(storedCompanies) : [];
-                                companies.push(companyData);
-                                localStorage.setItem('agendai_companies', JSON.stringify(companies));
-                                console.log('Empresa salva diretamente no localStorage');
-                            } catch (error) {
-                                console.error('Erro ao salvar empresa:', error);
+                    // Tentar salvar com função global
+                    let saved = false;
+                    if (typeof window.saveCompany === 'function') {
+                        try {
+                            window.saveCompany(companyData);
+                            console.log('✅ Empresa salva usando função saveCompany global');
+                            saved = true;
+                        } catch (error) {
+                            console.error('❌ Erro ao usar saveCompany global:', error);
+                        }
+                    }
+                    
+                    // Fallback direto para o localStorage se a função global falhar
+                    if (!saved) {
+                        try {
+                            // Garantir que window.companies seja um array
+                            if (typeof window.companies === 'undefined' || !Array.isArray(window.companies)) {
+                                window.companies = [];
                             }
+                            
+                            // Adicionar a nova empresa
+                            window.companies.push(companyData);
+                            
+                            // Salvar no localStorage
+                            localStorage.setItem('agendai_companies', JSON.stringify(window.companies));
+                            console.log('✅ Empresa salva diretamente no localStorage');
+                            saved = true;
+                        } catch (error) {
+                            console.error('❌ Erro ao salvar empresa no localStorage:', error);
                         }
                     }
                     
@@ -471,6 +473,9 @@
                     // Recarregar lista de empresas
                     if (typeof loadCompanies === 'function') {
                         loadCompanies();
+                    } else {
+                        // Tentar recarregar a página
+                        window.location.reload();
                     }
                 } else {
                     console.error('Formulário inválido!');

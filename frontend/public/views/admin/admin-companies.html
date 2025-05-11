@@ -889,29 +889,41 @@
     // Função para salvar empresa no localStorage
     function saveCompany(companyData) {
         try {
-            // Obter empresas existentes
-            let companies = Array.isArray(window.companies) ? window.companies : [];
+            console.log('📝 Salvando empresa:', companyData);
+            
+            // Garantir que window.companies exista e seja um array
+            window.ensureCompaniesExists();
             
             // Verificar se é uma atualização ou uma nova empresa
-            const existingIndex = companies.findIndex(company => company.id === companyData.id);
+            const existingIndex = window.companies.findIndex(company => company.id === companyData.id);
             
             if (existingIndex >= 0) {
                 // Atualizar empresa existente
-                companies[existingIndex] = companyData;
-                console.log(`Empresa ID ${companyData.id} atualizada`);
+                window.companies[existingIndex] = companyData;
+                console.log(`✅ Empresa ID ${companyData.id} atualizada`);
             } else {
                 // Adicionar nova empresa
-                companies.push(companyData);
-                console.log(`Nova empresa ID ${companyData.id} adicionada`);
+                window.companies.push(companyData);
+                console.log(`✅ Nova empresa ID ${companyData.id} adicionada`);
             }
             
-            // Salvar de forma persistente usando o novo sistema
-            window.CompaniesStorage.saveCompanies(companies);
-            console.log(`Total de ${companies.length} empresas salvas de forma persistente`);
+            // Salvar no localStorage
+            localStorage.setItem('agendai_companies', JSON.stringify(window.companies));
+            console.log(`📦 ${window.companies.length} empresas salvas no localStorage`);
+            
+            // Tentar salvar com CompaniesStorage se disponível
+            if (window.CompaniesStorage && typeof window.CompaniesStorage.saveCompanies === 'function') {
+                window.CompaniesStorage.saveCompanies(window.companies);
+                console.log('💾 Empresas também salvas via CompaniesStorage');
+            }
+            
+            // Recarregar tabela
+            loadCompanies();
             
             return true;
         } catch (error) {
-            console.error('Erro ao salvar empresa:', error);
+            console.error('❌ Erro ao salvar empresa:', error);
+            alert('Erro ao salvar empresa. Por favor, tente novamente.');
             return false;
         }
     }
@@ -1420,28 +1432,121 @@
     (function() {
         try {
             console.log('');
-            console.log('===== DIAGNÓSTICO DE PERSISTÊNCIA DE EMPRESAS =====');
+            console.log('===== DIAGNÓSTICO DE EMPRESAS =====');
+            // Verificar dados diretamente no localStorage
             const storedCompanies = localStorage.getItem('agendai_companies');
             if (storedCompanies) {
                 try {
                     const companiesData = JSON.parse(storedCompanies);
                     if (Array.isArray(companiesData)) {
                         console.log(`✅ localStorage contém ${companiesData.length} empresas:`, companiesData);
+                        
+                        // Garantir que window.companies esteja sincronizado
+                        window.companies = companiesData;
+                        console.log(`✅ Sincronizado window.companies com ${companiesData.length} empresas do localStorage`);
                     } else {
-                        console.error('❌ localStorage contém dados inválidos (não é um array):', companiesData);
+                        console.error('❌ localStorage contém dados inválidos para empresas (não é um array):', companiesData);
+                        // Corrigir os dados
+                        window.companies = [];
+                        localStorage.setItem('agendai_companies', JSON.stringify([]));
                     }
                 } catch (e) {
                     console.error('❌ Erro ao analisar dados do localStorage:', e);
+                    // Corrigir os dados
+                    window.companies = [];
+                    localStorage.setItem('agendai_companies', JSON.stringify([]));
                 }
             } else {
                 console.warn('⚠️ localStorage não contém empresas');
+                window.companies = [];
+                localStorage.setItem('agendai_companies', JSON.stringify([]));
             }
-
-            console.log('window.companies antes da inicialização:', typeof window.companies !== 'undefined' ? window.companies : 'indefinido');
+            
+            // Forçar inicialização do sistema de armazenamento persistente
+            if (window.CompaniesStorage && typeof window.CompaniesStorage.loadCompanies === 'function') {
+                console.log('📊 Inicializando sistema de armazenamento persistente...');
+                window.CompaniesStorage.loadCompanies();
+            } else {
+                console.error('❌ Sistema de armazenamento persistente não encontrado!');
+                
+                // Implementação de emergência
+                window.CompaniesStorage = {
+                    loadCompanies: function() {
+                        const stored = localStorage.getItem('agendai_companies');
+                        if (stored) {
+                            try {
+                                window.companies = JSON.parse(stored);
+                            } catch (e) {
+                                window.companies = [];
+                            }
+                        } else {
+                            window.companies = [];
+                        }
+                        return window.companies;
+                    },
+                    saveCompanies: function(companies) {
+                        if (Array.isArray(companies)) {
+                            localStorage.setItem('agendai_companies', JSON.stringify(companies));
+                            window.companies = companies;
+                        }
+                    },
+                    ensureIntegrity: function() {
+                        if (!Array.isArray(window.companies)) {
+                            window.companies = [];
+                        }
+                        return window.companies;
+                    }
+                };
+                
+                // Inicializar com implementação de emergência
+                window.CompaniesStorage.loadCompanies();
+                console.log('✅ Sistema de armazenamento de emergência inicializado');
+            }
+            
+            // Garantir que window.companies seja um array válido
+            if (!Array.isArray(window.companies)) {
+                console.warn('⚠️ window.companies não é um array, corrigindo...');
+                window.companies = [];
+                if (window.CompaniesStorage) {
+                    window.CompaniesStorage.saveCompanies([]);
+                } else {
+                    localStorage.setItem('agendai_companies', JSON.stringify([]));
+                }
+            }
+            
+            console.log('window.companies atual:', window.companies);
             console.log('===== FIM DO DIAGNÓSTICO =====');
             console.log('');
+            
+            // Iniciar carregamento da tabela após diagnóstico
+            setTimeout(loadCompanies, 500);
         } catch (e) {
             console.error('Erro durante diagnóstico:', e);
         }
+    })();
+
+    // Função auxiliar para garantir que window.companies sempre exista
+    window.ensureCompaniesExists = function() {
+        if (typeof window.companies === 'undefined' || window.companies === null) {
+            console.warn('window.companies não existe, inicializando como array vazio');
+            window.companies = [];
+        } else if (!Array.isArray(window.companies)) {
+            console.warn('window.companies não é um array, corrigindo');
+            window.companies = [];
+        }
+        
+        return window.companies;
+    };
+
+    // Inicializar a verificação e carregamento periódico
+    (function() {
+        // Executar imediatamente
+        window.ensureCompaniesExists();
+        
+        // Recarregar empresas a cada 5 segundos para garantir atualização em tempo real
+        setInterval(function() {
+            window.ensureCompaniesExists();
+            loadCompanies();
+        }, 5000);
     })();
 </script> 
