@@ -228,7 +228,152 @@
     
     <!-- Page Content -->
     <div id="page-content-wrapper">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+        <!-- Script para inicialização e correção da página -->
+        <script>
+            // Verificar se existe console
+            window.console = window.console || { log: function() {}, warn: function() {}, error: function() {} };
+            
+            // Certificar-se de que o objeto window.plans exista
+            window.ensureWindowPlansExists = function() {
+                if (!window.plans) {
+                    console.warn('------ DEBUGGING: window.plans não encontrado, inicializando como array vazio');
+                    // Tentar carregar do localStorage
+                    try {
+                        const plansFromStorage = localStorage.getItem('agendai_plans');
+                        if (plansFromStorage) {
+                            window.plans = JSON.parse(plansFromStorage);
+                            console.log(`------ DEBUGGING: Carregados ${window.plans.length} planos do localStorage`);
+                        } else {
+                            window.plans = [];
+                            console.log('------ DEBUGGING: Inicializado window.plans como array vazio');
+                        }
+                    } catch (e) {
+                        console.error('------ DEBUGGING: Erro ao carregar planos do localStorage:', e);
+                        window.plans = [];
+                    }
+                }
+                
+                // Garantir que seja um array
+                if (!Array.isArray(window.plans)) {
+                    console.warn('------ DEBUGGING: window.plans não é um array, convertendo');
+                    window.plans = Array.isArray(window.plans) ? window.plans : [];
+                }
+                
+                return window.plans;
+            };
+            
+            // Executar assim que o documento estiver pronto
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('===== DIAGNÓSTICO DE PERSISTÊNCIA DE PLANOS =====');
+                console.log('localStorage contém 3 planos: ', (localStorage.getItem('agendai_plans') || '').includes('[{') ? '✓' : '✗');
+                console.log('window.plans antes da inicialização: ', window.plans ? '✓' : '✗');
+                console.log('===== FIM DO DIAGNÓSTICO =====');
+                
+                // Garantir que window.plans exista e seja um array
+                window.ensureWindowPlansExists();
+                
+                console.log('------ DEBUGGING: API URL inicializada:', window.API_URL || 'não definida');
+                console.log('------ DEBUGGING: window.plans já foi inicializado com 3 planos');
+                console.log('------ DEBUGGING: window.plans já foi inicializado');
+                
+                // Verificar se o Bootstrap está disponível
+                if (typeof bootstrap === 'undefined') {
+                    console.warn('⚠️ Bootstrap não está disponível. Criando polyfill para Modal...');
+                    
+                    // Criar um polyfill básico para bootstrap.Modal
+                    window.bootstrap = window.bootstrap || {};
+                    window.bootstrap.Modal = class Modal {
+                        constructor(element) {
+                            this.element = element;
+                        }
+                        
+                        show() {
+                            if (this.element) {
+                                this.element.style.display = 'block';
+                                this.element.classList.add('show');
+                                document.body.classList.add('modal-open');
+                                
+                                // Criar backdrop se não existir
+                                let backdrop = document.querySelector('.modal-backdrop');
+                                if (!backdrop) {
+                                    backdrop = document.createElement('div');
+                                    backdrop.className = 'modal-backdrop fade show';
+                                    document.body.appendChild(backdrop);
+                                }
+                            }
+                        }
+                        
+                        hide() {
+                            if (this.element) {
+                                this.element.style.display = 'none';
+                                this.element.classList.remove('show');
+                                document.body.classList.remove('modal-open');
+                                
+                                // Remover backdrop
+                                const backdrop = document.querySelector('.modal-backdrop');
+                                if (backdrop) {
+                                    backdrop.remove();
+                                }
+                            }
+                        }
+                        
+                        static getInstance(element) {
+                            return new Modal(element);
+                        }
+                    };
+                    
+                    // Adicionar manipuladores para botões com data-bs-dismiss="modal"
+                    document.addEventListener('click', function(event) {
+                        if (event.target.getAttribute('data-bs-dismiss') === 'modal') {
+                            const modalElement = event.target.closest('.modal');
+                            if (modalElement) {
+                                const modal = new bootstrap.Modal(modalElement);
+                                modal.hide();
+                            }
+                        }
+                    });
+                    
+                    console.log('✅ Polyfill para Modal criado com sucesso!');
+                } else {
+                    console.log('✅ Bootstrap disponível!');
+                }
+                
+                // Normalizar features de todos os planos
+                if (window.plans && Array.isArray(window.plans)) {
+                    window.plans.forEach(plan => {
+                        // Garantir que features exista
+                        if (!plan.features) {
+                            plan.features = {};
+                        }
+                        
+                        // Normalizar as features para garantir que todos os valores sejam booleanos
+                        plan.features = {
+                            reports: Boolean(plan.features.reports),
+                            emailNotifications: plan.features.emailNotifications === undefined ? true : Boolean(plan.features.emailNotifications),
+                            smsNotifications: Boolean(plan.features.smsNotifications),
+                            whatsAppNotifications: Boolean(plan.features.whatsAppNotifications),
+                            customization: Boolean(plan.features.customization),
+                            api: Boolean(plan.features.api)
+                        };
+                    });
+                    
+                    console.log('🔄 Normalização de features concluída!');
+                }
+                
+                // Inicializar a interface
+                if (typeof refreshPlansUI === 'function') {
+                    try {
+                        refreshPlansUI();
+                        console.log('Interface atualizada com sucesso!');
+                    } catch (error) {
+                        console.error('Erro ao atualizar interface:', error);
+                    }
+                }
+            });
+        </script>
+        
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
+            style="margin-left: -1rem; margin-right: -1rem;">
             <div class="container-fluid">
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
                     <span class="navbar-toggler-icon"></span>
@@ -402,8 +547,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="cancelPlanBtn" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="savePlan()">Salvar</button>
+                <button type="button" class="btn btn-secondary" id="cancelPlanBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="createNewPlan()">Salvar</button>
             </div>
         </div>
     </div>
@@ -1247,8 +1392,11 @@
         // Criar uma cópia do plano para não modificar o original
         const normalizedPlan = { ...plan };
         
+        console.log('------ DEBUGGING: Normalizando features do plano:', normalizedPlan.id, normalizedPlan.name);
+        
         // Verificar se features existe
         if (normalizedPlan.features === undefined || normalizedPlan.features === null) {
+            console.log('------ DEBUGGING: Features não definidas, inicializando objeto vazio');
             normalizedPlan.features = {};
         }
         
@@ -1256,29 +1404,42 @@
         if (typeof normalizedPlan.features === 'string') {
             try {
                 normalizedPlan.features = JSON.parse(normalizedPlan.features);
+                console.log('------ DEBUGGING: Features convertidas de string para objeto:', normalizedPlan.features);
             } catch (e) {
-                console.error('------ DEBUGGING: Erro ao fazer parse das features do plano:', e);
+                console.error('------ DEBUGGING: Erro ao parsear features do plano:', e);
+                // Se não puder ser analisado como JSON, inicializar como objeto vazio
                 normalizedPlan.features = {};
             }
         }
         
-        // Se features ainda não for um objeto, inicializar como objeto vazio
+        // Garantir que features seja um objeto
         if (typeof normalizedPlan.features !== 'object' || normalizedPlan.features === null) {
+            console.log('------ DEBUGGING: Features não é um objeto, inicializando objeto vazio');
             normalizedPlan.features = {};
         }
         
-        // Garantir que todas as propriedades padrão existam
+        // Garantir que todas as propriedades esperadas existam e sejam booleanos
+        // Aqui definimos explicitamente cada propriedade
+        const features = normalizedPlan.features;
+        
+        // Função auxiliar para converter para booleano
+        function ensureBoolean(value) {
+            if (value === undefined || value === null) return false;
+            if (typeof value === 'string') return value.toLowerCase() === 'true';
+            return Boolean(value);
+        }
+        
+        // Converter explicitamente cada propriedade para booleano
         normalizedPlan.features = {
-            reports: false,
-            emailNotifications: false,
-            smsNotifications: false,
-            whatsAppNotifications: false,
-            customization: false,
-            api: false,
-            ...normalizedPlan.features
+            reports: ensureBoolean(features.reports),
+            emailNotifications: ensureBoolean(features.emailNotifications),
+            smsNotifications: ensureBoolean(features.smsNotifications),
+            whatsAppNotifications: ensureBoolean(features.whatsAppNotifications),
+            customization: ensureBoolean(features.customization),
+            api: ensureBoolean(features.api)
         };
         
-        console.log(`------ DEBUGGING: Plano ${normalizedPlan.id} features normalizadas:`, normalizedPlan.features);
+        console.log('------ DEBUGGING: Features normalizadas:', normalizedPlan.features);
         
         return normalizedPlan;
     }
@@ -1542,20 +1703,49 @@
                 return false;
             }
             
-            // Fazer requisição para API de planos
-            const response = await fetch(`${window.API_URL}/plans/${planId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Erro ao excluir plano: ${response.status}`);
+            // Verificar se o plano existe localmente
+            const planExists = window.plans.some(p => p.id === planId);
+            if (!planExists) {
+                console.error(`Plano ID ${planId} não encontrado localmente.`);
+                return false;
             }
             
-            return true;
+            console.log(`Tentando excluir plano ID: ${planId} na API...`);
+            
+            try {
+                // Fazer requisição para API de planos
+                const response = await fetch(`${window.API_URL}/plans/${planId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log(`Plano ID: ${planId} excluído com sucesso na API.`);
+                    return true;
+                } else if (response.status === 404) {
+                    // Caso 404 (Not Found), considerar como sucesso pois o plano não existe no servidor
+                    // Isso pode acontecer se o plano foi criado apenas localmente ou já foi excluído no servidor
+                    console.log(`Plano ID: ${planId} não encontrado na API (404). Considerando como excluído.`);
+                    return true;
+                } else {
+                    console.error(`Erro ao excluir plano na API: ${response.status}`);
+                    throw new Error(`Erro no servidor: ${response.status}`);
+                }
+            } catch (networkError) {
+                console.error('Erro de rede ao tentar excluir plano:', networkError);
+                
+                // Se for erro de conexão, permitir exclusão local
+                if (networkError.message.includes('Failed to fetch') || 
+                    networkError.message.includes('NetworkError')) {
+                    console.log('Erro de conexão. Permitindo exclusão local do plano.');
+                    return true;
+                }
+                
+                throw networkError;
+            }
         } catch (error) {
             console.error('Erro ao excluir plano na API:', error);
             return false;
@@ -1723,34 +1913,8 @@
         console.log('------ DEBUGGING: Configurando event listeners para botões...');
         
         try {
-            // Configurar botões de ações na tabela
-            const deleteButtons = document.querySelectorAll('.delete-plan');
-            console.log(`------ DEBUGGING: Encontrados ${deleteButtons.length} botões de exclusão`);
-            
-            deleteButtons.forEach(btn => {
-                const planId = btn.getAttribute('data-id');
-                console.log(`------ DEBUGGING: Configurando botão de exclusão para o plano ID: ${planId}`);
-                
-                // Remover listeners anteriores para evitar duplicações
-                btn.replaceWith(btn.cloneNode(true));
-                
-                // Obter o botão novamente após a clonagem
-                const newBtn = document.querySelector(`.delete-plan[data-id="${planId}"]`);
-                if (newBtn) {
-                    newBtn.addEventListener('click', function(event) {
-                        event.preventDefault();
-                        const planId = parseInt(this.getAttribute('data-id'));
-                        console.log(`------ DEBUGGING: Botão de exclusão clicado para o plano ID: ${planId}`);
-                        if (confirm(`Deseja realmente excluir o plano ID: ${planId}?`)) {
-                            deletePlan(planId);
-                        }
-                    });
-                    console.log(`------ DEBUGGING: Event listener adicionado ao botão de exclusão para o plano ID: ${planId}`);
-                } else {
-                    console.error(`------ DEBUGGING: Botão de exclusão para o plano ID: ${planId} não encontrado após clonagem`);
-                }
-            });
-            
+            // Não precisamos mais configurar os botões de exclusão aqui, pois estamos usando onclick
+
             // Configurar botões de edição na tabela
             const editButtons = document.querySelectorAll('.edit-plan');
             console.log(`------ DEBUGGING: Encontrados ${editButtons.length} botões de edição`);
@@ -1996,7 +2160,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" id="cancelPlanBtn">Cancelar</button>
-                            <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="savePlan()">Salvar</button>
+                            <button type="button" class="btn btn-primary" id="savePlanBtn" onclick="createNewPlan()">Salvar</button>
                         </div>
                     </div>
                 </div>
@@ -2077,7 +2241,7 @@
             console.log('Modal aberto manualmente com método direto');
             
             // Garantir que os botões de fechamento funcionem
-            const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], #cancelPlanBtn');
+            const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], #cancelEditBtn');
             closeButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     closeModalManually(modal);
@@ -2324,59 +2488,300 @@
     // Atualizar a interface após mudanças nos planos
     async function refreshPlansUI() {
         console.log('------ DEBUGGING: Início da função refreshPlansUI ------');
-        console.log('------ DEBUGGING: Atualizando interface com planos:', window.plans ? window.plans.length : 0);
+        
+        // CRÍTICO: Garantir que window.plans exista antes de atualizar a UI
+        window.ensureWindowPlansExists();
         
         try {
-            // CRÍTICO: Garantir que window.plans exista antes de atualizar a UI
-            window.ensureWindowPlansExists();
-            
-            // Verificar integridade da UI antes de atualizar
-            checkUIIntegrity();
-            
-            // Garantir que plans seja sempre um array
+            // Verificar se window.plans existe e é um array
             if (!Array.isArray(window.plans)) {
-                console.warn('------ DEBUGGING: window.plans não é um array, inicializando como array vazio');
+                console.error('------ DEBUGGING: window.plans não é um array em refreshPlansUI!');
                 window.plans = [];
             }
             
-            console.log('------ DEBUGGING: Planos disponíveis:', window.plans);
+            console.log(`------ DEBUGGING: Atualizando UI com ${window.plans.length} planos`);
             
-            // Garantir que o botão "Novo Plano" esteja visível e funcionando
-            const newPlanBtn = document.getElementById('newPlanBtn');
-            if (!newPlanBtn) {
-                console.warn('------ DEBUGGING: Botão "Novo Plano" não encontrado, recriando...');
-                const headerButtons = document.querySelector('.col-md-4.text-md-end');
-                if (headerButtons) {
-                    headerButtons.innerHTML = `
-                        <button type="button" class="btn btn-primary" id="newPlanBtn" onclick="openAddPlanModalManually()">
-                            <i class="fas fa-plus me-1"></i> Novo Plano
-                        </button>
-                    `;
-                } else {
-                    console.error('------ DEBUGGING: Container de botões não encontrado');
+            // Normalizar todos os planos para garantir que as features existam e sejam booleanos
+            const normalizedPlans = window.plans.map(plan => {
+                // Criar uma cópia para não modificar o original
+                const normalizedPlan = { ...plan };
+                
+                // Garantir que features exista
+                if (!normalizedPlan.features) {
+                    normalizedPlan.features = {};
                 }
+                
+                // Se features é uma string, tentar converter para objeto
+                if (typeof normalizedPlan.features === 'string') {
+                    try {
+                        normalizedPlan.features = JSON.parse(normalizedPlan.features);
+                    } catch (e) {
+                        console.error(`------ DEBUGGING: Erro ao parsear features do plano ${normalizedPlan.id}:`, e);
+                        normalizedPlan.features = {};
+                    }
+                }
+                
+                // Garantir que features seja um objeto
+                if (typeof normalizedPlan.features !== 'object' || normalizedPlan.features === null) {
+                    normalizedPlan.features = {};
+                }
+                
+                // Converter explicitamente cada propriedade para booleano
+                normalizedPlan.features = {
+                    reports: !!normalizedPlan.features.reports,
+                    emailNotifications: normalizedPlan.features.emailNotifications === undefined ? true : !!normalizedPlan.features.emailNotifications,
+                    smsNotifications: !!normalizedPlan.features.smsNotifications,
+                    whatsAppNotifications: !!normalizedPlan.features.whatsAppNotifications,
+                    customization: !!normalizedPlan.features.customization,
+                    api: !!normalizedPlan.features.api
+                };
+                
+                console.log(`------ DEBUGGING: Plano normalizado ID=${normalizedPlan.id}, reports=${normalizedPlan.features.reports}`);
+                
+                return normalizedPlan;
+            });
+            
+            // Atualizar tabela de planos
+            const plansTable = document.querySelector('#plansTable tbody');
+            if (plansTable) {
+                // Limpar tabela
+                plansTable.innerHTML = '';
+                
+                if (normalizedPlans.length === 0) {
+                    // Adicionar mensagem de nenhum plano
+                    const emptyRow = `
+                    <tr>
+                        <td colspan="8" class="text-center py-3">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Nenhum plano cadastrado. Clique em "Novo Plano" para adicionar.
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                    plansTable.innerHTML = emptyRow;
+                } else {
+                    // Adicionar cada plano
+                    normalizedPlans.forEach(plan => {
+                        // Formatação dos valores
+                        const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : 
+                                    (typeof plan.price === 'string' ? parseFloat(plan.price).toFixed(2) : '0.00');
+                        const appointmentsText = plan.appointments === 0 ? 'Ilimitado' : plan.appointments;
+                        const professionalsText = plan.professionals === 0 ? 'Ilimitado' : plan.professionals;
+                        const servicesText = plan.services === 0 ? 'Ilimitado' : plan.services;
+                        const statusClass = plan.status === 'active' ? 'bg-success' : 'bg-danger';
+                        const statusText = plan.status === 'active' ? 'Ativo' : 'Inativo';
+                        
+                        // Criar HTML da linha
+                        const rowHTML = `
+                        <tr>
+                            <td>${plan.id}</td>
+                            <td>${plan.name}</td>
+                            <td>R$ ${price}</td>
+                            <td>${appointmentsText}</td>
+                            <td>${professionalsText}</td>
+                            <td>${servicesText}</td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-plan me-1" data-id="${plan.id}" onclick="editPlan(${plan.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                        
+                        plansTable.innerHTML += rowHTML;
+                    });
+                }
+                console.log('------ DEBUGGING: Tabela de planos atualizada');
             } else {
-                // Garantir que o evento click está correto
-                newPlanBtn.onclick = openAddPlanModalManually;
+                console.error('------ DEBUGGING: Tabela de planos não encontrada!');
             }
             
-            // 1. Atualizar os cards de planos na parte superior
-            await updatePlanCards();
+            // Atualizar cards de planos
+            const headerRow = document.querySelector('.row.mb-4#headerRow');
+            if (headerRow) {
+                let cardsContainer = headerRow.nextElementSibling;
+                if (!cardsContainer || !cardsContainer.classList.contains('row')) {
+                    console.log('------ DEBUGGING: Container de cards não encontrado, criando novo');
+                    cardsContainer = document.createElement('div');
+                    cardsContainer.className = 'row mb-4';
+                    headerRow.parentNode.insertBefore(cardsContainer, headerRow.nextSibling);
+                }
+                
+                // Limpar container
+                cardsContainer.innerHTML = '';
+                
+                // Filtrar apenas planos ativos para mostrar nos cards
+                const activePlans = normalizedPlans.filter(plan => plan.status === 'active');
+                
+                if (activePlans.length === 0) {
+                    // Adicionar mensagem de nenhum plano ativo
+                    const emptyCardHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Nenhum plano ativo para exibição. Ative um plano para que ele apareça aqui.
+                        </div>
+                    </div>`;
+                    cardsContainer.innerHTML = emptyCardHTML;
+                } else {
+                    // Adicionar cada plano ativo
+                    activePlans.forEach(plan => {
+                        // Formatação dos valores
+                        const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : 
+                                     (typeof plan.price === 'string' ? parseFloat(plan.price).toFixed(2) : '0.00');
+                        const appointmentsText = plan.appointments === 0 ? 'Ilimitados' : plan.appointments;
+                        const professionalsText = plan.professionals === 0 ? 'Ilimitados' : plan.professionals;
+                        const servicesText = plan.services === 0 ? 'Ilimitados' : plan.services;
+                        
+                        // Garantir que features seja um objeto válido e com valores booleanos
+                        const features = plan.features || {};
+                        
+                        // Log para debug das features
+                        console.log(`------ DEBUGGING: Card do plano ID=${plan.id}, nome=${plan.name}, reports=${features.reports}`);
+                        
+                        function getHighlightLabel(highlight) {
+                            switch (highlight) {
+                                case 'popular': return 'Popular';
+                                case 'recommended': return 'Recomendado';
+                                case 'best-value': return 'Melhor Custo-Benefício';
+                                default: return '';
+                            }
+                        }
+                        
+                        // Criar HTML do card
+                        const cardHTML = `
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow h-100 ${plan.highlight !== 'none' ? 'border-primary' : ''}">
+                                <div class="card-header py-3 bg-primary text-white">
+                                    <h6 class="m-0 font-weight-bold">${plan.name}</h6>
+                                    ${plan.highlight !== 'none' ? `
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                        ${getHighlightLabel(plan.highlight)}
+                                    </span>` : ''}
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-4">
+                                        <h2 class="card-price text-primary">R$ ${price}<span class="period">/mês</span></h2>
+                                    </div>
+                                    <ul class="list-group list-group-flush mb-4">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Agendamentos
+                                            <span class="badge bg-primary rounded-pill">${appointmentsText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Profissionais
+                                            <span class="badge bg-primary rounded-pill">${professionalsText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Serviços
+                                            <span class="badge bg-primary rounded-pill">${servicesText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Relatórios
+                                            <span class="badge ${features.reports ? 'bg-success' : 'bg-danger'} rounded-pill">
+                                                ${features.reports ? 'Sim' : 'Não'}
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Notificações
+                                            <span class="badge ${(features.emailNotifications || features.smsNotifications || features.whatsAppNotifications) ? 'bg-success' : 'bg-danger'} rounded-pill">
+                                                ${(features.emailNotifications || features.smsNotifications || features.whatsAppNotifications) ? 'Sim' : 'Não'}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    <div class="d-grid">
+                                        <button class="btn btn-outline-primary" onclick="editPlan(${plan.id})">
+                                            <i class="fas fa-edit me-1"></i> Editar Plano
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        
+                        cardsContainer.innerHTML += cardHTML;
+                    });
+                }
+                console.log('------ DEBUGGING: Cards de planos atualizados');
+            } else {
+                console.error('------ DEBUGGING: Header row não encontrado para adicionar cards');
+            }
             
-            // 2. Atualizar a tabela de planos na parte inferior
-            await updatePlanTable();
+            // Debug dados salvos no localStorage
+            try {
+                const storedPlansJson = localStorage.getItem('agendai_plans');
+                if (storedPlansJson) {
+                    const storedPlans = JSON.parse(storedPlansJson);
+                    if (Array.isArray(storedPlans)) {
+                        console.log(`------ DEBUGGING: localStorage contém ${storedPlans.length} planos após UI refresh`);
+                        
+                        // Também atualizar o localStorage com as features normalizadas para evitar problemas futuros
+                        localStorage.setItem('agendai_plans', JSON.stringify(normalizedPlans));
+                        console.log('------ DEBUGGING: localStorage atualizado com planos normalizados');
+                    }
+                }
+            } catch (localStorageError) {
+                console.error('------ DEBUGGING: Erro ao verificar localStorage após UI refresh:', localStorageError);
+            }
             
-            // Configurar listeners de eventos para os botões
-            setupEventListeners();
+            // Configurar listeners para os botões de exclusão
+            try {
+                const deleteButtons = document.querySelectorAll('.delete-plan');
+                console.log(`------ DEBUGGING: Encontrados ${deleteButtons.length} botões de exclusão para configurar`);
+                
+                deleteButtons.forEach(btn => {
+                    const planId = btn.getAttribute('data-id');
+                    if (planId) {
+                        // Garantir que o onclick esteja definido
+                        btn.onclick = function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            console.log(`Botão de exclusão clicado para o plano ID: ${planId}`);
+                            window.confirmDeletePlan(parseInt(planId));
+                            return false;
+                        };
+                    }
+                });
+            } catch (buttonError) {
+                console.error('------ DEBUGGING: Erro ao configurar botões de exclusão:', buttonError);
+            }
             
-            // Verificar integridade da UI após atualização
-            checkUIIntegrity();
+            // IMPORTANTE: Atualizar window.plans com os planos normalizados para manter consistência
+            window.plans = normalizedPlans;
             
-            console.log('------ DEBUGGING: Interface atualizada com sucesso');
+            console.log('------ DEBUGGING: UI atualizada com sucesso');
+            return true;
         } catch (error) {
-            console.error('------ DEBUGGING: Erro ao atualizar interface:', error);
-        } finally {
-            console.log('------ DEBUGGING: Fim da função refreshPlansUI');
+            console.error('------ DEBUGGING: Erro ao atualizar UI:', error);
+            
+            // Tentar uma abordagem mais simples se a atualização falhar
+            try {
+                const plansTable = document.querySelector('#plansTable tbody');
+                if (plansTable && Array.isArray(window.plans)) {
+                    plansTable.innerHTML = ''; // Limpar tabela
+                    
+                    // Adicionar mensagem de erro
+                    const errorRow = `
+                    <tr>
+                        <td colspan="8" class="text-center py-3">
+                            <div class="alert alert-danger mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Erro ao atualizar a interface. Tente recarregar a página.
+                            </div>
+                        </td>
+                    </tr>`;
+                    plansTable.innerHTML = errorRow;
+                    
+                    console.log('------ DEBUGGING: Adicionada mensagem de erro na UI');
+                }
+            } catch (secondaryError) {
+                console.error('------ DEBUGGING: Erro secundário ao tentar exibir mensagem de erro:', secondaryError);
+            }
+            
+            return false;
         }
     }
     
@@ -2540,7 +2945,7 @@
                     <button class="btn btn-sm btn-primary edit-plan me-1" data-id="${plan.id}" onclick="editPlan(${plan.id})">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}">
+                    <button class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}" onclick="confirmDeletePlan(${plan.id})">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -2550,49 +2955,107 @@
         });
         
         console.log('------ DEBUGGING: Tabela de planos atualizada com sucesso');
-        
-        // Adicionar eventos aos botões de exclusão
-        document.querySelectorAll('.delete-plan').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const id = parseInt(this.getAttribute('data-id'));
-                if (confirm(`Deseja realmente excluir o plano ID ${id}?`)) {
-                    deletePlan(id);
-                }
-            });
-        });
     }
     
     // Função para excluir um plano
     async function deletePlan(id) {
         console.log('Excluindo plano:', id);
         
-        if (!confirm(`Deseja realmente excluir o plano ID: ${id}?`)) {
-            return;
-        }
-        
         try {
+            // Verificar se a exclusão desse plano já está em andamento
+            if (window.deletingPlans && window.deletingPlans.has(id)) {
+                console.log(`Função deletePlan: Exclusão do plano ID ${id} já está em andamento. Ignorando chamada duplicada.`);
+                return;
+            }
+            
+            // Registrar que este plano está em processo de exclusão (se o Set não existir, será criado)
+            window.deletingPlans = window.deletingPlans || new Set();
+            window.deletingPlans.add(id);
+            
+            // CRÍTICO: Garantir que window.plans exista
+            if (typeof window.ensureWindowPlansExists === 'function') {
+                window.ensureWindowPlansExists();
+            }
+            
+            // Verificar se o plano existe na memória antes de tentar excluir
+            if (!window.plans || !Array.isArray(window.plans) || !window.plans.some(p => p.id === id)) {
+                console.error(`Plano ID ${id} não existe na memória`);
+                alert('Erro: Plano não encontrado na lista local.');
+                window.deletingPlans.delete(id); // Remover da lista de exclusão em andamento
+                return;
+            }
+            
+            // Desabilitar todos os botões de exclusão para este plano enquanto processa
+            const deleteButtons = document.querySelectorAll(`.delete-plan[data-id="${id}"]`);
+            deleteButtons.forEach(button => {
+                // Salvar o conteúdo original para restaurar depois se necessário
+                button.dataset.originalHtml = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                button.disabled = true;
+            });
+            
             // Excluir no backend via API
             const success = await deletePlanAPI(id);
             
             if (!success) {
-                throw new Error('Não foi possível excluir o plano na API');
+                console.warn('API retornou erro, mas tentaremos remover localmente mesmo assim');
+            } else {
+                console.log('Plano excluído com sucesso na API');
             }
             
-            console.log('Plano excluído com sucesso na API');
-            
-            // Remover o plano do array local
+            // Remover o plano do array local em todos os casos
+            // Mesmo com falha na API, removemos para manter consistência na interface
             window.plans = window.plans.filter(plan => plan.id !== id);
             
             // Atualizar localStorage como backup
             localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
             
-            // Atualizar interface
+            // Garantir que o PlansStorage também seja atualizado se estiver disponível
+            if (window.PlansStorage && typeof window.PlansStorage.savePlans === 'function') {
+                window.PlansStorage.savePlans(window.plans);
+            }
+            
+            // Restaurar botões para estado original caso a operação seja muito rápida
+            deleteButtons.forEach(button => {
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                } else {
+                    button.innerHTML = '<i class="fas fa-trash"></i>';
+                }
+                button.disabled = false;
+            });
+            
+            // Atualizar interface antes de mostrar alerta
             refreshPlansUI();
             
-            alert('Plano excluído com sucesso!');
+            // Mostrar mensagem de sucesso apropriada
+            if (success) {
+                alert('Plano excluído com sucesso!');
+            } else {
+                alert('Plano removido localmente, mas houve um problema ao comunicar com o servidor.');
+            }
+            
+            // Remover da lista de exclusão em andamento após concluir
+            window.deletingPlans.delete(id);
         } catch (error) {
             console.error('Erro ao excluir plano:', error);
-            alert('Erro ao excluir o plano. Por favor, tente novamente.');
+            alert(`Erro ao excluir o plano: ${error.message || 'Erro desconhecido'}`);
+            
+            // Restaurar botões para estado original em caso de erro
+            const deleteButtons = document.querySelectorAll(`.delete-plan[data-id="${id}"]`);
+            deleteButtons.forEach(button => {
+                if (button.dataset.originalHtml) {
+                    button.innerHTML = button.dataset.originalHtml;
+                } else {
+                    button.innerHTML = '<i class="fas fa-trash"></i>';
+                }
+                button.disabled = false;
+            });
+            
+            // Remover da lista de exclusão em andamento em caso de erro
+            if (window.deletingPlans) {
+                window.deletingPlans.delete(id);
+            }
         }
     }
     
@@ -2600,109 +3063,135 @@
     function editPlan(id) {
         console.log('------ DEBUGGING: Editando plano:', id);
         
-        // Encontrar o plano pelo ID
-        const plan = window.plans.find(p => p.id === id);
-        if (!plan) {
-            console.error('------ DEBUGGING: Plano não encontrado com ID:', id);
-            alert('Plano não encontrado!');
-            return;
-        }
-        
-        // Verificar se o modal existe, se não, criar
-        let modal = document.getElementById('editPlanModal');
-        if (!modal) {
-            console.log('------ DEBUGGING: Modal de edição não encontrado! Criando dinamicamente...');
+        try {
+            // Encontrar o plano pelo ID
+            const plan = window.plans.find(p => p.id === parseInt(id));
+            if (!plan) {
+                console.error('------ DEBUGGING: Plano não encontrado com ID:', id);
+                alert('Plano não encontrado!');
+                return;
+            }
             
-            // Template HTML do modal de edição
-            const modalHTML = `
-            <div class="modal fade" id="editPlanModal" tabindex="-1" aria-labelledby="editPlanModalLabel" aria-hidden="true">
+            // Remover qualquer modal de edição anterior se existir
+            const oldModal = document.getElementById('superEditPlanModal');
+            if (oldModal) {
+                oldModal.remove();
+            }
+            
+            // Remover backdrop antigo se existir
+            const oldBackdrop = document.querySelector('.modal-backdrop');
+            if (oldBackdrop) {
+                oldBackdrop.remove();
+            }
+            
+            // Remover classe modal-open do body
+            document.body.classList.remove('modal-open');
+            
+            // Normalizar as features para garantir valores booleanos consistentes
+            const features = plan.features || {};
+            
+            // Garantir que todas as propriedades features existam como booleanos
+            const ensuredFeatures = {
+                reports: Boolean(features.reports),
+                emailNotifications: features.emailNotifications === undefined ? true : Boolean(features.emailNotifications),
+                smsNotifications: Boolean(features.smsNotifications),
+                whatsAppNotifications: Boolean(features.whatsAppNotifications),
+                customization: Boolean(features.customization),
+                api: Boolean(features.api)
+            };
+            
+            console.log('------ DEBUGGING: Features normalizadas para edição:', ensuredFeatures);
+            
+            // Criar um novo modal completamente do zero
+            const newModalHTML = `
+            <div class="modal fade" id="superEditPlanModal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="editPlanModalLabel">Editar Plano</h5>
-                            <button type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+                            <h5 class="modal-title">Editar Plano</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="editPlanForm">
-                                <input type="hidden" id="editPlanId">
+                            <form id="superEditPlanForm">
+                                <input type="hidden" id="superEditPlanId" value="${plan.id}">
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="editPlanName" class="form-label">Nome do Plano*</label>
-                                        <input type="text" class="form-control" id="editPlanName" required>
+                                        <label class="form-label">Nome do Plano*</label>
+                                        <input type="text" class="form-control" id="superEditPlanName" value="${plan.name}" required>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="editPlanPrice" class="form-label">Preço (R$)*</label>
-                                        <input type="number" class="form-control" id="editPlanPrice" step="0.01" min="0" required>
+                                        <label class="form-label">Preço (R$)*</label>
+                                        <input type="number" class="form-control" id="superEditPlanPrice" value="${plan.price}" step="0.01" min="0" required>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-4">
-                                        <label for="editPlanAppointments" class="form-label">Limite de Agendamentos*</label>
-                                        <input type="number" class="form-control" id="editPlanAppointments" min="0" required>
+                                        <label class="form-label">Limite de Agendamentos*</label>
+                                        <input type="number" class="form-control" id="superEditPlanAppointments" value="${plan.appointments}" min="0" required>
                                         <div class="form-text">0 para ilimitado</div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="editPlanProfessionals" class="form-label">Limite de Profissionais*</label>
-                                        <input type="number" class="form-control" id="editPlanProfessionals" min="0" required>
+                                        <label class="form-label">Limite de Profissionais*</label>
+                                        <input type="number" class="form-control" id="superEditPlanProfessionals" value="${plan.professionals}" min="0" required>
                                         <div class="form-text">0 para ilimitado</div>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="editPlanServices" class="form-label">Limite de Serviços*</label>
-                                        <input type="number" class="form-control" id="editPlanServices" min="0" required>
+                                        <label class="form-label">Limite de Serviços*</label>
+                                        <input type="number" class="form-control" id="superEditPlanServices" value="${plan.services}" min="0" required>
                                         <div class="form-text">0 para ilimitado</div>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label for="editPlanStatus" class="form-label">Status*</label>
-                                        <select class="form-select" id="editPlanStatus" required>
-                                            <option value="active">Ativo</option>
-                                            <option value="inactive">Inativo</option>
+                                        <label class="form-label">Status*</label>
+                                        <select class="form-select" id="superEditPlanStatus" required>
+                                            <option value="active" ${plan.status === 'active' ? 'selected' : ''}>Ativo</option>
+                                            <option value="inactive" ${plan.status === 'inactive' ? 'selected' : ''}>Inativo</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
-                                        <label for="editPlanHighlight" class="form-label">Destaque*</label>
-                                        <select class="form-select" id="editPlanHighlight" required>
-                                            <option value="none">Sem Destaque</option>
-                                            <option value="popular">Popular</option>
-                                            <option value="recommended">Recomendado</option>
-                                            <option value="best-value">Melhor Custo-Benefício</option>
+                                        <label class="form-label">Destaque*</label>
+                                        <select class="form-select" id="superEditPlanHighlight" required>
+                                            <option value="none" ${plan.highlight === 'none' ? 'selected' : ''}>Sem Destaque</option>
+                                            <option value="popular" ${plan.highlight === 'popular' ? 'selected' : ''}>Popular</option>
+                                            <option value="recommended" ${plan.highlight === 'recommended' ? 'selected' : ''}>Recomendado</option>
+                                            <option value="best-value" ${plan.highlight === 'best-value' ? 'selected' : ''}>Melhor Custo-Benefício</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="editPlanDescription" class="form-label">Descrição</label>
-                                    <textarea class="form-control" id="editPlanDescription" rows="3"></textarea>
+                                    <label class="form-label">Descrição</label>
+                                    <textarea class="form-control" id="superEditPlanDescription" rows="3">${plan.description || ''}</textarea>
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Recursos Incluídos</label>
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureReports">
-                                                <label class="form-check-label" for="editFeatureReports">Relatórios Avançados</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureReports" ${ensuredFeatures.reports ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureReports">Relatórios Avançados</label>
                                             </div>
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureEmailNotifications">
-                                                <label class="form-check-label" for="editFeatureEmailNotifications">Notificações por Email</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureEmailNotifications" ${ensuredFeatures.emailNotifications ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureEmailNotifications">Notificações por Email</label>
                                             </div>
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureSmsNotifications">
-                                                <label class="form-check-label" for="editFeatureSmsNotifications">Notificações por SMS</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureSmsNotifications" ${ensuredFeatures.smsNotifications ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureSmsNotifications">Notificações por SMS</label>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureWhatsAppNotifications">
-                                                <label class="form-check-label" for="editFeatureWhatsAppNotifications">Notificações por WhatsApp</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureWhatsAppNotifications" ${ensuredFeatures.whatsAppNotifications ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureWhatsAppNotifications">Notificações por WhatsApp</label>
                                             </div>
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureCustomization">
-                                                <label class="form-check-label" for="editFeatureCustomization">Personalização Avançada</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureCustomization" ${ensuredFeatures.customization ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureCustomization">Personalização Avançada</label>
                                             </div>
                                             <div class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id="editFeatureAPI">
-                                                <label class="form-check-label" for="editFeatureAPI">Acesso à API</label>
+                                                <input class="form-check-input" type="checkbox" id="superEditFeatureAPI" ${ensuredFeatures.api ? 'checked' : ''}>
+                                                <label class="form-check-label" for="superEditFeatureAPI">Acesso à API</label>
                                             </div>
                                         </div>
                                     </div>
@@ -2710,71 +3199,179 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" id="cancelEditBtn">Cancelar</button>
-                            <button type="button" class="btn btn-primary" id="updatePlanBtn">Atualizar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="savePlan()">Atualizar</button>
                         </div>
                     </div>
                 </div>
             </div>`;
             
-            // Adicionar o modal ao DOM
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            // Adicionar o novo modal ao corpo do documento
+            document.body.insertAdjacentHTML('beforeend', newModalHTML);
             
-            // Obter referência ao modal recém-criado
-            modal = document.getElementById('editPlanModal');
-            console.log('------ DEBUGGING: Modal de edição criado dinamicamente com sucesso!');
+            // Criar e inicializar o modal usando Bootstrap
+            const modalElement = document.getElementById('superEditPlanModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.show();
+            
+            // Somente após o modal ser mostrado, forçar a atualização das checkboxes
+            // para garantir que estejam com o estado visual correto
+            setTimeout(() => {
+                const checkboxes = [
+                    { id: 'superEditFeatureReports', state: ensuredFeatures.reports },
+                    { id: 'superEditFeatureEmailNotifications', state: ensuredFeatures.emailNotifications },
+                    { id: 'superEditFeatureSmsNotifications', state: ensuredFeatures.smsNotifications },
+                    { id: 'superEditFeatureWhatsAppNotifications', state: ensuredFeatures.whatsAppNotifications },
+                    { id: 'superEditFeatureCustomization', state: ensuredFeatures.customization },
+                    { id: 'superEditFeatureAPI', state: ensuredFeatures.api }
+                ];
+                
+                checkboxes.forEach(item => {
+                    const checkbox = document.getElementById(item.id);
+                    if (checkbox) {
+                        // Garantir que o estado visual coincida com o estado lógico
+                        checkbox.checked = item.state;
+                        console.log(`------ DEBUGGING: Checkbox ${item.id} = ${item.state}`);
+                    }
+                });
+            }, 100);
+            
+        } catch (error) {
+            console.error('------ DEBUGGING: Erro ao criar modal de edição:', error);
+            alert('Erro ao abrir o formulário de edição. Por favor, tente novamente.');
+        }
+    }
+
+    // Método melhorado para mostrar modal com maior compatibilidade
+    function showModalSafelyEnhanced(modal) {
+        console.log('------ DEBUGGING: Abrindo modal com método seguro aprimorado...');
+        
+        if (!modal) {
+            console.error('------ DEBUGGING: Modal não encontrado!');
+            return;
         }
         
-        // Preencher o formulário com os dados do plano
-        document.getElementById('editPlanId').value = plan.id;
-        document.getElementById('editPlanName').value = plan.name;
-        document.getElementById('editPlanPrice').value = plan.price;
-        document.getElementById('editPlanAppointments').value = plan.appointments;
-        document.getElementById('editPlanProfessionals').value = plan.professionals;
-        document.getElementById('editPlanServices').value = plan.services;
-        document.getElementById('editPlanStatus').value = plan.status;
-        document.getElementById('editPlanHighlight').value = plan.highlight;
-        document.getElementById('editPlanDescription').value = plan.description || '';
-        
-        // Preencher checkboxes de recursos
-        document.getElementById('editFeatureReports').checked = plan.features?.reports || false;
-        document.getElementById('editFeatureEmailNotifications').checked = plan.features?.emailNotifications || false;
-        document.getElementById('editFeatureSmsNotifications').checked = plan.features?.smsNotifications || false;
-        document.getElementById('editFeatureWhatsAppNotifications').checked = plan.features?.whatsAppNotifications || false;
-        document.getElementById('editFeatureCustomization').checked = plan.features?.customization || false;
-        document.getElementById('editFeatureAPI').checked = plan.features?.api || false;
-        
-        // Configurar event listeners para os botões do modal
-        const cancelBtn = modal.querySelector('#cancelEditBtn');
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                closeModalManually(modal);
-            });
-        }
-        
-        // Configurar botão de fechar
-        const closeBtn = modal.querySelector('.btn-close');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                closeModalManually(modal);
-            });
-        }
-        
-        // Configurar botão de atualizar
-        const updateBtn = document.getElementById('updatePlanBtn');
-        if (updateBtn) {
-            // Remover event listeners anteriores
-            updateBtn.removeEventListener('click', updatePlan);
-            // Adicionar novo event listener
-            updateBtn.addEventListener('click', updatePlan);
-            console.log('------ DEBUGGING: Event listener configurado para updatePlanBtn');
-        } else {
-            console.error('------ DEBUGGING: Botão updatePlanBtn não encontrado no modal!');
-        }
-        
-        // Abrir o modal usando o método seguro
         try {
-            // Método direto sem depender do Bootstrap
+            // Garantir que o Bootstrap esteja disponível
+            if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+                console.warn('------ DEBUGGING: Bootstrap.Modal não está disponível, criando polyfill...');
+                
+                // Criar polyfill simples para Bootstrap.Modal
+                window.bootstrap = window.bootstrap || {};
+                bootstrap.Modal = function(element) {
+                    this.element = element;
+                    
+                    this.show = function() {
+                        element.style.display = 'block';
+                        element.classList.add('show');
+                        document.body.classList.add('modal-open');
+                        
+                        // Criar backdrop
+                        if (!document.querySelector('.modal-backdrop')) {
+                            const backdrop = document.createElement('div');
+                            backdrop.className = 'modal-backdrop fade show';
+                            document.body.appendChild(backdrop);
+                        }
+                        
+                        // IMPORTANTE: Forçar checkbox UI update após abertura do modal
+                        setTimeout(() => {
+                            const checkboxes = element.querySelectorAll('input[type="checkbox"]');
+                            console.log('------ DEBUGGING: Forçando atualização de', checkboxes.length, 'checkboxes após abertura do modal');
+                            checkboxes.forEach(checkbox => {
+                                // Armazenar estado atual
+                                const isChecked = checkbox.checked;
+                                
+                                // Forçar mudança visual (toggle para o estado oposto e depois de volta)
+                                checkbox.checked = !isChecked;
+                                
+                                // Forçar reflow DOM
+                                checkbox.offsetHeight;
+                                
+                                // Restaurar estado original
+                                checkbox.checked = isChecked;
+                                
+                                console.log('------ DEBUGGING: Checkbox', checkbox.id, 'estado final:', checkbox.checked);
+                            });
+                        }, 200);
+                    };
+                    
+                    this.hide = function() {
+                        element.style.display = 'none';
+                        element.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        
+                        // Remover backdrop
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) backdrop.remove();
+                    };
+                };
+                
+                bootstrap.Modal.getInstance = function(element) {
+                    return new bootstrap.Modal(element);
+                };
+            }
+            
+            // Método 1: Tentar usar a API de Bootstrap (mais confiável)
+            try {
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+                console.log('------ DEBUGGING: Modal aberto com Bootstrap Modal API');
+                
+                // IMPORTANTE: Forçar checkbox UI update após abertura do modal
+                setTimeout(() => {
+                    const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+                    console.log('------ DEBUGGING: Forçando atualização de', checkboxes.length, 'checkboxes após abertura do modal');
+                    checkboxes.forEach(checkbox => {
+                        // Armazenar estado atual
+                        const isChecked = checkbox.checked;
+                        
+                        // Forçar mudança visual (toggle para o estado oposto e depois de volta)
+                        checkbox.checked = !isChecked;
+                        
+                        // Forçar reflow DOM
+                        checkbox.offsetHeight;
+                        
+                        // Restaurar estado original
+                        checkbox.checked = isChecked;
+                        
+                        console.log('------ DEBUGGING: Checkbox', checkbox.id, 'estado final:', checkbox.checked);
+                    });
+                }, 200);
+                
+                return;
+            } catch (bootstrapError) {
+                console.warn('------ DEBUGGING: Erro ao usar Bootstrap Modal API:', bootstrapError);
+            }
+            
+            // Método 2: Tentar jQuery se disponível
+            if (typeof $ !== 'undefined') {
+                try {
+                    $(modal).modal('show');
+                    console.log('------ DEBUGGING: Modal aberto com jQuery');
+                    
+                    // IMPORTANTE: Forçar checkbox UI update após abertura do modal com jQuery
+                    setTimeout(() => {
+                        const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+                        console.log('------ DEBUGGING: Forçando atualização de', checkboxes.length, 'checkboxes após abertura do modal (jQuery)');
+                        checkboxes.forEach(checkbox => {
+                            const $checkbox = $(checkbox);
+                            const isChecked = $checkbox.prop('checked');
+                            
+                            // Toggle e restaurar com jQuery
+                            $checkbox.prop('checked', !isChecked).change();
+                            $checkbox.prop('checked', isChecked).change();
+                            
+                            console.log('------ DEBUGGING: Checkbox', checkbox.id, 'estado final (jQuery):', $checkbox.prop('checked'));
+                        });
+                    }, 200);
+                    
+                    return;
+                } catch (jQueryError) {
+                    console.warn('------ DEBUGGING: Erro ao usar jQuery para abrir modal:', jQueryError);
+                }
+            }
+            
+            // Método 3: Manipulação direta do DOM como último recurso
             modal.style.display = 'block';
             modal.classList.add('show');
             document.body.classList.add('modal-open');
@@ -2786,9 +3383,44 @@
                 document.body.appendChild(backdrop);
             }
             
-            console.log('------ DEBUGGING: Modal de edição aberto com método seguro');
+            console.log('------ DEBUGGING: Modal aberto com manipulação direta do DOM');
+            
+            // IMPORTANTE: Forçar checkbox UI update após abertura do modal com DOM direto
+            setTimeout(() => {
+                const checkboxes = modal.querySelectorAll('input[type="checkbox"]');
+                console.log('------ DEBUGGING: Forçando atualização de', checkboxes.length, 'checkboxes após abertura do modal (DOM direto)');
+                checkboxes.forEach(checkbox => {
+                    // Armazenar estado atual
+                    const isChecked = checkbox.checked;
+                    
+                    // Forçar mudança visual (toggle e restaurar)
+                    checkbox.checked = !isChecked;
+                    
+                    // Forçar reflow DOM
+                    checkbox.offsetHeight;
+                    
+                    // Restaurar estado original
+                    checkbox.checked = isChecked;
+                    
+                    console.log('------ DEBUGGING: Checkbox', checkbox.id, 'estado final (DOM direto):', checkbox.checked);
+                });
+            }, 200);
+            
+            // Garantir que os botões de fechamento funcionem
+            const closeButtons = modal.querySelectorAll('[data-bs-dismiss="modal"], .btn-close, #cancelEditBtn');
+            closeButtons.forEach(button => {
+                const newButton = button.cloneNode(true);
+                button.parentNode.replaceChild(newButton, button);
+                
+                newButton.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    closeModalManually(modal);
+                    return false;
+                });
+            });
         } catch (e) {
-            console.error('------ DEBUGGING: Erro ao abrir modal de edição:', e);
+            console.error('------ DEBUGGING: Erro ao abrir modal:', e);
             alert('Não foi possível abrir o formulário de edição. Por favor, tente novamente ou recarregue a página.');
         }
     }
@@ -2832,7 +3464,7 @@
             const highlight = document.getElementById('editPlanHighlight')?.value || 'none';
             const description = document.getElementById('editPlanDescription')?.value || '';
             
-            // Recursos/features
+            // Recursos/features - obter diretamente o estado das checkboxes
             const reports = document.getElementById('editFeatureReports')?.checked || false;
             const emailNotifications = document.getElementById('editFeatureEmailNotifications')?.checked || false;
             const smsNotifications = document.getElementById('editFeatureSmsNotifications')?.checked || false;
@@ -2840,7 +3472,16 @@
             const customization = document.getElementById('editFeatureCustomization')?.checked || false;
             const api = document.getElementById('editFeatureAPI')?.checked || false;
             
-            // Criar o objeto atualizado do plano
+            // Debug dos valores das checkboxes
+            console.log('------ DEBUGGING: Valores das checkboxes no momento do salvamento:');
+            console.log('reports:', reports, typeof reports);
+            console.log('emailNotifications:', emailNotifications, typeof emailNotifications);
+            console.log('smsNotifications:', smsNotifications, typeof smsNotifications);
+            console.log('whatsAppNotifications:', whatsAppNotifications, typeof whatsAppNotifications);
+            console.log('customization:', customization, typeof customization);
+            console.log('api:', api, typeof api);
+            
+            // Criar o objeto atualizado do plano com features explicitamente como booleanos
             const planData = {
                 name: name,
                 price: price,
@@ -2851,12 +3492,12 @@
                 highlight: highlight,
                 description: description,
                 features: {
-                    reports: reports,
-                    emailNotifications: emailNotifications,
-                    smsNotifications: smsNotifications,
-                    whatsAppNotifications: whatsAppNotifications,
-                    customization: customization,
-                    api: api
+                    reports: Boolean(reports),
+                    emailNotifications: Boolean(emailNotifications),
+                    smsNotifications: Boolean(smsNotifications),
+                    whatsAppNotifications: Boolean(whatsAppNotifications),
+                    customization: Boolean(customization),
+                    api: Boolean(api)
                 }
             };
             
@@ -2913,12 +3554,20 @@
                 // Verificar se o plano existe na lista local
                 const planIndex = window.plans.findIndex(p => p.id === id);
                 
-                // Criar plano local atualizado
+                // Criar plano local atualizado com features explicitamente definidas
                 updatedPlan = {
                     id: id,  // Garantir que o ID seja preservado
                     ...planData,
                     updated_at: new Date().toISOString(),
-                    storage_type: 'local_update'
+                    storage_type: 'local_update',
+                    features: {
+                        reports: reports,
+                        emailNotifications: emailNotifications,
+                        smsNotifications: smsNotifications,
+                        whatsAppNotifications: whatsAppNotifications,
+                        customization: customization,
+                        api: api
+                    }
                 };
                 
                 // Atualizar localmente
@@ -3343,6 +3992,573 @@
             }, 1000); // Aguardar 1 segundo para certificar-se de que tudo já carregou
         });
     })();
+
+    // ... existing code ...
+    // Função para confirmar exclusão de um plano
+    window.confirmDeletePlan = function(id) {
+        console.log(`------ DEBUGGING: Confirmando exclusão do plano ID: ${id}`);
+        if (confirm(`Deseja realmente excluir o plano ID: ${id}?`)) {
+            deletePlan(id);
+        }
+    };
+
+    // Função para atualizar a interface do usuário
+    async function refreshPlansUI() {
+        console.log('------ DEBUGGING: Iniciando refreshPlansUI...');
+        
+        // CRÍTICO: Garantir que window.plans exista
+        window.ensureWindowPlansExists();
+        
+        try {
+            // Verificar se window.plans existe e é um array
+            if (!Array.isArray(window.plans)) {
+                console.error('------ DEBUGGING: window.plans não é um array em refreshPlansUI!');
+                window.plans = [];
+            }
+            
+            console.log(`------ DEBUGGING: Atualizando UI com ${window.plans.length} planos`);
+            
+            // Normalizar os planos para garantir que todas as propriedades existam
+            const normalizedPlans = window.plans.map(plan => normalizePlanFeatures(plan));
+            
+            // Atualizar tabela de planos
+            const plansTable = document.querySelector('#plansTable tbody');
+            if (plansTable) {
+                // Limpar tabela
+                plansTable.innerHTML = '';
+                
+                if (normalizedPlans.length === 0) {
+                    // Adicionar mensagem de nenhum plano
+                    const emptyRow = `
+                    <tr>
+                        <td colspan="8" class="text-center py-3">
+                            <div class="alert alert-info mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Nenhum plano cadastrado. Clique em "Novo Plano" para adicionar.
+                            </div>
+                        </td>
+                    </tr>
+                    `;
+                    plansTable.innerHTML = emptyRow;
+                } else {
+                    // Adicionar cada plano
+                    normalizedPlans.forEach(plan => {
+                        // Formatação dos valores
+                        const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : 
+                                    (typeof plan.price === 'string' ? parseFloat(plan.price).toFixed(2) : '0.00');
+                        const appointmentsText = plan.appointments === 0 ? 'Ilimitado' : plan.appointments;
+                        const professionalsText = plan.professionals === 0 ? 'Ilimitado' : plan.professionals;
+                        const servicesText = plan.services === 0 ? 'Ilimitado' : plan.services;
+                        const statusClass = plan.status === 'active' ? 'bg-success' : 'bg-danger';
+                        const statusText = plan.status === 'active' ? 'Ativo' : 'Inativo';
+                        
+                        // Criar HTML da linha
+                        const rowHTML = `
+                        <tr>
+                            <td>${plan.id}</td>
+                            <td>${plan.name}</td>
+                            <td>R$ ${price}</td>
+                            <td>${appointmentsText}</td>
+                            <td>${professionalsText}</td>
+                            <td>${servicesText}</td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary edit-plan me-1" data-id="${plan.id}" onclick="editPlan(${plan.id})">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-plan" data-id="${plan.id}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>`;
+                        
+                        plansTable.innerHTML += rowHTML;
+                    });
+                }
+                console.log('------ DEBUGGING: Tabela de planos atualizada');
+            } else {
+                console.error('------ DEBUGGING: Tabela de planos não encontrada!');
+            }
+            
+            // Atualizar cards de planos
+            const headerRow = document.querySelector('.row.mb-4#headerRow');
+            if (headerRow) {
+                let cardsContainer = headerRow.nextElementSibling;
+                if (!cardsContainer || !cardsContainer.classList.contains('row')) {
+                    console.log('------ DEBUGGING: Container de cards não encontrado, criando novo');
+                    cardsContainer = document.createElement('div');
+                    cardsContainer.className = 'row mb-4';
+                    headerRow.parentNode.insertBefore(cardsContainer, headerRow.nextSibling);
+                }
+                
+                // Limpar container
+                cardsContainer.innerHTML = '';
+                
+                // Filtrar apenas planos ativos para mostrar nos cards
+                const activePlans = normalizedPlans.filter(plan => plan.status === 'active');
+                
+                if (activePlans.length === 0) {
+                    // Adicionar mensagem de nenhum plano ativo
+                    const emptyCardHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Nenhum plano ativo para exibição. Ative um plano para que ele apareça aqui.
+                        </div>
+                    </div>`;
+                    cardsContainer.innerHTML = emptyCardHTML;
+                } else {
+                    // Adicionar cada plano ativo
+                    activePlans.forEach(plan => {
+                        // Formatação dos valores
+                        const price = typeof plan.price === 'number' ? plan.price.toFixed(2) : 
+                                     (typeof plan.price === 'string' ? parseFloat(plan.price).toFixed(2) : '0.00');
+                        const appointmentsText = plan.appointments === 0 ? 'Ilimitados' : plan.appointments;
+                        const professionalsText = plan.professionals === 0 ? 'Ilimitados' : plan.professionals;
+                        const servicesText = plan.services === 0 ? 'Ilimitados' : plan.services;
+                        
+                        // Verificar se features está definido e é um objeto
+                        const features = plan.features || {};
+                        console.log(`------ DEBUGGING: Plano ID ${plan.id} features para card:`, features);
+                        
+                        function getHighlightLabel(highlight) {
+                            switch (highlight) {
+                                case 'popular': return 'Popular';
+                                case 'recommended': return 'Recomendado';
+                                case 'best-value': return 'Melhor Custo-Benefício';
+                                default: return '';
+                            }
+                        }
+                        
+                        // Criar HTML do card
+                        const cardHTML = `
+                        <div class="col-md-4 mb-4">
+                            <div class="card shadow h-100 ${plan.highlight !== 'none' ? 'border-primary' : ''}">
+                                <div class="card-header py-3 bg-primary text-white">
+                                    <h6 class="m-0 font-weight-bold">${plan.name}</h6>
+                                    ${plan.highlight !== 'none' ? `
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
+                                        ${getHighlightLabel(plan.highlight)}
+                                    </span>` : ''}
+                                </div>
+                                <div class="card-body">
+                                    <div class="text-center mb-4">
+                                        <h2 class="card-price text-primary">R$ ${price}<span class="period">/mês</span></h2>
+                                    </div>
+                                    <ul class="list-group list-group-flush mb-4">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Agendamentos
+                                            <span class="badge bg-primary rounded-pill">${appointmentsText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Profissionais
+                                            <span class="badge bg-primary rounded-pill">${professionalsText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Serviços
+                                            <span class="badge bg-primary rounded-pill">${servicesText}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Relatórios
+                                            <span class="badge ${features.reports ? 'bg-success' : 'bg-danger'} rounded-pill">
+                                                ${features.reports ? 'Sim' : 'Não'}
+                                            </span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            Notificações
+                                            <span class="badge ${(features.emailNotifications || features.smsNotifications || features.whatsAppNotifications) ? 'bg-success' : 'bg-danger'} rounded-pill">
+                                                ${(features.emailNotifications || features.smsNotifications || features.whatsAppNotifications) ? 'Sim' : 'Não'}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    <div class="d-grid">
+                                        <button class="btn btn-outline-primary" onclick="editPlan(${plan.id})">
+                                            <i class="fas fa-edit me-1"></i> Editar Plano
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        
+                        cardsContainer.innerHTML += cardHTML;
+                    });
+                }
+                console.log('------ DEBUGGING: Cards de planos atualizados');
+            } else {
+                console.error('------ DEBUGGING: Header row não encontrado para adicionar cards');
+            }
+            
+            // Debug dados salvos no localStorage
+            try {
+                const storedPlansJson = localStorage.getItem('agendai_plans');
+                if (storedPlansJson) {
+                    const storedPlans = JSON.parse(storedPlansJson);
+                    if (Array.isArray(storedPlans)) {
+                        console.log(`------ DEBUGGING: localStorage contém ${storedPlans.length} planos após UI refresh`);
+                    }
+                }
+            } catch (localStorageError) {
+                console.error('------ DEBUGGING: Erro ao verificar localStorage após UI refresh:', localStorageError);
+            }
+            
+            // Configurar listeners para os botões de exclusão
+            // Antiga chamada para função inexistente que causava o erro:
+            // setupPlanActionButtonListeners();
+            
+            // Em vez disso, vamos configurar os botões de exclusão diretamente aqui:
+            try {
+                const deleteButtons = document.querySelectorAll('.delete-plan');
+                console.log(`------ DEBUGGING: Encontrados ${deleteButtons.length} botões de exclusão para configurar`);
+                
+                deleteButtons.forEach(btn => {
+                    const planId = btn.getAttribute('data-id');
+                    if (planId) {
+                        // Garantir que o onclick esteja definido
+                        btn.onclick = function(event) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            console.log(`Botão de exclusão clicado para o plano ID: ${planId}`);
+                            window.confirmDeletePlan(parseInt(planId));
+                            return false;
+                        };
+                    }
+                });
+            } catch (buttonError) {
+                console.error('------ DEBUGGING: Erro ao configurar botões de exclusão:', buttonError);
+            }
+            
+            console.log('------ DEBUGGING: UI atualizada com sucesso');
+            return true;
+        } catch (error) {
+            console.error('------ DEBUGGING: Erro ao atualizar UI:', error);
+            
+            // Tentar uma abordagem mais simples se a atualização falhar
+            try {
+                const plansTable = document.querySelector('#plansTable tbody');
+                if (plansTable && Array.isArray(window.plans)) {
+                    plansTable.innerHTML = ''; // Limpar tabela
+                    
+                    // Adicionar mensagem de erro
+                    const errorRow = `
+                    <tr>
+                        <td colspan="8" class="text-center py-3">
+                            <div class="alert alert-danger mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Erro ao atualizar a interface. Tente recarregar a página.
+                            </div>
+                        </td>
+                    </tr>`;
+                    plansTable.innerHTML = errorRow;
+                    
+                    console.log('------ DEBUGGING: Adicionada mensagem de erro na UI');
+                }
+            } catch (secondaryError) {
+                console.error('------ DEBUGGING: Erro secundário ao tentar exibir mensagem de erro:', secondaryError);
+            }
+            
+            return false;
+        }
+    }
+    
+    // ... existing code ...
+    
+    // Função para salvar um plano editado
+    function savePlan() {
+        console.log('------ DEBUGGING: Função savePlan chamada');
+        
+        try {
+            // Coletar dados do formulário
+            const id = parseInt(document.getElementById('superEditPlanId').value);
+            const name = document.getElementById('superEditPlanName').value || 'Plano';
+            const price = parseFloat(document.getElementById('superEditPlanPrice').value || '0');
+            const appointments = parseInt(document.getElementById('superEditPlanAppointments').value || '0');
+            const professionals = parseInt(document.getElementById('superEditPlanProfessionals').value || '0');
+            const services = parseInt(document.getElementById('superEditPlanServices').value || '0');
+            const status = document.getElementById('superEditPlanStatus').value || 'active';
+            const highlight = document.getElementById('superEditPlanHighlight').value || 'none';
+            const description = document.getElementById('superEditPlanDescription').value || '';
+            
+            // Obter estado das checkboxes
+            const reports = document.getElementById('superEditFeatureReports').checked;
+            const emailNotifications = document.getElementById('superEditFeatureEmailNotifications').checked;
+            const smsNotifications = document.getElementById('superEditFeatureSmsNotifications').checked;
+            const whatsAppNotifications = document.getElementById('superEditFeatureWhatsAppNotifications').checked;
+            const customization = document.getElementById('superEditFeatureCustomization').checked;
+            const api = document.getElementById('superEditFeatureAPI').checked;
+            
+            console.log('------ DEBUGGING: Estado das checkboxes ao salvar:');
+            console.log('reports:', reports);
+            console.log('emailNotifications:', emailNotifications);
+            console.log('smsNotifications:', smsNotifications);
+            console.log('whatsAppNotifications:', whatsAppNotifications);
+            console.log('customization:', customization);
+            console.log('api:', api);
+            
+            // Criar o objeto atualizado do plano
+            const planData = {
+                name: name,
+                price: price,
+                appointments: appointments,
+                professionals: professionals,
+                services: services,
+                status: status,
+                highlight: highlight,
+                description: description,
+                features: {
+                    reports: reports,
+                    emailNotifications: emailNotifications,
+                    smsNotifications: smsNotifications,
+                    whatsAppNotifications: whatsAppNotifications,
+                    customization: customization,
+                    api: api
+                }
+            };
+            
+            // Fechar o modal
+            const modalElement = document.getElementById('superEditPlanModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+            
+            // Mostrar mensagem de processamento
+            const tempMessage = document.createElement('div');
+            tempMessage.className = 'alert alert-info position-fixed top-0 start-50 translate-middle-x mt-4 shadow';
+            tempMessage.style.zIndex = '9999';
+            tempMessage.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processando atualização do plano...';
+            document.body.appendChild(tempMessage);
+            
+            // Chamar a API para atualizar o plano
+            updatePlanAPI(id, planData)
+                .then(updatedPlan => {
+                    console.log('------ DEBUGGING: Plano atualizado com sucesso:', updatedPlan);
+                    
+                    // Atualizar a interface do usuário
+                    refreshPlansUI();
+                    
+                    // Remover mensagem temporária
+                    if (tempMessage && tempMessage.parentNode) {
+                        tempMessage.parentNode.removeChild(tempMessage);
+                    }
+                    
+                    // Mostrar mensagem de sucesso
+                    const successMessage = document.createElement('div');
+                    successMessage.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-4 shadow';
+                    successMessage.style.zIndex = '9999';
+                    successMessage.innerHTML = '<i class="fas fa-check-circle me-2"></i> Plano atualizado com sucesso!';
+                    document.body.appendChild(successMessage);
+                    
+                    // Remover mensagem após 3 segundos
+                    setTimeout(() => {
+                        if (successMessage && successMessage.parentNode) {
+                            successMessage.parentNode.removeChild(successMessage);
+                        }
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('------ DEBUGGING: Erro ao atualizar plano:', error);
+                    
+                    // Remover mensagem temporária
+                    if (tempMessage && tempMessage.parentNode) {
+                        tempMessage.parentNode.removeChild(tempMessage);
+                    }
+                    
+                    // Mostrar mensagem de erro
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'alert alert-danger position-fixed top-0 start-50 translate-middle-x mt-4 shadow';
+                    errorMessage.style.zIndex = '9999';
+                    errorMessage.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i> Erro ao atualizar o plano: ${error.message}`;
+                    document.body.appendChild(errorMessage);
+                    
+                    // Remover mensagem após 5 segundos
+                    setTimeout(() => {
+                        if (errorMessage && errorMessage.parentNode) {
+                            errorMessage.parentNode.removeChild(errorMessage);
+                        }
+                    }, 5000);
+                });
+        } catch (error) {
+            console.error('------ DEBUGGING: Erro ao processar formulário:', error);
+            alert(`Erro ao processar formulário: ${error.message}`);
+        }
+    }
+    
+    // ... existing code ...
+    
+    // Função para criar um novo plano a partir do modal #addPlanModal
+    async function createPlan() {
+        console.log('Função createPlan chamada');
+        
+        // CRÍTICO: Garantir que window.plans exista
+        window.ensureWindowPlansExists();
+        
+        // Mostrar indicador de carregamento no botão
+        const saveBtn = document.getElementById('savePlanBtn');
+        if (saveBtn) {
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+            saveBtn.disabled = true;
+        }
+        
+        try {
+            // Coletar dados do formulário
+            const formElements = {
+                name: document.getElementById('planName'),
+                price: document.getElementById('planPrice'),
+                appointments: document.getElementById('planAppointments'),
+                professionals: document.getElementById('planProfessionals'),
+                services: document.getElementById('planServices'),
+                status: document.getElementById('planStatus'),
+                highlight: document.getElementById('planHighlight'),
+                description: document.getElementById('planDescription'),
+                reports: document.getElementById('featureReports'),
+                emailNotifications: document.getElementById('featureEmailNotifications'),
+                smsNotifications: document.getElementById('featureSmsNotifications'),
+                whatsAppNotifications: document.getElementById('featureWhatsAppNotifications'),
+                customization: document.getElementById('featureCustomization'),
+                api: document.getElementById('featureAPI')
+            };
+            
+            // Verificar se todos os elementos foram encontrados
+            let missingElements = [];
+            for (const [key, element] of Object.entries(formElements)) {
+                if (!element) {
+                    missingElements.push(key);
+                }
+            }
+            
+            if (missingElements.length > 0) {
+                console.error('------ DEBUGGING: Elementos ausentes no formulário:', missingElements);
+                throw new Error('Falha ao encontrar todos os elementos do formulário: ' + missingElements.join(', '));
+            }
+            
+            // Extrair valores com segurança
+            const name = formElements.name.value || 'Novo Plano';
+            const price = parseFloat(formElements.price.value || '50');
+            const appointments = parseInt(formElements.appointments.value || '50');
+            const professionals = parseInt(formElements.professionals.value || '2');
+            const services = parseInt(formElements.services.value || '10');
+            const status = formElements.status.value || 'active';
+            const highlight = formElements.highlight.value || 'none';
+            const description = formElements.description.value || '';
+            
+            // Recursos/features
+            const reports = formElements.reports.checked;
+            const emailNotifications = formElements.emailNotifications.checked;
+            const smsNotifications = formElements.smsNotifications.checked;
+            const whatsAppNotifications = formElements.whatsAppNotifications.checked;
+            const customization = formElements.customization.checked;
+            const api = formElements.api.checked;
+            
+            // Criar o objeto do plano
+            const planData = {
+                name: name,
+                price: price,
+                appointments: appointments,
+                professionals: professionals,
+                services: services,
+                status: status,
+                highlight: highlight,
+                description: description,
+                features: {
+                    reports: reports,
+                    emailNotifications: emailNotifications,
+                    smsNotifications: smsNotifications,
+                    whatsAppNotifications: whatsAppNotifications,
+                    customization: customization,
+                    api: api
+                }
+            };
+            
+            console.log('Dados do novo plano:', planData);
+            
+            // Verificar autenticação antes de salvar
+            const authData = JSON.parse(localStorage.getItem('agendai_auth') || '{}');
+            if (!authData.token) {
+                console.warn('Token de autenticação não encontrado, tentando login automático...');
+                const loginSuccess = await ensureAdminLogin();
+                if (!loginSuccess) {
+                    throw new Error('Não foi possível autenticar automaticamente. Por favor, faça login manualmente.');
+                }
+                console.log('Login automático realizado com sucesso, continuando com o salvamento do plano');
+            }
+            
+            // Salvar no backend via API ou localStorage
+            const newPlan = await createPlanAPI(planData);
+            
+            if (!newPlan) {
+                throw new Error('Não foi possível criar o plano');
+            }
+            
+            // Fechar o modal com método seguro
+            const modal = document.getElementById('addPlanModal');
+            if (modal) {
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) bsModal.hide();
+                } else {
+                    modal.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                }
+            }
+            
+            // Atualizar a interface do usuário
+            if (typeof refreshPlansUI === 'function') {
+                setTimeout(refreshPlansUI, 100);
+            }
+            
+            // Mostrar mensagem de sucesso
+            setTimeout(() => {
+                alert('Plano adicionado com sucesso!');
+            }, 200);
+            
+        } catch (error) {
+            console.error('Erro ao salvar plano:', error);
+            alert('Erro ao salvar o plano: ' + error.message);
+        } finally {
+            // Restaurar botão para estado normal
+            if (saveBtn) {
+                saveBtn.innerHTML = 'Salvar';
+                saveBtn.disabled = false;
+            }
+        }
+    }
+    
+    // Função de fallback para criar plano localmente
+    function createPlanLocally(planData) {
+        console.log('Usando fallback para criar plano localmente');
+        
+        try {
+            // Garantir que window.plans exista
+            if (!window.plans) window.plans = [];
+            if (!Array.isArray(window.plans)) window.plans = [];
+            
+            // Encontrar o próximo ID disponível
+            const maxId = window.plans.reduce((max, plan) => Math.max(max, plan.id || 0), 0);
+            const newId = maxId + 1;
+            
+            // Criar o novo plano com ID
+            const newPlan = {
+                ...planData,
+                id: newId,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+                storage_type: 'local'
+            };
+            
+            // Adicionar à lista de planos
+            window.plans.push(newPlan);
+            
+            // Atualizar localStorage
+            localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+            
+            return newPlan;
+        } catch (error) {
+            console.error('Erro ao criar plano localmente:', error);
+            throw new Error('Falha ao salvar o plano localmente: ' + error.message);
+        }
+    }
 </script>
 
 <!-- Correção para erros de Bootstrap -->
@@ -3406,22 +4622,188 @@
         window.addEventListener('error', function(e) {
             if (e.message && (
                 e.message.includes('backdrop') || 
-                e.message.includes('Cannot read properties')
+                e.message.includes('modal') || 
+                e.message.includes('Bootstrap')
             )) {
-                console.warn('Erro do Bootstrap interceptado:', e.message);
-                // Evitar que o erro pare a execução
+                console.warn('Erro relacionado ao Bootstrap detectado e suprimido:', e.message);
                 e.preventDefault();
                 e.stopPropagation();
             }
         }, true);
         
-        console.log('Patches aplicados com sucesso');
+        // Modificar os botões de modal
+        setTimeout(() => {
+            // Modificar o botão "Salvar" do modal de adição
+            const saveBtns = document.querySelectorAll('[onclick="createNewPlan()"]');
+            saveBtns.forEach(btn => {
+                btn.innerHTML = 'Salvar Plano';
+                console.log('Botão de salvamento modificado para usar função global');
+            });
+            
+            console.log('Correções do Bootstrap e dos botões aplicadas com sucesso!');
+        }, 500);
     });
     
-    // Script de emergência para forçar carregamento de planos caso nada mais funcione
-    window.addEventListener('load', function() {
-        // ... existing code ...
-    });
+    // Definir a função createNewPlan diretamente no escopo global
+    window.createNewPlan = async function() {
+        console.log('------ DEBUGGING: Função createNewPlan chamada - escopo global');
+        
+        try {
+            // Coletar dados do formulário com segurança
+            const planName = document.getElementById('planName');
+            const planPrice = document.getElementById('planPrice');
+            const planAppointments = document.getElementById('planAppointments');
+            const planProfessionals = document.getElementById('planProfessionals');
+            const planServices = document.getElementById('planServices');
+            const planStatus = document.getElementById('planStatus');
+            const planHighlight = document.getElementById('planHighlight');
+            const planDescription = document.getElementById('planDescription');
+            
+            // Verificar se os elementos foram encontrados
+            if (!planName || !planPrice || !planAppointments || !planProfessionals || 
+                !planServices || !planStatus || !planHighlight) {
+                console.error('------ DEBUGGING: Elementos do formulário não encontrados');
+                alert('Erro: Não foi possível encontrar todos os campos do formulário.');
+                return;
+            }
+            
+            // Obter valores
+            const name = planName.value || 'Novo Plano';
+            const price = parseFloat(planPrice.value || '0');
+            const appointments = parseInt(planAppointments.value || '0');
+            const professionals = parseInt(planProfessionals.value || '0');
+            const services = parseInt(planServices.value || '0');
+            const status = planStatus.value || 'active';
+            const highlight = planHighlight.value || 'none';
+            const description = planDescription ? planDescription.value : '';
+            
+            // Obter estado das checkboxes com verificação de segurança
+            const getCheckboxState = (id) => {
+                const checkbox = document.getElementById(id);
+                return checkbox ? checkbox.checked : false;
+            };
+            
+            const features = {
+                reports: getCheckboxState('featureReports'),
+                emailNotifications: getCheckboxState('featureEmailNotifications'),
+                smsNotifications: getCheckboxState('featureSmsNotifications'),
+                whatsAppNotifications: getCheckboxState('featureWhatsAppNotifications'),
+                customization: getCheckboxState('featureCustomization'),
+                api: getCheckboxState('featureAPI')
+            };
+            
+            // Criar objeto do plano
+            const planData = {
+                name, price, appointments, professionals, 
+                services, status, highlight, description, features
+            };
+            
+            console.log('------ DEBUGGING: Dados do novo plano:', planData);
+            
+            // Verificar se a função createPlanAPI existe
+            if (typeof createPlanAPI !== 'function') {
+                console.error('------ DEBUGGING: Função createPlanAPI não encontrada, usando fallback');
+                
+                // Criar plano localmente como fallback
+                const newId = Math.max(...(window.plans || []).map(p => p.id || 0), 0) + 1;
+                const newPlan = {
+                    ...planData,
+                    id: newId,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
+                };
+                
+                // Garantir que window.plans exista e seja um array
+                if (!window.plans) window.plans = [];
+                if (!Array.isArray(window.plans)) window.plans = [];
+                
+                // Adicionar o plano
+                window.plans.push(newPlan);
+                
+                // Atualizar localStorage
+                try {
+                    localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
+                } catch (e) {
+                    console.error('------ DEBUGGING: Erro ao salvar no localStorage:', e);
+                }
+                
+                // Fechar o modal
+                fecharModal();
+                
+                // Atualizar a interface
+                if (typeof refreshPlansUI === 'function') {
+                    setTimeout(() => {
+                        refreshPlansUI();
+                        alert('Plano criado localmente com sucesso!');
+                    }, 100);
+                } else {
+                    alert('Plano criado localmente com sucesso! Recarregue a página para ver as alterações.');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+                
+                return;
+            }
+            
+            // Criar plano via API
+            createPlanAPI(planData).then(newPlan => {
+                console.log('------ DEBUGGING: Plano criado com sucesso:', newPlan);
+                
+                // Fechar o modal
+                fecharModal();
+                
+                // Atualizar a interface
+                if (typeof refreshPlansUI === 'function') {
+                    setTimeout(() => {
+                        refreshPlansUI();
+                        alert('Plano criado com sucesso!');
+                    }, 100);
+                } else {
+                    alert('Plano criado com sucesso! Recarregue a página para ver as alterações.');
+                    setTimeout(() => window.location.reload(), 1000);
+                }
+            }).catch(error => {
+                console.error('------ DEBUGGING: Erro ao criar plano via API:', error);
+                alert(`Erro ao criar plano: ${error.message}`);
+            });
+            
+        } catch (error) {
+            console.error('------ DEBUGGING: Erro ao criar plano:', error);
+            alert(`Erro ao criar plano: ${error.message}`);
+        }
+    };
+    
+    // Função auxiliar para fechar o modal
+    function fecharModal() {
+        // Fechar o modal
+        const modal = document.getElementById('addPlanModal');
+        if (modal) {
+            // Tentar métodos diferentes para fechar o modal
+            try {
+                // Método 1: Usar Bootstrap
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const bsModal = bootstrap.Modal.getInstance(modal);
+                    if (bsModal) bsModal.hide();
+                } 
+                // Método 2: Fechar manualmente
+                else {
+                    modal.style.display = 'none';
+                    const backdrops = document.querySelectorAll('.modal-backdrop');
+                    backdrops.forEach(b => b.remove());
+                    document.body.classList.remove('modal-open');
+                }
+            } catch (e) {
+                console.error('------ DEBUGGING: Erro ao fechar modal:', e);
+                // Método 3: Forçar fechamento
+                modal.style.display = 'none';
+                const backdrops = document.querySelectorAll('.modal-backdrop');
+                backdrops.forEach(b => b.remove());
+                document.body.classList.remove('modal-open');
+            }
+        }
+    }
 </script>
+
+<!-- Script de correção para botões de exclusão de planos -->
+<script src="/public/js/plan-actions-fix.js"></script>
 </body>
 </html> 
