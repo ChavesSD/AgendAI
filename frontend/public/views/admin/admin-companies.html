@@ -1,4 +1,83 @@
 <!-- View de Gestão de Empresas para o Dashboard Administrativo -->
+<!-- Script de polyfill para Bootstrap Modal -->
+<script>
+    // Garantir que o Bootstrap Modal funcione corretamente
+    window.addEventListener('DOMContentLoaded', function() {
+        console.log('Verificando disponibilidade do Bootstrap...');
+        
+        // Se o bootstrap não estiver definido, criar um polyfill
+        if (typeof bootstrap === 'undefined' || !bootstrap.Modal) {
+            console.log('Bootstrap Modal não detectado. Criando polyfill...');
+            
+            // Criar namespace bootstrap se não existir
+            window.bootstrap = window.bootstrap || {};
+            
+            // Implementar polyfill para Modal
+            bootstrap.Modal = function(element) {
+                this.element = element;
+                
+                this.show = function() {
+                    element.style.display = 'block';
+                    element.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Adicionar backdrop
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
+                    }
+                };
+                
+                this.hide = function() {
+                    element.style.display = 'none';
+                    element.classList.remove('show');
+                    document.body.classList.remove('modal-open');
+                    
+                    // Remover backdrop
+                    const backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) backdrop.remove();
+                };
+                
+                // Método estático
+                this.constructor.getInstance = function(element) {
+                    return new bootstrap.Modal(element);
+                };
+            };
+            
+            // Adicionar método estático getOrCreateInstance
+            bootstrap.Modal.getInstance = function(element) {
+                // Implementação simples que sempre retorna uma nova instância
+                // Em uma implementação real, você manteria um mapa de elementos para instâncias
+                return new bootstrap.Modal(element);
+            };
+            
+            console.log('Polyfill para Bootstrap Modal criado com sucesso!');
+        }
+        
+        // Garantir que todos os elementos data-bs-dismiss funcionem
+        document.querySelectorAll('[data-bs-dismiss="modal"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const target = document.querySelector(this.getAttribute('data-bs-target')) || 
+                              this.closest('.modal');
+                if (target) {
+                    // Tentar fechar o modal usando Bootstrap
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const modal = bootstrap.Modal.getInstance(target);
+                        if (modal) modal.hide();
+                    } else {
+                        // Fechar manualmente
+                        target.style.display = 'none';
+                        target.classList.remove('show');
+                        document.body.classList.remove('modal-open');
+                        document.querySelector('.modal-backdrop')?.remove();
+                    }
+                }
+            });
+        });
+    });
+</script>
+
 <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
     <div class="border-end bg-white" id="sidebar-wrapper">
@@ -68,7 +147,7 @@
                     <p class="text-muted">Cadastre e gerencie as empresas que utilizam o AgendAI.</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCompanyModal">
+                    <button type="button" class="btn btn-primary" id="newCompanyBtn">
                         <i class="fas fa-plus me-1"></i> Nova Empresa
                     </button>
                 </div>
@@ -357,6 +436,11 @@
             loadAvailablePlans();
         });
         
+        // Configurar botão Nova Empresa para abrir o modal de forma segura
+        document.getElementById('newCompanyBtn')?.addEventListener('click', function() {
+            openAddCompanyModal();
+        });
+        
         // Configurar todos os links do sidebar para funcionarem corretamente
         document.querySelectorAll('[data-link]').forEach(link => {
             link.addEventListener('click', function(e) {
@@ -428,9 +512,39 @@
             if (form.checkValidity()) {
                 alert('Empresa cadastrada com sucesso!');
                 // Aqui você pode fazer a requisição para salvar a empresa
-                // Fechando o modal após o cadastro
-                const modal = bootstrap.Modal.getInstance(document.getElementById('addCompanyModal'));
-                modal.hide();
+                
+                // Fechando o modal após o cadastro de forma segura
+                try {
+                    // Tentar fechar usando Bootstrap
+                    const modalElement = document.getElementById('addCompanyModal');
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        // Método 1: Tentar obter instância existente
+                        let modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        if (modalInstance) {
+                            modalInstance.hide();
+                        } else {
+                            // Método 2: Criar nova instância e fechar
+                            modalInstance = new bootstrap.Modal(modalElement);
+                            modalInstance.hide();
+                        }
+                    } else {
+                        // Método alternativo: fechar manualmente se Bootstrap não estiver disponível
+                        modalElement.classList.remove('show');
+                        modalElement.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                        
+                        // Remover backdrop manualmente
+                        const backdrop = document.querySelector('.modal-backdrop');
+                        if (backdrop) backdrop.remove();
+                    }
+                    console.log('Modal fechado com sucesso');
+                } catch (error) {
+                    console.error('Erro ao fechar modal:', error);
+                    // Tente fechar manualmente como último recurso
+                    document.getElementById('addCompanyModal').style.display = 'none';
+                    document.querySelector('.modal-backdrop')?.remove();
+                    document.body.classList.remove('modal-open');
+                }
             } else {
                 // Força a validação do formulário pelo navegador
                 form.reportValidity();
@@ -479,5 +593,70 @@
         });
         
         console.log('Planos carregados no formulário:', localPlans);
+    }
+
+    // Função para abrir o modal de nova empresa de forma segura
+    function openAddCompanyModal() {
+        console.log('Abrindo modal de nova empresa...');
+        
+        try {
+            // Obter referência ao modal
+            const modalElement = document.getElementById('addCompanyModal');
+            
+            // Limpar o formulário se já existir
+            const form = document.getElementById('companyForm');
+            if (form) {
+                try {
+                    form.reset();
+                } catch (e) {
+                    console.warn('Erro ao resetar formulário:', e);
+                }
+            }
+            
+            // Tentar abrir com Bootstrap
+            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                let modal;
+                
+                // Tentar obter instância existente primeiro
+                try {
+                    modal = bootstrap.Modal.getInstance(modalElement);
+                    if (modal) {
+                        modal.show();
+                        console.log('Modal aberto usando instância existente do Bootstrap');
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Erro ao obter instância do modal:', e);
+                }
+                
+                // Se não conseguir obter instância, criar uma nova
+                try {
+                    modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                    console.log('Modal aberto usando nova instância do Bootstrap');
+                    return;
+                } catch (e) {
+                    console.warn('Erro ao criar nova instância do modal:', e);
+                }
+            }
+            
+            // Método fallback - abrir manualmente
+            modalElement.style.display = 'block';
+            modalElement.classList.add('show');
+            document.body.classList.add('modal-open');
+            
+            // Adicionar backdrop se não existir
+            if (!document.querySelector('.modal-backdrop')) {
+                const backdrop = document.createElement('div');
+                backdrop.className = 'modal-backdrop fade show';
+                document.body.appendChild(backdrop);
+            }
+            
+            console.log('Modal aberto manualmente como fallback');
+            
+        } catch (error) {
+            console.error('Erro ao abrir modal:', error);
+            alert('Não foi possível abrir o formulário. Por favor, tente novamente ou atualize a página.');
+        }
     }
 </script> 
