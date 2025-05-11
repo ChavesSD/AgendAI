@@ -36,6 +36,12 @@ const App = {
         // Configurar event listeners
         this.setupEventListeners();
         
+        // Se não estiver autenticado, forçar redirecionamento para login
+        if (!this.state.isAuthenticated) {
+            console.log('Usuário não autenticado, definindo rota inicial para login');
+            window.location.hash = '#/login';
+        }
+        
         // Iniciar roteamento
         this.router();
         
@@ -184,6 +190,11 @@ const App = {
                     this.loadView('company-dashboard');
                 }
             } else {
+                // Para a rota raiz '/', redirecionar para login
+                if (path === '/') {
+                    console.log('Rota raiz acessada sem autenticação, redirecionando para login');
+                    history.replaceState(null, null, '#/login');
+                }
                 this.renderLogin();
             }
             return;
