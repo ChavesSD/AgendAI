@@ -101,10 +101,26 @@
                                 <i class="fas fa-info-circle me-2"></i>
                                 Nenhuma empresa cadastrada. Use o botão "Nova Empresa" para adicionar.
                             </div>
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="restaurarEmpresasPadrao">
+                                    <i class="fas fa-undo me-1"></i> Restaurar empresas padrão
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
                 console.log('ℹ️ Mensagem de "nenhuma empresa" exibida na tabela');
+                
+                // Configurar o botão para restaurar empresas padrão
+                setTimeout(() => {
+                    const btnRestaurar = document.getElementById('restaurarEmpresasPadrao');
+                    if (btnRestaurar) {
+                        btnRestaurar.onclick = function() {
+                            restaurarEmpresasPadrao();
+                        };
+                    }
+                }, 100);
+                
                 return true;
             }
             
@@ -462,6 +478,18 @@
             // Atualizar variável global
             window.companies = empresasFiltradas;
             
+            // Se todas as empresas foram removidas, marcar como exclusão intencional
+            if (empresasFiltradas.length === 0) {
+                console.log('📊 Todas as empresas foram removidas!');
+                // Usar a função do DataPersistence se disponível
+                if (window.DataPersistence && typeof window.DataPersistence.marcarExclusaoEmpresas === 'function') {
+                    window.DataPersistence.marcarExclusaoEmpresas();
+                } else {
+                    // Fallback caso o script de persistência não esteja disponível
+                    localStorage.setItem('agendai_companies_cleared', 'true');
+                }
+            }
+            
             // Recarregar tabela
             carregarEmpresas();
             
@@ -470,6 +498,78 @@
         } catch (erro) {
             console.error('🚫 Erro ao excluir empresa:', erro);
             alert('Erro ao excluir empresa.');
+        }
+    }
+    
+    // Função para restaurar empresas padrão
+    function restaurarEmpresasPadrao() {
+        console.log('🔄 Restaurando empresas padrão...');
+        
+        if (!confirm('Deseja restaurar as empresas de exemplo padrão?')) {
+            console.log('❌ Restauração cancelada pelo usuário');
+            return;
+        }
+        
+        try {
+            // Empresas padrão
+            const empresasPadrao = [
+                {
+                    id: 1001,
+                    name: "Salão Beleza Total",
+                    cnpj: "12.345.678/0001-90",
+                    email: "contato@belezatotal.com",
+                    phone: "(11) 98765-4321",
+                    address: "Rua das Flores, 123",
+                    city: "São Paulo",
+                    state: "SP",
+                    zip: "01234-567",
+                    plan: 2,
+                    planName: "Plano Profissional",
+                    status: "active",
+                    statusText: "Ativo",
+                    category: "salon",
+                    createdAt: "01/05/2023"
+                },
+                {
+                    id: 1002,
+                    name: "Barbearia Vintage",
+                    cnpj: "98.765.432/0001-10",
+                    email: "contato@barbeariavintage.com",
+                    phone: "(11) 91234-5678",
+                    address: "Av. Paulista, 1000",
+                    city: "São Paulo",
+                    state: "SP",
+                    zip: "01310-100",
+                    plan: 1,
+                    planName: "Plano Básico",
+                    status: "active",
+                    statusText: "Ativo",
+                    category: "barber",
+                    createdAt: "15/06/2023"
+                }
+            ];
+            
+            // Salvar no localStorage
+            localStorage.setItem('agendai_companies', JSON.stringify(empresasPadrao));
+            
+            // Remover flag de exclusão intencional
+            if (window.DataPersistence && typeof window.DataPersistence.resetarExclusaoEmpresas === 'function') {
+                window.DataPersistence.resetarExclusaoEmpresas();
+            } else {
+                localStorage.removeItem('agendai_companies_cleared');
+            }
+            
+            // Atualizar variável global
+            window.companies = empresasPadrao;
+            
+            // Recarregar tabela
+            carregarEmpresas();
+            
+            // Notificar usuário
+            alert('Empresas padrão restauradas com sucesso!');
+        } catch (erro) {
+            console.error('🚫 Erro ao restaurar empresas padrão:', erro);
+            alert('Erro ao restaurar empresas padrão.');
         }
     }
     

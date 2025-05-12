@@ -9,6 +9,11 @@
     // Verificar se estamos em modo de inicialização
     const isInitMode = !localStorage.getItem('agendai_initialized');
     
+    // Verificar se o usuário excluiu todas as empresas intencionalmente
+    const verificarExclusaoIntencional = function() {
+        return localStorage.getItem('agendai_companies_cleared') === 'true';
+    };
+    
     // Dados iniciais para o sistema
     const dadosIniciais = {
         // Planos padrão do sistema
@@ -130,8 +135,8 @@
                     console.log('✅ Planos iniciais configurados');
                 }
                 
-                // Inicializar empresas
-                if (!localStorage.getItem('agendai_companies')) {
+                // Inicializar empresas apenas se não foram excluídas intencionalmente
+                if (!localStorage.getItem('agendai_companies') && !verificarExclusaoIntencional()) {
                     localStorage.setItem('agendai_companies', JSON.stringify(dadosIniciais.empresas));
                     console.log('✅ Empresas iniciais configuradas');
                 }
@@ -178,7 +183,7 @@
                 window.plans = dadosIniciais.planos;
             }
             
-            // Verificar empresas
+            // Verificar empresas - Não restaurar se foram excluídas intencionalmente
             try {
                 const empresasJSON = localStorage.getItem('agendai_companies');
                 let empresas = [];
@@ -187,12 +192,23 @@
                     empresas = JSON.parse(empresasJSON);
                     if (!Array.isArray(empresas)) {
                         console.error('🚨 Dados de empresas corrompidos. Restaurando padrões...');
-                        empresas = dadosIniciais.empresas;
-                        localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                        // Só restaurar se não foram excluídas intencionalmente
+                        if (!verificarExclusaoIntencional()) {
+                            empresas = dadosIniciais.empresas;
+                            localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                        } else {
+                            empresas = [];
+                            localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                        }
                     }
-                } else {
+                } else if (!verificarExclusaoIntencional()) {
+                    // Só restaurar empresas padrão se não foram excluídas intencionalmente
                     console.warn('⚠️ Empresas não encontradas. Adicionando empresas padrão...');
                     empresas = dadosIniciais.empresas;
+                    localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                } else {
+                    // Se foram excluídas intencionalmente, manter vazio
+                    empresas = [];
                     localStorage.setItem('agendai_companies', JSON.stringify(empresas));
                 }
                 
@@ -201,9 +217,14 @@
                 console.log(`✅ ${empresas.length} empresas verificadas e disponíveis`);
             } catch (error) {
                 console.error('🚨 Erro ao verificar empresas:', error);
-                // Restaurar empresas padrão em caso de erro
-                localStorage.setItem('agendai_companies', JSON.stringify(dadosIniciais.empresas));
-                window.companies = dadosIniciais.empresas;
+                // Só restaurar padrão se não foram excluídas intencionalmente
+                if (!verificarExclusaoIntencional()) {
+                    localStorage.setItem('agendai_companies', JSON.stringify(dadosIniciais.empresas));
+                    window.companies = dadosIniciais.empresas;
+                } else {
+                    localStorage.setItem('agendai_companies', JSON.stringify([]));
+                    window.companies = [];
+                }
             }
         },
         
@@ -217,6 +238,12 @@
             // Sincronizar empresas
             if (window.companies && Array.isArray(window.companies)) {
                 localStorage.setItem('agendai_companies', JSON.stringify(window.companies));
+                
+                // Se todas as empresas foram removidas, marcar como exclusão intencional
+                if (window.companies.length === 0) {
+                    localStorage.setItem('agendai_companies_cleared', 'true');
+                    console.log('🧹 Todas as empresas foram removidas intencionalmente');
+                }
             }
             
             console.log('🔄 Dados sincronizados com localStorage');
@@ -240,6 +267,18 @@
             });
             
             console.log('👁️ Monitoramento de dados iniciado');
+        },
+        
+        // Marcar que as empresas foram excluídas intencionalmente
+        marcarExclusaoEmpresas: function() {
+            localStorage.setItem('agendai_companies_cleared', 'true');
+            console.log('🧹 Marcado que as empresas foram excluídas intencionalmente');
+        },
+        
+        // Resetar flag de exclusão intencional das empresas
+        resetarExclusaoEmpresas: function() {
+            localStorage.removeItem('agendai_companies_cleared');
+            console.log('🔄 Reset da flag de exclusão intencional de empresas');
         }
     };
     
@@ -269,7 +308,9 @@
     // Disponibilizar funções globalmente para outros scripts
     window.DataPersistence = {
         verificarIntegridade: DataPersistence.verificarIntegridade.bind(DataPersistence),
-        sincronizarDados: DataPersistence.sincronizarDados.bind(DataPersistence)
+        sincronizarDados: DataPersistence.sincronizarDados.bind(DataPersistence),
+        marcarExclusaoEmpresas: DataPersistence.marcarExclusaoEmpresas.bind(DataPersistence),
+        resetarExclusaoEmpresas: DataPersistence.resetarExclusaoEmpresas.bind(DataPersistence)
     };
     
     console.log('✅ Sistema de persistência de dados carregado com sucesso');
