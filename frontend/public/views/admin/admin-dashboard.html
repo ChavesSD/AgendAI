@@ -12,7 +12,7 @@
                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
             </a>
             <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
-                <i class="fas fa-tag me-2"></i> Planos
+                <i class="fas fa-tags me-2"></i> Planos
             </a>
             <a href="#/admin/companies" class="list-group-item list-group-item-action" data-link>
                 <i class="fas fa-building me-2"></i> Empresas
@@ -279,9 +279,61 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script src="/public/src/js/dashboard-charts.js"></script>
 
+<!-- Script para remover tabelas indesejadas -->
 <script>
-    // Configurar o botão de logout
+    // Função para verificar e remover tabelas em locais incorretos
+    function limparTabelasIndesejadas() {
+        console.log('🧹 Verificando e removendo tabelas indesejadas no dashboard...');
+        
+        try {
+            // Verificar cards de gráficos
+            const cardsGraficos = document.querySelectorAll('.card-body');
+            
+            cardsGraficos.forEach(card => {
+                // Remover tabelas de empresas dentro dos cards de gráficos
+                const tabelas = card.querySelectorAll('table, .table, .table-responsive');
+                if (tabelas.length > 0) {
+                    console.log(`🧹 Removendo ${tabelas.length} tabelas indesejadas do dashboard`);
+                    tabelas.forEach(tabela => tabela.remove());
+                }
+                
+                // Remover elementos específicos de empresas
+                const elementosEmpresas = card.querySelectorAll('[id*="companies"], [id*="company"]');
+                elementosEmpresas.forEach(elem => {
+                    // Não remover os elementos dos gráficos de empresas
+                    if (!elem.id || (elem.id !== 'companiesByPlanChart' && elem.id !== 'companiesMonthlyChart')) {
+                        elem.remove();
+                    }
+                });
+                
+                // Remover cabeçalhos e corpos de tabela
+                card.querySelectorAll('th, tbody, thead, tr').forEach(elem => elem.remove());
+                
+                // Remover botões relacionados à tabela de empresas
+                card.querySelectorAll('.edit-company, .delete-company, .view-company, button[data-id]').forEach(btn => {
+                    if (btn.parentElement && btn.parentElement.className.includes('btn-group')) {
+                        btn.parentElement.remove();
+                    } else {
+                        btn.remove();
+                    }
+                });
+            });
+            
+            console.log('✅ Limpeza de tabelas no dashboard concluída');
+        } catch (erro) {
+            console.error('❌ Erro ao limpar tabelas indesejadas:', erro);
+        }
+    }
+    
+    // Executar limpeza quando o DOM estiver carregado
     document.addEventListener('DOMContentLoaded', function() {
+        // Executar após um pequeno delay para garantir carregamento completo
+        setTimeout(limparTabelasIndesejadas, 300);
+        setTimeout(limparTabelasIndesejadas, 1000);
+        
+        // Executar periodicamente para garantir que as tabelas não apareçam novamente
+        setInterval(limparTabelasIndesejadas, 3000);
+        
         console.log('Dashboard admin carregado!');
         
         // Garantir que os dropdowns do Bootstrap sejam inicializados

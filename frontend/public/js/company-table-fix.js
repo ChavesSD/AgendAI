@@ -29,6 +29,12 @@
     
     // Verificar imediatamente se a tabela existe
     function localizarTabela() {
+        // Verificar se estamos na página de empresas
+        if (!window.location.hash.includes('/admin/companies')) {
+            console.log('ℹ️ Não estamos na página de empresas. Operação ignorada.');
+            return null;
+        }
+        
         window.companyTableAttempts++;
         
         // Limitar número de tentativas
@@ -56,6 +62,12 @@
     
     // Função para carregar empresas e preencher a tabela
     function carregarEmpresas() {
+        // Verificar se estamos na página correta
+        if (!window.location.hash.includes('/admin/companies')) {
+            console.log('ℹ️ Não estamos na página de empresas. Carregamento ignorado.');
+            return false;
+        }
+        
         console.log('📊 Tentando carregar empresas...');
         
         try {
@@ -126,11 +138,11 @@
                 return false; // Voltar mais tarde para preencher a tabela recém-criada
             }
             
-            // Limpar tabela atual
+            // Limpar tabela antes de preencher
             tabela.innerHTML = '';
             
+            // Verificar se há empresas para exibir
             if (empresas.length === 0) {
-                // Se não há empresas, mostrar mensagem
                 tabela.innerHTML = `
                     <tr>
                         <td colspan="8" class="text-center py-4">
@@ -141,8 +153,6 @@
                         </td>
                     </tr>
                 `;
-                console.log('ℹ️ Mensagem de "nenhuma empresa" exibida na tabela');
-                
                 return true;
             }
             
@@ -197,60 +207,84 @@
         }
     }
     
-    // Função para criar a tabela de empresas se ela não existir
-    function criarTabelaEmpresas() {
-        console.log('🏗️ Criando tabela de empresas...');
+    // Função para remover tabelas de empresas em locais incorretos
+    function removerTabelasIncorretas() {
+        // Se estamos na página de empresas, não remover a tabela principal
+        if (window.location.hash.includes('/admin/companies')) {
+            return;
+        }
+        
+        console.log('🧹 Verificando tabelas de empresas em locais incorretos...');
         
         try {
-            // Procurar pelo container que deve conter a tabela
-            let container = document.querySelector('.card-body .table-responsive');
+            // Procurar por tabelas de empresas
+            const tabelasEmpresas = document.querySelectorAll('#companiesTable, [id*="companies"], .table-responsive table');
             
-            // Se não existir, tentar encontrar o card-body
-            if (!container) {
-                const cardBody = document.querySelector('.card-body');
-                
-                if (cardBody) {
-                    console.log('✅ Card-body encontrado, criando table-responsive dentro dele');
-                    container = document.createElement('div');
-                    container.className = 'table-responsive';
-                    cardBody.appendChild(container);
-                } else {
-                    // Se não encontrou nem o card-body, tentar encontrar o container principal
-                    const mainContainer = document.querySelector('.container-fluid');
-                    
-                    if (mainContainer) {
-                        console.log('✅ Container principal encontrado, criando card dentro dele');
-                        
-                        // Criar estrutura completa
-                        const card = document.createElement('div');
-                        card.className = 'card shadow mb-4';
-                        card.innerHTML = `
-                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                <h6 class="m-0 font-weight-bold text-primary">Empresas Cadastradas</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive"></div>
-                            </div>
-                        `;
-                        
-                        // Adicionar ao container principal
-                        mainContainer.appendChild(card);
-                        
-                        // Obter o container table-responsive recém-criado
-                        container = card.querySelector('.table-responsive');
+            if (tabelasEmpresas.length > 0) {
+                console.log(`🧹 Removendo ${tabelasEmpresas.length} tabelas de empresas em locais incorretos`);
+                tabelasEmpresas.forEach(tabela => {
+                    // Se estiver em um card ou outro container, remover o container inteiro
+                    const containerPai = tabela.closest('.card-body, .table-responsive');
+                    if (containerPai) {
+                        containerPai.innerHTML = '';
                     } else {
-                        console.error('🚫 Não foi possível encontrar um container adequado para a tabela');
-                        return;
+                        tabela.remove();
                     }
-                }
+                });
             }
             
-            // Criar a tabela dentro do container
+            // Remover elementos específicos relacionados a tabelas de empresas
+            const elementosEmpresas = document.querySelectorAll('[id*="companiesTable"], [id*="companiesTableBody"]');
+            if (elementosEmpresas.length > 0) {
+                console.log(`🧹 Removendo ${elementosEmpresas.length} elementos relacionados a tabelas de empresas`);
+                elementosEmpresas.forEach(elem => elem.remove());
+            }
+            
+            // Remover botões de ação de empresas
+            const botoesAcao = document.querySelectorAll('.edit-company, .delete-company, .view-company');
+            if (botoesAcao.length > 0) {
+                console.log(`🧹 Removendo ${botoesAcao.length} botões de ação de empresas`);
+                botoesAcao.forEach(btn => {
+                    if (btn.parentElement && btn.parentElement.className.includes('btn-group')) {
+                        btn.parentElement.remove();
+                    } else {
+                        btn.remove();
+                    }
+                });
+            }
+        } catch (erro) {
+            console.error('❌ Erro ao remover tabelas incorretas:', erro);
+        }
+    }
+    
+    // Função para criar a tabela de empresas do zero
+    function criarTabelaEmpresas() {
+        // Verificar se estamos na página de empresas
+        if (!window.location.hash.includes('/admin/companies')) {
+            console.log('ℹ️ Não estamos na página de empresas. Criação de tabela ignorada.');
+            return;
+        }
+        
+        try {
+            console.log('🏗️ Tentando criar tabela de empresas...');
+            
+            // Encontrar o container da tabela
+            const container = document.querySelector('.table-responsive');
+            if (!container) {
+                console.error('🚫 Container para tabela não encontrado!');
+                return;
+            }
+            
+            // Verificar se já existe uma tabela
+            if (container.querySelector('table')) {
+                console.log('ℹ️ Já existe uma tabela no container. Criação ignorada.');
+                return;
+            }
+            
+            // Criar a tabela
             const tabela = document.createElement('table');
-            tabela.className = 'table table-bordered';
             tabela.id = 'companiesTable';
-            tabela.width = '100%';
-            tabela.cellSpacing = '0';
+            tabela.className = 'table table-striped table-hover';
             
             // Adicionar cabeçalho e corpo da tabela
             tabela.innerHTML = `
@@ -266,7 +300,7 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="companiesTableBody">
                     <tr>
                         <td colspan="8" class="text-center py-4">
                             <div class="text-muted">
@@ -289,6 +323,11 @@
     
     // Função para configurar os botões de ação da tabela
     function configurarBotoesAcao() {
+        // Verificar se estamos na página de empresas
+        if (!window.location.hash.includes('/admin/companies')) {
+            return;
+        }
+        
         // Configurar botões de editar
         document.querySelectorAll('.edit-company').forEach(botao => {
             botao.onclick = function() {
@@ -306,259 +345,133 @@
         });
     }
     
-    // Função para visualizar detalhes de uma empresa (desabilitada - botão removido)
-    /*
-    function visualizarEmpresa(id) {
-        console.log(`🔍 Visualizando empresa ID: ${id}`);
-        
-        try {
-            // Encontrar empresa por ID
-            const empresa = window.companies.find(e => e.id === id);
-            
-            if (!empresa) {
-                console.error(`🚫 Empresa ID ${id} não encontrada!`);
-                alert('Empresa não encontrada.');
-                return;
-            }
-            
-            // Construir mensagem com detalhes
-            const detalhes = `
-                Nome: ${empresa.name || 'N/A'}
-                CNPJ: ${empresa.cnpj || 'N/A'}
-                Email: ${empresa.email || 'N/A'}
-                Telefone: ${empresa.phone || 'N/A'}
-                Status: ${empresa.statusText || empresa.status || 'N/A'}
-                Endereço: ${empresa.address || 'N/A'}, ${empresa.city || 'N/A'}/${empresa.state || 'N/A'} - ${empresa.zip || 'N/A'}
-                Data de Cadastro: ${empresa.createdAt || 'N/A'}
-            `;
-            
-            // Mostrar detalhes
-            alert(`Detalhes da Empresa:\n\n${detalhes}`);
-        } catch (erro) {
-            console.error('🚫 Erro ao visualizar empresa:', erro);
-            alert('Erro ao visualizar detalhes da empresa.');
-        }
-    }
-    */
-    
-    // Função para editar uma empresa
+    // Função para editar uma empresa (a ser implementada fora deste script)
     function editarEmpresa(id) {
-        console.log(`✏️ Editando empresa ID: ${id}`);
+        console.log(`🖊️ Editar empresa com ID: ${id}`);
         
-        // Verificar se temos a função openAddCompanyModal ou openAddCompanyModalManually
-        if (typeof window.openAddCompanyModal === 'function') {
-            // Primeiro, carregar os dados da empresa na memória temporária
-            const empresa = window.companies.find(e => e.id === id);
-            if (!empresa) {
-                console.error(`🚫 Empresa ID ${id} não encontrada!`);
-                alert('Empresa não encontrada.');
-                return;
-            }
-            
-            // Armazenar a empresa para edição
-            window.empresaEmEdicao = empresa;
-            
-            // Abrir o modal
-            window.openAddCompanyModal();
-            
-            // Aguardar o modal abrir e então preencher os campos
-            setTimeout(() => preencherFormularioEdicao(empresa), 500);
-        } else if (typeof window.openAddCompanyModalManually === 'function') {
-            // Usar a função manual se disponível
-            window.openAddCompanyModalManually();
-            
-            // Aguardar o modal abrir e então preencher os campos
-            setTimeout(() => {
-                const empresa = window.companies.find(e => e.id === id);
-                if (empresa) {
-                    preencherFormularioEdicao(empresa);
-                }
-            }, 500);
+        // Verificar se a função global está disponível
+        if (typeof window.editarEmpresa === 'function') {
+            window.editarEmpresa(id);
+        } else if (typeof window.openCompanyModal === 'function') {
+            window.openCompanyModal(id);
         } else {
-            console.error('🚫 Função para abrir modal não encontrada!');
-            alert('Não foi possível abrir o formulário de edição. Tente recarregar a página.');
-        }
-    }
-    
-    // Função para preencher o formulário com dados da empresa
-    function preencherFormularioEdicao(empresa) {
-        console.log('📝 Preenchendo formulário com dados da empresa...');
-        
-        try {
-            // Obter referência ao formulário
-            const form = document.getElementById('companyForm');
-            if (!form) {
-                console.error('🚫 Formulário não encontrado!');
-                return;
-            }
-            
-            // Limpar validações anteriores
-            form.classList.remove('was-validated');
-            
-            // Armazenar ID da empresa no formulário
-            form.setAttribute('data-company-id', empresa.id);
-            
-            // Preencher campos
-            const campos = [
-                'companyName', 'companyCNPJ', 'companyEmail', 'companyPhone',
-                'companyAddress', 'companyCity', 'companyState', 'companyZip'
-            ];
-            
-            const mapeamentoCampos = {
-                'companyName': 'name',
-                'companyCNPJ': 'cnpj',
-                'companyEmail': 'email',
-                'companyPhone': 'phone',
-                'companyAddress': 'address',
-                'companyCity': 'city',
-                'companyState': 'state',
-                'companyZip': 'zip'
-            };
-            
-            // Preencher os campos do formulário
-            for (const campo of campos) {
-                const elemento = document.getElementById(campo);
-                if (elemento) {
-                    const propriedade = mapeamentoCampos[campo];
-                    elemento.value = empresa[propriedade] || '';
-                }
-            }
-            
-            // Selecionar status
-            if (empresa.status) {
-                const statusSelect = document.getElementById('companyStatus');
-                if (statusSelect) {
-                    for (let i = 0; i < statusSelect.options.length; i++) {
-                        if (statusSelect.options[i].value === empresa.status) {
-                            statusSelect.selectedIndex = i;
-                            break;
+            console.warn('⚠️ Função para editar empresa não encontrada!');
+            // Tentar abrir o modal diretamente
+            const modal = document.getElementById('companyModal');
+            if (modal) {
+                const empresas = window.companies || [];
+                const empresa = empresas.find(e => e.id === id);
+                
+                if (empresa) {
+                    // Preencher formulário com dados da empresa
+                    document.getElementById('companyId')?.value = empresa.id;
+                    document.getElementById('companyName')?.value = empresa.name;
+                    document.getElementById('companyCNPJ')?.value = empresa.cnpj;
+                    document.getElementById('companyEmail')?.value = empresa.email;
+                    document.getElementById('companyStatus')?.value = empresa.status;
+                    
+                    // Se houver um campo para plano, selecioná-lo
+                    if (empresa.plan) {
+                        const planSelect = document.getElementById('companyPlan');
+                        if (planSelect) {
+                            for (let i = 0; i < planSelect.options.length; i++) {
+                                if (planSelect.options[i].value === empresa.plan) {
+                                    planSelect.selectedIndex = i;
+                                    break;
+                                }
+                            }
                         }
                     }
+                    
+                    // Abrir modal
+                    new bootstrap.Modal(modal).show();
                 }
             }
-            
-            // Atualizar título do modal
-            const modalTitle = document.querySelector('#addCompanyModal .modal-title');
-            if (modalTitle) {
-                modalTitle.textContent = 'Editar Empresa';
-            }
-            
-            console.log('✅ Formulário preenchido com sucesso!');
-        } catch (erro) {
-            console.error('🚫 Erro ao preencher formulário:', erro);
         }
     }
     
-    // Função para excluir uma empresa
+    // Função para excluir uma empresa (a ser implementada fora deste script)
     function excluirEmpresa(id) {
-        console.log(`🗑️ Excluindo empresa ID: ${id}`);
+        console.log(`🗑️ Excluir empresa com ID: ${id}`);
         
-        try {
-            // Encontrar empresa por ID
-            const empresa = window.companies.find(e => e.id === id);
-            
-            if (!empresa) {
-                console.error(`🚫 Empresa ID ${id} não encontrada!`);
-                alert('Empresa não encontrada.');
-                return;
-            }
-            
-            // Confirmar exclusão
-            if (!confirm(`Deseja realmente excluir a empresa "${empresa.name}"?`)) {
-                console.log('❌ Exclusão cancelada pelo usuário');
-                return;
-            }
-            
-            // Filtrar empresa do array
-            const empresasFiltradas = window.companies.filter(e => e.id !== id);
-            
-            // Salvar no localStorage
-            localStorage.setItem('agendai_companies', JSON.stringify(empresasFiltradas));
-            
-            // Atualizar variável global
-            window.companies = empresasFiltradas;
-            
-            // Se todas as empresas foram removidas, marcar como exclusão intencional
-            if (empresasFiltradas.length === 0) {
-                console.log('📊 Todas as empresas foram removidas!');
-                // Usar a função do DataPersistence se disponível
-                if (window.DataPersistence && typeof window.DataPersistence.marcarExclusaoEmpresas === 'function') {
-                    window.DataPersistence.marcarExclusaoEmpresas();
-                } else {
-                    // Fallback caso o script de persistência não esteja disponível
-                    localStorage.setItem('agendai_companies_cleared', 'true');
-                }
-            }
-            
-            // Recarregar tabela
-            carregarEmpresas();
-            
-            // Notificar usuário
-            alert('Empresa excluída com sucesso!');
-        } catch (erro) {
-            console.error('🚫 Erro ao excluir empresa:', erro);
-            alert('Erro ao excluir empresa.');
-        }
-    }
-    
-    // Função para restaurar empresas padrão
-    function restaurarEmpresasPadrao() {
-        console.log('🛑 Função de restauração de empresas padrão foi desativada');
-        return false; // Não faz nada, apenas retorna
-    }
-    
-    // Tentar carregar as empresas após um curto período
-    setTimeout(() => {
-        // Verificar se o documento está pronto
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            carregarEmpresas();
+        // Verificar se a função global está disponível
+        if (typeof window.excluirEmpresa === 'function') {
+            window.excluirEmpresa(id);
+        } else if (typeof window.deleteCompany === 'function') {
+            window.deleteCompany(id);
         } else {
-            // Aguardar o documento ficar pronto
-            document.addEventListener('DOMContentLoaded', carregarEmpresas);
-        }
-    }, 500);
-    
-    // Configurar verificação periódica com limite
-    const intervaloVerificacao = setInterval(() => {
-        // Se já atingimos o limite de tentativas, parar verificação
-        if (window.companyTableAttempts > MAX_ATTEMPTS) {
-            console.log('⏱️ Interrompendo verificação periódica da tabela de empresas após limite de tentativas');
-            clearInterval(intervaloVerificacao);
-            return;
-        }
-        
-        const sucesso = carregarEmpresas();
-        
-        // Se conseguiu carregar com sucesso por 3 vezes consecutivas, reduzir a frequência
-        if (sucesso) {
-            window.contagemSucessos = (window.contagemSucessos || 0) + 1;
+            console.warn('⚠️ Função para excluir empresa não encontrada!');
             
-            if (window.contagemSucessos >= 3) {
-                console.log('✅ Correção da tabela de empresas estabilizada');
-                clearInterval(intervaloVerificacao);
+            // Implementar exclusão básica aqui
+            if (confirm('Tem certeza que deseja excluir esta empresa?')) {
+                // Obter empresas
+                const empresasJSON = localStorage.getItem('agendai_companies');
+                let empresas = [];
                 
-                // Continuar verificando, mas com menos frequência e com limite de execuções
-                let verificacoesAdicionais = 0;
-                const MAX_VERIFICACOES_ADICIONAIS = 2;
-                
-                const intervaloReducedFrequency = setInterval(() => {
-                    verificacoesAdicionais++;
-                    
-                    if (verificacoesAdicionais > MAX_VERIFICACOES_ADICIONAIS) {
-                        console.log('⏱️ Finalizando verificações periódicas da tabela de empresas');
-                        clearInterval(intervaloReducedFrequency);
-                        return;
+                if (empresasJSON) {
+                    try {
+                        empresas = JSON.parse(empresasJSON);
+                    } catch (e) {
+                        empresas = [];
                     }
-                    
-                    console.log(`🔄 Verificação adicional da tabela (${verificacoesAdicionais}/${MAX_VERIFICACOES_ADICIONAIS})`);
-                    carregarEmpresas();
-                }, 10000); // a cada 10 segundos
+                }
+                
+                // Remover empresa pelo ID
+                const novasEmpresas = empresas.filter(e => e.id !== id);
+                
+                // Salvar empresas atualizadas
+                localStorage.setItem('agendai_companies', JSON.stringify(novasEmpresas));
+                
+                // Atualizar variável global
+                window.companies = novasEmpresas;
+                
+                // Recarregar tabela
+                carregarEmpresas();
+                
+                console.log(`✅ Empresa ${id} excluída com sucesso.`);
             }
-        } else {
-            // Resetar contagem de sucessos consecutivos
-            window.contagemSucessos = 0;
         }
-    }, 2000); // verificar a cada 2 segundos inicialmente
+    }
     
-    console.log('✅ Script de correção da tabela de empresas carregado com sucesso!');
+    // Executar verificação inicial
+    const verificarDomCarregado = function() {
+        // Executar remoção de tabelas incorretas
+        removerTabelasIncorretas();
+        
+        // Carregar empresas apenas na página apropriada
+        if (window.location.hash.includes('/admin/companies')) {
+            carregarEmpresas();
+        }
+    };
+    
+    // Verificar quando o DOM estiver pronto
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', verificarDomCarregado);
+    } else {
+        verificarDomCarregado();
+    }
+    
+    // Verificar novamente após um delay
+    setTimeout(verificarDomCarregado, 500);
+    setTimeout(verificarDomCarregado, 1500);
+    
+    // Executar quando a URL mudar
+    window.addEventListener('hashchange', function() {
+        console.log('🔄 URL alterada:', window.location.hash);
+        
+        // Remover tabelas incorretas em todas as páginas
+        removerTabelasIncorretas();
+        
+        // Carregar empresas apenas na página apropriada
+        if (window.location.hash.includes('/admin/companies')) {
+            setTimeout(function() {
+                carregarEmpresas();
+            }, 300);
+        }
+    });
+    
+    // Executar limpeza de tabelas incorretas periodicamente
+    setInterval(removerTabelasIncorretas, 3000);
+    
+    console.log('✅ Script de correção da tabela de empresas inicializado com sucesso');
 })(); 
