@@ -4,13 +4,50 @@
  */
 
 (function() {
+    // Evitar múltiplas execuções
+    if (window.companyTableFixExecuted) {
+        console.log('🔄 Script de correção da tabela já foi executado anteriormente');
+        return;
+    }
+    window.companyTableFixExecuted = true;
+    
+    // Contador de tentativas
+    window.companyTableAttempts = 0;
+    const MAX_ATTEMPTS = 5;
+    
     console.log('🔍 Iniciando correção da tabela de empresas...');
+    
+    // Função para obter o texto do plano baseado no ID
+    function getPlanText(planId) {
+        const planos = {
+            '1': 'Plano Básico - R$ 50,00/mês',
+            '2': 'Plano Intermediário - R$ 70,00/mês',
+            '3': 'Plano Avançado - R$ 100,00/mês'
+        };
+        return planos[planId] || 'Plano não especificado';
+    }
     
     // Verificar imediatamente se a tabela existe
     function localizarTabela() {
-        const tabela = document.querySelector('#companiesTable tbody');
+        window.companyTableAttempts++;
+        
+        // Limitar número de tentativas
+        if (window.companyTableAttempts > MAX_ATTEMPTS) {
+            console.log(`✅ Limite de ${MAX_ATTEMPTS} tentativas de localização da tabela atingido. Verificação interrompida.`);
+            return null;
+        }
+        
+        // Tentar encontrar pelo ID do tbody primeiro
+        let tabela = document.querySelector('#companiesTableBody');
+        if (tabela) {
+            console.log('✅ Tabela de empresas encontrada pelo ID do tbody: #companiesTableBody');
+            return tabela;
+        }
+        
+        // Tentar encontrar pelo ID da tabela
+        tabela = document.querySelector('#companiesTable tbody');
         if (!tabela) {
-            console.warn('⚠️ Tabela #companiesTable tbody não encontrada no carregamento inicial');
+            console.warn(`⚠️ Tabela #companiesTable tbody não encontrada (tentativa ${window.companyTableAttempts}/${MAX_ATTEMPTS})`);
             return null;
         }
         console.log('✅ Tabela de empresas encontrada no DOM');
@@ -101,25 +138,10 @@
                                 <i class="fas fa-info-circle me-2"></i>
                                 Nenhuma empresa cadastrada. Use o botão "Nova Empresa" para adicionar.
                             </div>
-                            <div class="mt-3">
-                                <button type="button" class="btn btn-outline-secondary btn-sm" id="restaurarEmpresasPadrao">
-                                    <i class="fas fa-undo me-1"></i> Restaurar empresas padrão
-                                </button>
-                            </div>
                         </td>
                     </tr>
                 `;
                 console.log('ℹ️ Mensagem de "nenhuma empresa" exibida na tabela');
-                
-                // Configurar o botão para restaurar empresas padrão
-                setTimeout(() => {
-                    const btnRestaurar = document.getElementById('restaurarEmpresasPadrao');
-                    if (btnRestaurar) {
-                        btnRestaurar.onclick = function() {
-                            restaurarEmpresasPadrao();
-                        };
-                    }
-                }, 100);
                 
                 return true;
             }
@@ -145,14 +167,11 @@
                     <td>${empresa.name || 'N/A'}</td>
                     <td>${empresa.cnpj || 'N/A'}</td>
                     <td>${empresa.email || 'N/A'}</td>
-                    <td>${empresa.planName || empresa.plan || 'N/A'}</td>
                     <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                    <td>${getPlanText(empresa.plan) || 'N/A'}</td>
                     <td>${empresa.createdAt || 'N/A'}</td>
                     <td>
                         <div class="btn-group btn-group-sm" role="group">
-                            <button type="button" class="btn btn-info view-company" data-id="${empresa.id}" title="Visualizar">
-                                <i class="fas fa-eye"></i>
-                            </button>
                             <button type="button" class="btn btn-primary edit-company" data-id="${empresa.id}" title="Editar">
                                 <i class="fas fa-edit"></i>
                             </button>
@@ -241,8 +260,8 @@
                         <th>Nome</th>
                         <th>CNPJ</th>
                         <th>Email</th>
-                        <th>Plano</th>
                         <th>Status</th>
+                        <th>Plano</th>
                         <th>Data de Cadastro</th>
                         <th>Ações</th>
                     </tr>
@@ -270,14 +289,6 @@
     
     // Função para configurar os botões de ação da tabela
     function configurarBotoesAcao() {
-        // Configurar botões de visualizar
-        document.querySelectorAll('.view-company').forEach(botao => {
-            botao.onclick = function() {
-                const id = parseInt(this.getAttribute('data-id'));
-                visualizarEmpresa(id);
-            };
-        });
-        
         // Configurar botões de editar
         document.querySelectorAll('.edit-company').forEach(botao => {
             botao.onclick = function() {
@@ -295,7 +306,8 @@
         });
     }
     
-    // Função para visualizar detalhes de uma empresa
+    // Função para visualizar detalhes de uma empresa (desabilitada - botão removido)
+    /*
     function visualizarEmpresa(id) {
         console.log(`🔍 Visualizando empresa ID: ${id}`);
         
@@ -315,7 +327,6 @@
                 CNPJ: ${empresa.cnpj || 'N/A'}
                 Email: ${empresa.email || 'N/A'}
                 Telefone: ${empresa.phone || 'N/A'}
-                Plano: ${empresa.planName || empresa.plan || 'N/A'}
                 Status: ${empresa.statusText || empresa.status || 'N/A'}
                 Endereço: ${empresa.address || 'N/A'}, ${empresa.city || 'N/A'}/${empresa.state || 'N/A'} - ${empresa.zip || 'N/A'}
                 Data de Cadastro: ${empresa.createdAt || 'N/A'}
@@ -328,6 +339,7 @@
             alert('Erro ao visualizar detalhes da empresa.');
         }
     }
+    */
     
     // Função para editar uma empresa
     function editarEmpresa(id) {
@@ -412,19 +424,7 @@
                 }
             }
             
-            // Selecionar plano e status
-            if (empresa.plan) {
-                const planSelect = document.getElementById('companyPlan');
-                if (planSelect) {
-                    for (let i = 0; i < planSelect.options.length; i++) {
-                        if (planSelect.options[i].value == empresa.plan) {
-                            planSelect.selectedIndex = i;
-                            break;
-                        }
-                    }
-                }
-            }
-            
+            // Selecionar status
             if (empresa.status) {
                 const statusSelect = document.getElementById('companyStatus');
                 if (statusSelect) {
@@ -503,74 +503,8 @@
     
     // Função para restaurar empresas padrão
     function restaurarEmpresasPadrao() {
-        console.log('🔄 Restaurando empresas padrão...');
-        
-        if (!confirm('Deseja restaurar as empresas de exemplo padrão?')) {
-            console.log('❌ Restauração cancelada pelo usuário');
-            return;
-        }
-        
-        try {
-            // Empresas padrão
-            const empresasPadrao = [
-                {
-                    id: 1001,
-                    name: "Salão Beleza Total",
-                    cnpj: "12.345.678/0001-90",
-                    email: "contato@belezatotal.com",
-                    phone: "(11) 98765-4321",
-                    address: "Rua das Flores, 123",
-                    city: "São Paulo",
-                    state: "SP",
-                    zip: "01234-567",
-                    plan: 2,
-                    planName: "Plano Profissional",
-                    status: "active",
-                    statusText: "Ativo",
-                    category: "salon",
-                    createdAt: "01/05/2023"
-                },
-                {
-                    id: 1002,
-                    name: "Barbearia Vintage",
-                    cnpj: "98.765.432/0001-10",
-                    email: "contato@barbeariavintage.com",
-                    phone: "(11) 91234-5678",
-                    address: "Av. Paulista, 1000",
-                    city: "São Paulo",
-                    state: "SP",
-                    zip: "01310-100",
-                    plan: 1,
-                    planName: "Plano Básico",
-                    status: "active",
-                    statusText: "Ativo",
-                    category: "barber",
-                    createdAt: "15/06/2023"
-                }
-            ];
-            
-            // Salvar no localStorage
-            localStorage.setItem('agendai_companies', JSON.stringify(empresasPadrao));
-            
-            // Remover flag de exclusão intencional
-            if (window.DataPersistence && typeof window.DataPersistence.resetarExclusaoEmpresas === 'function') {
-                window.DataPersistence.resetarExclusaoEmpresas();
-            } else {
-                localStorage.removeItem('agendai_companies_cleared');
-            }
-            
-            // Atualizar variável global
-            window.companies = empresasPadrao;
-            
-            // Recarregar tabela
-            carregarEmpresas();
-            
-            // Notificar usuário
-            alert('Empresas padrão restauradas com sucesso!');
-        } catch (erro) {
-            console.error('🚫 Erro ao restaurar empresas padrão:', erro);
-            alert('Erro ao restaurar empresas padrão.');
-        }
+        console.log('🛑 Função de restauração de empresas padrão foi desativada');
+        return false; // Não faz nada, apenas retorna
     }
     
     // Tentar carregar as empresas após um curto período
@@ -584,8 +518,15 @@
         }
     }, 500);
     
-    // Configurar verificação periódica
+    // Configurar verificação periódica com limite
     const intervaloVerificacao = setInterval(() => {
+        // Se já atingimos o limite de tentativas, parar verificação
+        if (window.companyTableAttempts > MAX_ATTEMPTS) {
+            console.log('⏱️ Interrompendo verificação periódica da tabela de empresas após limite de tentativas');
+            clearInterval(intervaloVerificacao);
+            return;
+        }
+        
         const sucesso = carregarEmpresas();
         
         // Se conseguiu carregar com sucesso por 3 vezes consecutivas, reduzir a frequência
@@ -596,8 +537,22 @@
                 console.log('✅ Correção da tabela de empresas estabilizada');
                 clearInterval(intervaloVerificacao);
                 
-                // Continuar verificando, mas com menos frequência
-                setInterval(carregarEmpresas, 10000); // a cada 10 segundos
+                // Continuar verificando, mas com menos frequência e com limite de execuções
+                let verificacoesAdicionais = 0;
+                const MAX_VERIFICACOES_ADICIONAIS = 2;
+                
+                const intervaloReducedFrequency = setInterval(() => {
+                    verificacoesAdicionais++;
+                    
+                    if (verificacoesAdicionais > MAX_VERIFICACOES_ADICIONAIS) {
+                        console.log('⏱️ Finalizando verificações periódicas da tabela de empresas');
+                        clearInterval(intervaloReducedFrequency);
+                        return;
+                    }
+                    
+                    console.log(`🔄 Verificação adicional da tabela (${verificacoesAdicionais}/${MAX_VERIFICACOES_ADICIONAIS})`);
+                    carregarEmpresas();
+                }, 10000); // a cada 10 segundos
             }
         } else {
             // Resetar contagem de sucessos consecutivos
