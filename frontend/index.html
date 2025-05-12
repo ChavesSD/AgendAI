@@ -41,6 +41,9 @@
     <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     
+    <!-- Script de persistência de dados -->
+    <script src="/public/js/data-persistence-fix.js"></script>
+    
     <!-- Script para limpar dados mockados -->
     <script src="/public/src/js/reset-data.js"></script>
     
@@ -53,9 +56,19 @@
                 e.preventDefault();
                 console.log('Botão de logout clicado (handler global)');
                 
-                // Limpar localStorage
+                // Salvar dados importantes antes de limpar o localStorage
+                const plansData = localStorage.getItem('agendai_plans');
+                const companiesData = localStorage.getItem('agendai_companies');
+                const initialized = localStorage.getItem('agendai_initialized');
+                
+                // Limpar apenas os dados de autenticação
                 localStorage.removeItem('agendai_auth');
                 console.log('Dados de autenticação removidos do localStorage');
+                
+                // Restaurar dados importantes
+                if (plansData) localStorage.setItem('agendai_plans', plansData);
+                if (companiesData) localStorage.setItem('agendai_companies', companiesData);
+                if (initialized) localStorage.setItem('agendai_initialized', initialized);
                 
                 // Redirecionar para a página inicial
                 window.location.href = '/';
