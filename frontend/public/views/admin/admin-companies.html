@@ -280,4 +280,365 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+
+<!-- CORREÇÃO EMERGENCIAL PARA EXIBIÇÃO DE EMPRESAS -->
+<script>
+    // Executar imediatamente após o carregamento da página
+    (function() {
+        console.log('🚨 CORREÇÃO EMERGENCIAL SENDO APLICADA 🚨');
+        
+        // Função para carregar empresas do localStorage e exibi-las na tabela
+        function carregarEExibirEmpresas() {
+            console.log('📋 Verificando empresas no localStorage...');
+            
+            try {
+                // Recuperar empresas do localStorage
+                const empresasJSON = localStorage.getItem('agendai_companies');
+                let empresas = [];
+                
+                if (empresasJSON) {
+                    try {
+                        empresas = JSON.parse(empresasJSON);
+                        if (!Array.isArray(empresas)) {
+                            console.error('Dados no localStorage não são um array!');
+                            empresas = [];
+                        }
+                    } catch (e) {
+                        console.error('Erro ao analisar JSON de empresas:', e);
+                        empresas = [];
+                    }
+                }
+                
+                console.log(`📊 Encontradas ${empresas.length} empresas no localStorage`);
+                
+                // Forçar atualização da variável global window.companies
+                window.companies = empresas;
+                
+                // Obter referência à tabela
+                const tabela = document.querySelector('#companiesTable tbody');
+                if (!tabela) {
+                    console.error('❌ Tabela de empresas não encontrada no DOM!');
+                    return;
+                }
+                
+                // Limpar tabela atual
+                tabela.innerHTML = '';
+                
+                if (empresas.length === 0) {
+                    // Se não há empresas, mostrar mensagem
+                    tabela.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center py-4">
+                                <div class="text-muted">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    Nenhuma empresa cadastrada. Use o botão "Nova Empresa" para adicionar.
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Mapear status para texto e classes
+                const statusMap = {
+                    'active': { text: 'Ativo', class: 'success' },
+                    'inactive': { text: 'Inativo', class: 'danger' },
+                    'trial': { text: 'Em teste', class: 'warning' }
+                };
+                
+                // Adicionar cada empresa à tabela
+                empresas.forEach(empresa => {
+                    // Determinar status
+                    const status = empresa.status ? 
+                        (statusMap[empresa.status] || { text: empresa.status, class: 'secondary' }) : 
+                        { text: 'Indefinido', class: 'secondary' };
+                    
+                    // Criar linha
+                    const linha = document.createElement('tr');
+                    linha.innerHTML = `
+                        <td>${empresa.id || '-'}</td>
+                        <td>${empresa.name || 'N/A'}</td>
+                        <td>${empresa.cnpj || 'N/A'}</td>
+                        <td>${empresa.email || 'N/A'}</td>
+                        <td>${empresa.planName || empresa.plan || 'N/A'}</td>
+                        <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                        <td>${empresa.createdAt || 'N/A'}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button type="button" class="btn btn-info view-company" data-id="${empresa.id}" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-primary edit-company" data-id="${empresa.id}" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger delete-company" data-id="${empresa.id}" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    
+                    // Adicionar à tabela
+                    tabela.appendChild(linha);
+                });
+                
+                console.log('✅ Tabela atualizada com sucesso!');
+            } catch (erro) {
+                console.error('❌ Erro na correção emergencial:', erro);
+            }
+        }
+        
+        // Função para salvar empresa diretamente
+        window.salvarEmpresaDiretamente = function(dadosEmpresa) {
+            console.log('🔄 Salvando empresa diretamente:', dadosEmpresa);
+            
+            try {
+                // Garantir ID único baseado em timestamp
+                if (!dadosEmpresa.id) {
+                    dadosEmpresa.id = Date.now();
+                }
+                
+                // Recuperar empresas existentes
+                const empresasJSON = localStorage.getItem('agendai_companies');
+                let empresas = [];
+                
+                if (empresasJSON) {
+                    try {
+                        empresas = JSON.parse(empresasJSON);
+                        if (!Array.isArray(empresas)) {
+                            empresas = [];
+                        }
+                    } catch (e) {
+                        empresas = [];
+                    }
+                }
+                
+                // Verificar se é atualização ou nova empresa
+                const indiceExistente = empresas.findIndex(e => e.id === dadosEmpresa.id);
+                
+                if (indiceExistente >= 0) {
+                    // Atualizar empresa existente
+                    empresas[indiceExistente] = dadosEmpresa;
+                } else {
+                    // Adicionar nova empresa
+                    empresas.push(dadosEmpresa);
+                }
+                
+                // Salvar no localStorage
+                localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                
+                // Atualizar variável global
+                window.companies = empresas;
+                
+                // Recarregar a tabela
+                carregarEExibirEmpresas();
+                
+                console.log('✅ Empresa salva com sucesso!');
+                return true;
+            } catch (erro) {
+                console.error('❌ Erro ao salvar empresa diretamente:', erro);
+                return false;
+            }
+        };
+        
+        // Modificar comportamento do botão salvar
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'saveCompanyBtn') {
+                console.log('🖱️ Botão Salvar clicado, interceptando...');
+                
+                const form = document.getElementById('companyForm');
+                if (form && form.checkValidity()) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Coletar dados do formulário
+                    const dadosEmpresa = {
+                        id: form.hasAttribute('data-company-id') 
+                            ? parseInt(form.getAttribute('data-company-id')) 
+                            : Date.now(),
+                        name: document.getElementById('companyName').value,
+                        cnpj: document.getElementById('companyCNPJ').value,
+                        email: document.getElementById('companyEmail').value,
+                        phone: document.getElementById('companyPhone').value,
+                        address: document.getElementById('companyAddress').value,
+                        city: document.getElementById('companyCity').value,
+                        state: document.getElementById('companyState').value,
+                        zip: document.getElementById('companyZip').value,
+                        plan: document.getElementById('companyPlan').value,
+                        planName: document.getElementById('companyPlan').options[
+                            document.getElementById('companyPlan').selectedIndex
+                        ].text,
+                        status: document.getElementById('companyStatus').value,
+                        statusText: document.getElementById('companyStatus').options[
+                            document.getElementById('companyStatus').selectedIndex
+                        ].text,
+                        createdAt: new Date().toLocaleDateString('pt-BR')
+                    };
+                    
+                    // Salvar diretamente
+                    const salvouComSucesso = window.salvarEmpresaDiretamente(dadosEmpresa);
+                    
+                    if (salvouComSucesso) {
+                        // Mostrar mensagem de sucesso
+                        alert('Empresa cadastrada com sucesso!');
+                        
+                        // Fechar o modal
+                        const modal = document.getElementById('addCompanyModal');
+                        if (modal) {
+                            // Tentar fechar com Bootstrap
+                            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                                try {
+                                    const bsModal = bootstrap.Modal.getInstance(modal);
+                                    if (bsModal) {
+                                        bsModal.hide();
+                                    }
+                                } catch (erro) {
+                                    console.warn('Erro ao fechar modal via Bootstrap:', erro);
+                                }
+                            }
+                            
+                            // Método alternativo
+                            modal.style.display = 'none';
+                            modal.classList.remove('show');
+                            document.body.classList.remove('modal-open');
+                            
+                            // Remover backdrop
+                            const backdrop = document.querySelector('.modal-backdrop');
+                            if (backdrop) backdrop.remove();
+                        }
+                    }
+                } else if (form) {
+                    // Mostrar validações
+                    form.classList.add('was-validated');
+                }
+            }
+        }, true); // Usar captura para garantir que este evento execute primeiro
+        
+        // Adicionar função para abrir modal
+        window.openAddCompanyModal = function() {
+            console.log('📂 Abrindo modal de nova empresa...');
+            
+            try {
+                // Obter referência ao modal
+                const modal = document.getElementById('addCompanyModal');
+                if (!modal) {
+                    console.error('❌ Modal não encontrado!');
+                    return;
+                }
+                
+                // Limpar formulário
+                const form = document.getElementById('companyForm');
+                if (form) {
+                    form.reset();
+                    form.classList.remove('was-validated');
+                    form.removeAttribute('data-company-id');
+                }
+                
+                // Carregar planos no select
+                const planSelect = document.getElementById('companyPlan');
+                if (planSelect) {
+                    // Limpar opções exceto a primeira
+                    while (planSelect.options.length > 1) {
+                        planSelect.remove(1);
+                    }
+                    
+                    // Tentar obter planos do localStorage
+                    try {
+                        const plansJSON = localStorage.getItem('agendai_plans');
+                        if (plansJSON) {
+                            const plans = JSON.parse(plansJSON);
+                            if (Array.isArray(plans)) {
+                                plans.forEach(plan => {
+                                    const option = document.createElement('option');
+                                    option.value = plan.id;
+                                    option.textContent = plan.name;
+                                    planSelect.appendChild(option);
+                                });
+                            }
+                        } else {
+                            // Planos padrão
+                            [
+                                { id: 1, name: "Básico" },
+                                { id: 2, name: "Profissional" },
+                                { id: 3, name: "Empresarial" }
+                            ].forEach(plan => {
+                                const option = document.createElement('option');
+                                option.value = plan.id;
+                                option.textContent = plan.name;
+                                planSelect.appendChild(option);
+                            });
+                        }
+                    } catch (erro) {
+                        console.error('Erro ao carregar planos:', erro);
+                    }
+                }
+                
+                // Definir título do modal
+                const modalTitle = modal.querySelector('.modal-title');
+                if (modalTitle) {
+                    modalTitle.textContent = 'Nova Empresa';
+                }
+                
+                // Mostrar modal
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    try {
+                        let bsModal = bootstrap.Modal.getInstance(modal);
+                        if (!bsModal) {
+                            bsModal = new bootstrap.Modal(modal);
+                        }
+                        bsModal.show();
+                    } catch (erro) {
+                        console.warn('Erro ao abrir modal via Bootstrap:', erro);
+                        
+                        // Método alternativo
+                        modal.style.display = 'block';
+                        modal.classList.add('show');
+                        document.body.classList.add('modal-open');
+                        
+                        // Adicionar backdrop
+                        if (!document.querySelector('.modal-backdrop')) {
+                            const backdrop = document.createElement('div');
+                            backdrop.className = 'modal-backdrop fade show';
+                            document.body.appendChild(backdrop);
+                        }
+                    }
+                } else {
+                    // Método alternativo
+                    modal.style.display = 'block';
+                    modal.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    
+                    // Adicionar backdrop
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
+                    }
+                }
+                
+                console.log('✅ Modal aberto com sucesso!');
+            } catch (erro) {
+                console.error('❌ Erro ao abrir modal:', erro);
+            }
+        };
+        
+        // Configurar botão Nova Empresa
+        const btnNovaEmpresa = document.getElementById('newCompanyBtn');
+        if (btnNovaEmpresa) {
+            btnNovaEmpresa.onclick = function(e) {
+                e.preventDefault();
+                window.openAddCompanyModal();
+            };
+            console.log('✅ Botão Nova Empresa configurado com sucesso!');
+        }
+        
+        // Carregar e exibir empresas imediatamente
+        carregarEExibirEmpresas();
+        
+        // Configurar recarregamento periódico
+        setInterval(carregarEExibirEmpresas, 5000);
+        
+        console.log('✅ CORREÇÃO EMERGENCIAL APLICADA COM SUCESSO!');
+    })();
+</script> 
