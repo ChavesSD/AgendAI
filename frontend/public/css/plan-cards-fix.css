@@ -1,0 +1,71 @@
+/**
+ * Estilos para corrigir problemas visuais nos cards de planos
+ */
+
+/* Esconder qualquer tabela que possa aparecer dentro dos cards de planos */
+.col-lg-4.mb-4 .card table,
+.col-lg-4.mb-4 .card .table,
+.col-lg-4.mb-4 .card .table-responsive,
+.col-lg-4.mb-4 .card thead,
+.col-lg-4.mb-4 .card tbody,
+.col-lg-4.mb-4 .card tr,
+.col-lg-4.mb-4 .card th,
+.col-lg-4.mb-4 .card td,
+.col-lg-4.mb-4 .card nav[aria-label="Page navigation"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+}
+
+/* Garantir que o card tenha aparência consistente */
+.col-lg-4.mb-4 .card {
+    height: auto !important;
+    overflow: hidden !important;
+    min-height: 550px;
+}
+
+/* Garantir que o conteúdo do card seja exibido corretamente */
+.col-lg-4.mb-4 .card .card-body {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Garantir que a lista de recursos seja exibida corretamente */
+.col-lg-4.mb-4 .card .list-group-flush {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+/* Garantir que os itens da lista sejam exibidos corretamente */
+.col-lg-4.mb-4 .card .list-group-item {
+    display: flex !important;
+    align-items: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+}
+
+/* Destacar o card do plano intermediário */
+.col-lg-4.mb-4 .card.border-primary {
+    border-width: 2px !important;
+    box-shadow: 0 0.5rem 1rem rgba(0, 123, 255, 0.15) !important;
+}
+
+/* Garantir que o cabeçalho do card esteja sempre visível */
+.col-lg-4.mb-4 .card .card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Garantir que o preço seja destacado */
+.col-lg-4.mb-4 .card .display-4 {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+} 

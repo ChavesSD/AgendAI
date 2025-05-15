@@ -1,10 +1,31 @@
 /**
  * Script para garantir a persistência de dados no AgendAI
- * Garante que planos e empresas permaneçam no localStorage entre sessões
+ * Garante que empresas permaneçam no localStorage entre sessões
  */
 
 (function() {
     console.log('🔒 Iniciando sistema de persistência de dados...');
+    
+    // Limpar imediatamente qualquer dado inválido
+    try {
+        // Verificar se há dados inválidos no localStorage
+        const keys = ['agendai_companies', 'agendai_auth', 'agendai_initialized'];
+        
+        keys.forEach(key => {
+            try {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    // Verificar se o JSON é válido
+                    JSON.parse(value);
+                }
+            } catch (e) {
+                console.warn(`⚠️ Dados inválidos encontrados para ${key}, limpando...`);
+                localStorage.removeItem(key);
+            }
+        });
+    } catch (e) {
+        console.error('❌ Erro ao limpar dados inválidos:', e);
+    }
     
     // Verificar se estamos em modo de inicialização
     const isInitMode = !localStorage.getItem('agendai_initialized');
@@ -16,73 +37,6 @@
     
     // Dados iniciais para o sistema
     const dadosIniciais = {
-        // Planos padrão do sistema
-        planos: [
-            { 
-                id: 1, 
-                name: "Plano Básico", 
-                price: 50.00, 
-                appointments: 50, 
-                professionals: 2, 
-                services: 10, 
-                status: "active", 
-                highlight: "none",
-                features: {
-                    reports: false,
-                    emailNotifications: true,
-                    smsNotifications: false,
-                    whatsAppNotifications: false,
-                    customization: false,
-                    api: false
-                },
-                description: "Plano ideal para pequenos negócios iniciando no mundo digital.",
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            },
-            { 
-                id: 2, 
-                name: "Plano Profissional", 
-                price: 99.90, 
-                appointments: 200, 
-                professionals: 5, 
-                services: 20, 
-                status: "active", 
-                highlight: "popular",
-                features: {
-                    reports: true,
-                    emailNotifications: true,
-                    smsNotifications: true,
-                    whatsAppNotifications: false,
-                    customization: false,
-                    api: false
-                },
-                description: "Para negócios em crescimento que precisam de mais recursos.",
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            },
-            { 
-                id: 3, 
-                name: "Plano Empresarial",
-
-                price: 199.90, 
-                appointments: 0, 
-                professionals: 0, 
-                services: 0, 
-                status: "active", 
-                highlight: "best-value",
-                features: {
-                    reports: true,
-                    emailNotifications: true,
-                    smsNotifications: true,
-                    whatsAppNotifications: true,
-                    customization: true,
-                    api: true
-                },
-                description: "Solução completa e ilimitada para empresas de médio e grande porte.",
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            }
-        ],
         // Empresas de exemplo
         empresas: [
             {
@@ -95,8 +49,6 @@
                 city: "São Paulo",
                 state: "SP",
                 zip: "01234-567",
-                plan: 2,
-                planName: "Plano Profissional",
                 status: "active",
                 statusText: "Ativo",
                 category: "salon",
@@ -112,8 +64,6 @@
                 city: "São Paulo",
                 state: "SP",
                 zip: "01310-100",
-                plan: 1,
-                planName: "Plano Básico",
                 status: "active",
                 statusText: "Ativo",
                 category: "barber",
@@ -128,12 +78,6 @@
         inicializar: function() {
             if (isInitMode) {
                 console.log('🔄 Primeira inicialização do sistema. Configurando dados iniciais...');
-                
-                // Inicializar planos
-                if (!localStorage.getItem('agendai_plans')) {
-                    localStorage.setItem('agendai_plans', JSON.stringify(dadosIniciais.planos));
-                    console.log('✅ Planos iniciais configurados');
-                }
                 
                 // Inicializar empresas apenas se não foram excluídas intencionalmente
                 if (!localStorage.getItem('agendai_companies') && !verificarExclusaoIntencional()) {
@@ -151,55 +95,30 @@
         
         // Verificar integridade dos dados e corrigir se necessário
         verificarIntegridade: function() {
-            // Verificar planos
-            try {
-                const planosJSON = localStorage.getItem('agendai_plans');
-                let planos = [];
-                
-                if (planosJSON) {
-                    planos = JSON.parse(planosJSON);
-                    if (!Array.isArray(planos)) {
-                        console.error('🚨 Dados de planos corrompidos. Restaurando padrões...');
-                        planos = dadosIniciais.planos;
-                        localStorage.setItem('agendai_plans', JSON.stringify(planos));
-                    } else if (planos.length === 0) {
-                        console.warn('⚠️ Nenhum plano encontrado. Adicionando planos padrão...');
-                        planos = dadosIniciais.planos;
-                        localStorage.setItem('agendai_plans', JSON.stringify(planos));
-                    }
-                } else {
-                    console.warn('⚠️ Planos não encontrados. Adicionando planos padrão...');
-                    planos = dadosIniciais.planos;
-                    localStorage.setItem('agendai_plans', JSON.stringify(planos));
-                }
-                
-                // Atualizar variável global
-                window.plans = planos;
-                console.log(`✅ ${planos.length} planos verificados e disponíveis`);
-            } catch (error) {
-                console.error('🚨 Erro ao verificar planos:', error);
-                // Restaurar planos padrão em caso de erro
-                localStorage.setItem('agendai_plans', JSON.stringify(dadosIniciais.planos));
-                window.plans = dadosIniciais.planos;
-            }
-            
             // Verificar empresas - Não restaurar se foram excluídas intencionalmente
             try {
                 const empresasJSON = localStorage.getItem('agendai_companies');
                 let empresas = [];
                 
                 if (empresasJSON) {
-                    empresas = JSON.parse(empresasJSON);
-                    if (!Array.isArray(empresas)) {
-                        console.error('🚨 Dados de empresas corrompidos. Restaurando padrões...');
-                        // Só restaurar se não foram excluídas intencionalmente
-                        if (!verificarExclusaoIntencional()) {
-                            empresas = dadosIniciais.empresas;
-                            localStorage.setItem('agendai_companies', JSON.stringify(empresas));
-                        } else {
-                            empresas = [];
-                            localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                    try {
+                        empresas = JSON.parse(empresasJSON);
+                        if (!Array.isArray(empresas)) {
+                            console.error('🚨 Dados de empresas corrompidos. Restaurando padrões...');
+                            // Só restaurar se não foram excluídas intencionalmente
+                            if (!verificarExclusaoIntencional()) {
+                                empresas = dadosIniciais.empresas;
+                                localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                            } else {
+                                empresas = [];
+                                localStorage.setItem('agendai_companies', JSON.stringify(empresas));
+                            }
                         }
+                    } catch (e) {
+                        // Se houver erro ao parsear o JSON, limpar e usar um array vazio
+                        console.error('🚨 Erro ao parsear dados de empresas:', e);
+                        localStorage.setItem('agendai_companies', JSON.stringify([]));
+                        empresas = [];
                     }
                 } else if (!verificarExclusaoIntencional()) {
                     // Só restaurar empresas padrão se não foram excluídas intencionalmente
@@ -230,20 +149,13 @@
         
         // Sincronizar dados em memória com localStorage
         sincronizarDados: function() {
-            // Sincronizar planos
-            if (window.plans && Array.isArray(window.plans)) {
-                localStorage.setItem('agendai_plans', JSON.stringify(window.plans));
-            }
-            
             // Sincronizar empresas
             if (window.companies && Array.isArray(window.companies)) {
                 localStorage.setItem('agendai_companies', JSON.stringify(window.companies));
                 
-                // Se todas as empresas foram removidas, marcar como exclusão intencional
-                if (window.companies.length === 0) {
-                    localStorage.setItem('agendai_companies_cleared', 'true');
-                    console.log('🧹 Todas as empresas foram removidas intencionalmente');
-                }
+                // Remover código que marcava empresas como intencionalmente excluídas
+                // Apenas registra a sincronização
+                console.log(`✅ ${window.companies.length} empresas sincronizadas com localStorage`);
             }
             
             console.log('🔄 Dados sincronizados com localStorage');
@@ -251,22 +163,22 @@
         
         // Verificar e sincronizar periodicamente
         iniciarMonitoramento: function() {
-            // Sincronizar dados a cada 30 segundos
+            // Sincronizar dados a cada 5 minutos (300000ms) em vez de 30 segundos
             setInterval(() => {
                 this.sincronizarDados();
-            }, 30000);
+            }, 300000);
             
-            // Verificar integridade a cada 2 minutos
+            // Verificar integridade a cada 30 minutos (1800000ms) em vez de 2 minutos
             setInterval(() => {
                 this.verificarIntegridade();
-            }, 120000);
+            }, 1800000);
             
             // Verificar antes de sair da página
             window.addEventListener('beforeunload', () => {
                 this.sincronizarDados();
             });
             
-            console.log('👁️ Monitoramento de dados iniciado');
+            console.log('👁️ Monitoramento de dados iniciado (com intervalos estendidos)');
         },
         
         // Marcar que as empresas foram excluídas intencionalmente

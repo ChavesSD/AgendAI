@@ -22,25 +22,6 @@ CREATE TABLE IF NOT EXISTS users (
     INDEX(company_id)
 );
 
--- Tabela de planos de assinatura
-CREATE TABLE IF NOT EXISTS plans (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT NULL,
-    monthly_price DECIMAL(10,2) NOT NULL,
-    annual_price DECIMAL(10,2) NULL,
-    features JSON NULL,
-    max_professionals INT NOT NULL DEFAULT 1,
-    max_services INT NOT NULL DEFAULT 10,
-    max_appointments_per_month INT NULL,
-    has_calendar_integration BOOLEAN DEFAULT FALSE,
-    has_reports BOOLEAN DEFAULT FALSE,
-    has_custom_domain BOOLEAN DEFAULT FALSE,
-    status ENUM('active', 'inactive') DEFAULT 'active',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
 -- Tabela de empresas
 CREATE TABLE IF NOT EXISTS companies (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -49,9 +30,6 @@ CREATE TABLE IF NOT EXISTS companies (
     email VARCHAR(100) NOT NULL UNIQUE,
     phone VARCHAR(20) NULL,
     address JSON NULL,
-    plan_id INT NOT NULL,
-    plan_start_date DATE NOT NULL,
-    plan_end_date DATE NULL,
     payment_status ENUM('active', 'pending', 'overdue', 'canceled') DEFAULT 'active',
     settings JSON NULL,
     business_hours JSON NULL,
@@ -60,9 +38,7 @@ CREATE TABLE IF NOT EXISTS companies (
     status ENUM('active', 'inactive', 'suspended') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (plan_id) REFERENCES plans(id),
-    INDEX(email),
-    INDEX(plan_id)
+    INDEX(email)
 );
 
 -- Adicionar chave estrangeira na tabela users
@@ -180,29 +156,19 @@ CREATE TABLE IF NOT EXISTS notifications (
     INDEX(is_read)
 );
 
--- Inserir planos padrão
-INSERT INTO plans (name, description, monthly_price, annual_price, features, max_professionals, max_services, has_calendar_integration, has_reports)
-VALUES
-('Básico', 'Plano ideal para autônomos e pequenos negócios', 29.90, 299.00, '["Agendamento online", "Lembrete por email", "1 profissional"]', 1, 10, FALSE, FALSE),
-('Profissional', 'Ideal para salões e clínicas pequenas', 69.90, 699.00, '["Tudo do plano Básico", "Até 3 profissionais", "Relatórios simples", "Integração com calendário"]', 3, 20, TRUE, TRUE),
-('Empresarial', 'Para empresas com múltiplos profissionais', 129.90, 1299.00, '["Tudo do plano Profissional", "Até 10 profissionais", "Relatórios avançados", "API para integração"]', 10, 50, TRUE, TRUE);
-
 -- Inserir administrador padrão
 INSERT INTO users (name, email, password, role)
 VALUES ('Administrador', 'admin@agendai.com', '$2a$12$1InE4AsCWtOkOYe5jmd6G.ex2MKT4w7KvIDOQd9jdT6EfFsNpkF4W', 'admin');
 -- Senha: admin (criptografada com bcrypt)
 
 -- Inserir empresa de demonstração
-INSERT INTO companies (name, document_number, email, phone, address, plan_id, plan_start_date, plan_end_date, payment_status, business_hours, working_days)
+INSERT INTO companies (name, document_number, email, phone, address, payment_status, business_hours, working_days)
 VALUES (
     'Empresa Demonstração',
     '12.345.678/0001-99',
     'empresa@agendai.com',
     '(11) 99999-9999',
     '{"street": "Rua Exemplo", "number": "123", "neighborhood": "Centro", "city": "São Paulo", "state": "SP", "zipcode": "01234-567"}',
-    2,
-    CURDATE(),
-    DATE_ADD(CURDATE(), INTERVAL 1 YEAR),
     'active',
     '{"start": "09:00", "end": "18:00", "lunch_start": "12:00", "lunch_end": "13:00"}',
     '[1, 2, 3, 4, 5]'

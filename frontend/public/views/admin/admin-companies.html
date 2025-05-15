@@ -8,13 +8,13 @@
             </div>
         </div>
         <div class="list-group list-group-flush">
-            <a href="#/admin" class="list-group-item list-group-item-action" data-link>
+            <a href="#/admin/dashboard" class="list-group-item list-group-item-action">
                 <i class="fas fa-tachometer-alt me-2"></i> Dashboard
             </a>
-            <a href="#/admin/plans" class="list-group-item list-group-item-action" data-link>
-                <i class="fas fa-tag me-2"></i> Planos
+            <a href="#/admin/plans" class="list-group-item list-group-item-action">
+                <i class="fas fa-tags me-2"></i> Planos
             </a>
-            <a href="#/admin/companies" class="list-group-item list-group-item-action active" data-link>
+            <a href="#/admin/companies" class="list-group-item list-group-item-action active">
                 <i class="fas fa-building me-2"></i> Empresas
             </a>
             <a href="#/admin/users" class="list-group-item list-group-item-action" data-link>
@@ -68,7 +68,7 @@
                     <p class="text-muted">Cadastre e gerencie as empresas que utilizam o AgendAI.</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <button type="button" class="btn btn-primary" id="newCompanyBtn" onclick="openAddCompanyModal()">
+                    <button type="button" class="btn btn-primary" id="newCompanyBtn">
                         <i class="fas fa-plus me-1"></i> Nova Empresa
                     </button>
                 </div>
@@ -81,29 +81,20 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="filterName" class="form-label">Nome</label>
                             <input type="text" class="form-control" id="filterName" placeholder="Nome da empresa">
                         </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="filterPlan" class="form-label">Plano</label>
-                            <select class="form-select" id="filterPlan">
-                                <option value="">Todos</option>
-                                <option value="basic">Básico</option>
-                                <option value="professional">Profissional</option>
-                                <option value="enterprise">Empresarial</option>
-                            </select>
-                        </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="filterStatus" class="form-label">Status</label>
-                            <select class="form-select" id="filterStatus">
+                            <select class="form-control" id="filterStatus">
                                 <option value="">Todos</option>
                                 <option value="active">Ativo</option>
                                 <option value="inactive">Inativo</option>
                                 <option value="trial">Em teste</option>
                             </select>
                         </div>
-                        <div class="col-md-3 mb-3">
+                        <div class="col-md-4 mb-3">
                             <label for="filterDate" class="form-label">Data de cadastro</label>
                             <input type="date" class="form-control" id="filterDate">
                         </div>
@@ -140,21 +131,21 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered" id="companiesTable" width="100%" cellspacing="0">
+                        <table class="table table-striped table-hover" id="companiesTable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Nome</th>
                                     <th>CNPJ</th>
                                     <th>Email</th>
-                                    <th>Plano</th>
                                     <th>Status</th>
+                                    <th>Plano</th>
                                     <th>Data de Cadastro</th>
                                     <th>Ações</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Os dados das empresas serão carregados aqui dinamicamente -->
+                            <tbody id="companiesTableBody">
+                                <!-- Empresas serão carregadas dinamicamente aqui -->
                             </tbody>
                         </table>
                     </div>
@@ -210,13 +201,6 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label for="companyPlan" class="form-label">Plano*</label>
-                            <select class="form-select" id="companyPlan" required>
-                                <option value="">Selecione...</option>
-                                <!-- Os planos serão carregados dinamicamente -->
-                            </select>
-                        </div>
-                        <div class="col-md-6">
                             <label for="companyStatus" class="form-label">Status*</label>
                             <select class="form-select" id="companyStatus" required>
                                 <option value="active">Ativo</option>
@@ -224,7 +208,32 @@
                                 <option value="trial">Em teste</option>
                             </select>
                         </div>
+                        <div class="col-md-6">
+                            <label for="companyCategory" class="form-label">Categoria*</label>
+                            <select class="form-select" id="companyCategory" required>
+                                <option value="">Selecione...</option>
+                                <option value="salon">Salão de Beleza</option>
+                                <option value="barber">Barbearia</option>
+                                <option value="clinic">Clínica Estética</option>
+                                <option value="spa">SPA</option>
+                                <option value="nail">Manicure & Pedicure</option>
+                                <option value="other">Outro</option>
+                            </select>
+                        </div>
                     </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="companyPlan" class="form-label">Plano*</label>
+                            <select class="form-select" id="companyPlan" required>
+                                <option value="">Selecione um plano...</option>
+                                <option value="1">Plano Básico - R$ 50,00/mês (Até 50 agendamentos/mês, 3 profissionais)</option>
+                                <option value="2">Plano Intermediário - R$ 70,00/mês (Até 150 agendamentos/mês, 7 profissionais)</option>
+                                <option value="3">Plano Avançado - R$ 100,00/mês (Agendamentos e profissionais ilimitados)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="companyAddress" class="form-label">Endereço*</label>
                         <input type="text" class="form-control" id="companyAddress" required>
@@ -282,11 +291,73 @@
     </div>
 </div>
 
+<!-- Modal para visualizar detalhes da empresa (desabilitado - botão removido) -->
+<!--
+<div class="modal fade" id="viewCompanyModal" tabindex="-1" aria-labelledby="viewCompanyModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="viewCompanyModalLabel">Detalhes da Empresa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                    <div class="mb-3">
+                    <strong>ID:</strong> <span id="viewCompanyId"></span>
+                    </div>
+                    <div class="mb-3">
+                    <strong>Nome:</strong> <span id="viewCompanyName"></span>
+                        </div>
+                <div class="mb-3">
+                    <strong>CNPJ:</strong> <span id="viewCompanyCNPJ"></span>
+                        </div>
+                <div class="mb-3">
+                    <strong>Email:</strong> <span id="viewCompanyEmail"></span>
+                        </div>
+                <div class="mb-3">
+                    <strong>Telefone:</strong> <span id="viewCompanyPhone"></span>
+                        </div>
+                <div class="mb-3">
+                    <strong>Endereço:</strong> <span id="viewCompanyAddress"></span>
+                    </div>
+                <div class="mb-3">
+                    <strong>Cidade/Estado:</strong> <span id="viewCompanyCity"></span>/<span id="viewCompanyState"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>CEP:</strong> <span id="viewCompanyZip"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Status:</strong> <span id="viewCompanyStatus"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Plano:</strong> <span id="viewCompanyPlan"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Data de Cadastro:</strong> <span id="viewCompanyCreatedAt"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+-->
+
 <!-- CORREÇÃO EMERGENCIAL PARA EXIBIÇÃO DE EMPRESAS -->
 <script>
     // Executar imediatamente após o carregamento da página
     (function() {
         console.log('🚨 CORREÇÃO EMERGENCIAL SENDO APLICADA 🚨');
+        
+        // Função para obter o texto do plano baseado no ID
+        function getPlanText(planId) {
+            const planos = {
+                '1': 'Plano Básico - R$ 50,00/mês',
+                '2': 'Plano Intermediário - R$ 70,00/mês',
+                '3': 'Plano Avançado - R$ 100,00/mês'
+            };
+            return planos[planId] || 'Plano não especificado';
+        }
         
         // Função para carregar empresas do localStorage e exibi-las na tabela
         function carregarEExibirEmpresas() {
@@ -341,7 +412,7 @@
                 window.companies = empresas;
                 
                 // Obter referência à tabela
-                const tabela = document.querySelector('#companiesTable tbody');
+                const tabela = document.querySelector('#companiesTableBody');
                 if (!tabela) {
                     console.error('❌ Tabela de empresas não encontrada no DOM!');
                     return;
@@ -386,14 +457,11 @@
                         <td>${empresa.name || 'N/A'}</td>
                         <td>${empresa.cnpj || 'N/A'}</td>
                         <td>${empresa.email || 'N/A'}</td>
-                        <td>${empresa.planName || empresa.plan || 'N/A'}</td>
                         <td><span class="badge bg-${status.class}">${status.text}</span></td>
+                        <td>${getPlanText(empresa.plan) || 'N/A'}</td>
                         <td>${empresa.createdAt || 'N/A'}</td>
                         <td>
                             <div class="btn-group btn-group-sm" role="group">
-                                <button type="button" class="btn btn-info view-company" data-id="${empresa.id}" title="Visualizar">
-                                    <i class="fas fa-eye"></i>
-                                </button>
                                 <button type="button" class="btn btn-primary edit-company" data-id="${empresa.id}" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -419,14 +487,6 @@
         
         // Função para configurar os botões de ação da tabela
         function configurarBotoesAcao() {
-            // Configurar botões de visualizar
-            document.querySelectorAll('.view-company').forEach(botao => {
-                botao.onclick = function() {
-                    const id = parseInt(this.getAttribute('data-id'));
-                    visualizarEmpresa(id);
-                };
-            });
-            
             // Configurar botões de editar
             document.querySelectorAll('.edit-company').forEach(botao => {
                 botao.onclick = function() {
@@ -442,40 +502,6 @@
                     excluirEmpresa(id);
                 };
             });
-        }
-        
-        // Função para visualizar detalhes de uma empresa
-        function visualizarEmpresa(id) {
-            console.log(`🔍 Visualizando empresa ID: ${id}`);
-            
-            try {
-                // Encontrar empresa por ID
-                const empresa = window.companies.find(e => e.id === id);
-                
-                if (!empresa) {
-                    console.error(`❌ Empresa ID ${id} não encontrada!`);
-                    alert('Empresa não encontrada.');
-                    return;
-                }
-                
-                // Construir mensagem com detalhes
-                const detalhes = `
-                    Nome: ${empresa.name || 'N/A'}
-                    CNPJ: ${empresa.cnpj || 'N/A'}
-                    Email: ${empresa.email || 'N/A'}
-                    Telefone: ${empresa.phone || 'N/A'}
-                    Plano: ${empresa.planName || empresa.plan || 'N/A'}
-                    Status: ${empresa.statusText || empresa.status || 'N/A'}
-                    Endereço: ${empresa.address || 'N/A'}, ${empresa.city || 'N/A'}/${empresa.state || 'N/A'} - ${empresa.zip || 'N/A'}
-                    Data de Cadastro: ${empresa.createdAt || 'N/A'}
-                `;
-                
-                // Mostrar detalhes
-                alert(`Detalhes da Empresa:\n\n${detalhes}`);
-            } catch (erro) {
-                console.error('❌ Erro ao visualizar empresa:', erro);
-                alert('Erro ao visualizar detalhes da empresa.');
-            }
         }
         
         // Função para editar uma empresa
@@ -499,45 +525,70 @@
                     return;
                 }
                 
-                // Preencher formulário com dados da empresa
+                // Limpar validações anteriores
                 const form = document.getElementById('companyForm');
                 if (form) {
-                    // Limpar validações anteriores
                     form.classList.remove('was-validated');
+                }
+                
+                // Usar a função global para preencher o formulário - NOVO MÉTODO
+                if (typeof window.preencherFormularioEdicaoModal === 'function') {
+                    window.preencherFormularioEdicaoModal(empresa);
+                    console.log('✅ Utilizando função global para preencher formulário');
+                } else {
+                    console.warn('⚠️ Função global de preenchimento não disponível, usando método legacy');
                     
-                    // Armazenar ID da empresa no formulário
-                    form.setAttribute('data-company-id', empresa.id);
-                    
-                    // Preencher campos
-                    document.getElementById('companyName').value = empresa.name || '';
-                    document.getElementById('companyCNPJ').value = empresa.cnpj || '';
-                    document.getElementById('companyEmail').value = empresa.email || '';
-                    document.getElementById('companyPhone').value = empresa.phone || '';
-                    document.getElementById('companyAddress').value = empresa.address || '';
-                    document.getElementById('companyCity').value = empresa.city || '';
-                    document.getElementById('companyState').value = empresa.state || '';
-                    document.getElementById('companyZip').value = empresa.zip || '';
-                    
-                    // Selecionar plano e status
-                    if (empresa.plan) {
-                        const planSelect = document.getElementById('companyPlan');
-                        if (planSelect) {
-                            for (let i = 0; i < planSelect.options.length; i++) {
-                                if (planSelect.options[i].value == empresa.plan) {
-                                    planSelect.selectedIndex = i;
-                                    break;
+                    // CÓDIGO LEGACY (FALLBACK) - usar o método antigo de preenchimento
+                    // Preencher formulário com dados da empresa
+                    if (form) {
+                        // Armazenar ID da empresa no formulário
+                        form.setAttribute('data-company-id', empresa.id);
+                        
+                        // Preencher campos
+                        document.getElementById('companyName').value = empresa.name || '';
+                        document.getElementById('companyCNPJ').value = empresa.cnpj || '';
+                        document.getElementById('companyEmail').value = empresa.email || '';
+                        document.getElementById('companyPhone').value = empresa.phone || '';
+                        document.getElementById('companyAddress').value = empresa.address || '';
+                        document.getElementById('companyCity').value = empresa.city || '';
+                        document.getElementById('companyState').value = empresa.state || '';
+                        document.getElementById('companyZip').value = empresa.zip || '';
+                        
+                        // Selecionar status
+                        if (empresa.status) {
+                            const statusSelect = document.getElementById('companyStatus');
+                            if (statusSelect) {
+                                for (let i = 0; i < statusSelect.options.length; i++) {
+                                    if (statusSelect.options[i].value === empresa.status) {
+                                        statusSelect.selectedIndex = i;
+                                        break;
+                                    }
                                 }
                             }
                         }
-                    }
-                    
-                    if (empresa.status) {
-                        const statusSelect = document.getElementById('companyStatus');
-                        if (statusSelect) {
-                            for (let i = 0; i < statusSelect.options.length; i++) {
-                                if (statusSelect.options[i].value === empresa.status) {
-                                    statusSelect.selectedIndex = i;
-                                    break;
+                        
+                        // Selecionar categoria
+                        if (empresa.category) {
+                            const categorySelect = document.getElementById('companyCategory');
+                            if (categorySelect) {
+                                for (let i = 0; i < categorySelect.options.length; i++) {
+                                    if (categorySelect.options[i].value === empresa.category) {
+                                        categorySelect.selectedIndex = i;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Selecionar plano
+                        if (empresa.plan) {
+                            const planSelect = document.getElementById('companyPlan');
+                            if (planSelect) {
+                                for (let i = 0; i < planSelect.options.length; i++) {
+                                    if (planSelect.options[i].value === empresa.plan) {
+                                        planSelect.selectedIndex = i;
+                                        break;
+                                    }
                                 }
                             }
                         }
@@ -564,14 +615,14 @@
                         // Método alternativo
                         modal.style.display = 'block';
                         modal.classList.add('show');
-                        document.body.classList.add('modal-open');
-                        
+                    document.body.classList.add('modal-open');
+                    
                         // Adicionar backdrop
-                        if (!document.querySelector('.modal-backdrop')) {
-                            const backdrop = document.createElement('div');
-                            backdrop.className = 'modal-backdrop fade show';
-                            document.body.appendChild(backdrop);
-                        }
+                    if (!document.querySelector('.modal-backdrop')) {
+                        const backdrop = document.createElement('div');
+                        backdrop.className = 'modal-backdrop fade show';
+                        document.body.appendChild(backdrop);
+                    }
                     }
                 } else {
                     // Método alternativo
@@ -715,8 +766,8 @@
                         empresas = JSON.parse(empresasJSON);
                         if (!Array.isArray(empresas)) {
                             empresas = [];
-                        }
-                    } catch (e) {
+                    }
+                } catch (e) {
                         empresas = [];
                     }
                 }
@@ -750,236 +801,159 @@
                 } else {
                     // Adicionar nova empresa
                     empresas.push(dadosEmpresa);
-                    console.log(`➕ Adicionando nova empresa ID: ${dadosEmpresa.id}`);
+                    console.log(`🔄 Adicionando nova empresa ID: ${dadosEmpresa.id}`);
                 }
                 
-                // Remover possíveis duplicatas (por ID)
-                const idsUnicos = {};
-                empresas = empresas.filter(empresa => {
-                    // Se já vimos este ID, pular
-                    if (idsUnicos[empresa.id]) return false;
-                    // Caso contrário, marcá-lo como visto e manter
-                    idsUnicos[empresa.id] = true;
-                    return true;
-                });
-                
-                // Salvar no localStorage
+                // Salvar e atualizar
                 localStorage.setItem('agendai_companies', JSON.stringify(empresas));
-                
-                // Atualizar variável global
                 window.companies = empresas;
-                
-                // Recarregar a tabela
                 carregarEExibirEmpresas();
                 
-                console.log(`✅ Empresas salvas com sucesso! Total: ${empresas.length}`);
+                console.log('✅ Empresa salva com sucesso!');
                 return true;
             } catch (erro) {
-                console.error('❌ Erro ao salvar empresa diretamente:', erro);
+                console.error('❌ Erro ao salvar empresa:', erro);
+                alert('Erro ao salvar empresa.');
                 return false;
             }
-        };
-        
-        // Modificar comportamento do botão salvar
-        document.addEventListener('click', function(e) {
-            if (e.target && e.target.id === 'saveCompanyBtn') {
-                console.log('🖱️ Botão Salvar clicado, interceptando...');
-                
-                const form = document.getElementById('companyForm');
-                if (form && form.checkValidity()) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Coletar dados do formulário
-                    const dadosEmpresa = {
-                        id: form.hasAttribute('data-company-id') 
-                            ? parseInt(form.getAttribute('data-company-id')) 
-                            : Date.now(),
-                        name: document.getElementById('companyName').value,
-                        cnpj: document.getElementById('companyCNPJ').value,
-                        email: document.getElementById('companyEmail').value,
-                        phone: document.getElementById('companyPhone').value,
-                        address: document.getElementById('companyAddress').value,
-                        city: document.getElementById('companyCity').value,
-                        state: document.getElementById('companyState').value,
-                        zip: document.getElementById('companyZip').value,
-                        plan: document.getElementById('companyPlan').value,
-                        planName: document.getElementById('companyPlan').options[
-                            document.getElementById('companyPlan').selectedIndex
-                        ].text,
-                        status: document.getElementById('companyStatus').value,
-                        statusText: document.getElementById('companyStatus').options[
-                            document.getElementById('companyStatus').selectedIndex
-                        ].text,
-                        createdAt: new Date().toLocaleDateString('pt-BR')
-                    };
-                    
-                    // Salvar diretamente
-                    const salvouComSucesso = window.salvarEmpresaDiretamente(dadosEmpresa);
-                    
-                    if (salvouComSucesso) {
-                        // Mostrar mensagem de sucesso
-                        alert('Empresa cadastrada com sucesso!');
-                        
-                        // Fechar o modal
-                        const modal = document.getElementById('addCompanyModal');
-                        if (modal) {
-                            // Tentar fechar com Bootstrap
-                            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                                try {
-                                    const bsModal = bootstrap.Modal.getInstance(modal);
-                                    if (bsModal) {
-                                        bsModal.hide();
-                                    }
-                                } catch (erro) {
-                                    console.warn('Erro ao fechar modal via Bootstrap:', erro);
-                                }
-                            }
-                            
-                            // Método alternativo
-                            modal.style.display = 'none';
-                            modal.classList.remove('show');
-                            document.body.classList.remove('modal-open');
-                            
-                            // Remover backdrop
-                            const backdrop = document.querySelector('.modal-backdrop');
-                            if (backdrop) backdrop.remove();
-                        }
-                    }
-                } else if (form) {
-                    // Mostrar validações
-                    form.classList.add('was-validated');
-                }
-            }
-        }, true); // Usar captura para garantir que este evento execute primeiro
-        
-        // Adicionar função para abrir modal
-        window.openAddCompanyModal = function() {
-            console.log('📂 Abrindo modal de nova empresa...');
-            
-            try {
-                // Obter referência ao modal
-                const modal = document.getElementById('addCompanyModal');
-                if (!modal) {
-                    console.error('❌ Modal não encontrado!');
-                    return;
-                }
-                
-                // Limpar formulário
-                const form = document.getElementById('companyForm');
-                if (form) {
-                    form.reset();
-                    form.classList.remove('was-validated');
-                    form.removeAttribute('data-company-id');
-                }
-                
-                // Carregar planos no select
-                const planSelect = document.getElementById('companyPlan');
-                if (planSelect) {
-                    // Limpar opções exceto a primeira
-                    while (planSelect.options.length > 1) {
-                        planSelect.remove(1);
-                    }
-                    
-                    // Tentar obter planos do localStorage
-                    try {
-                        const plansJSON = localStorage.getItem('agendai_plans');
-                        if (plansJSON) {
-                            const plans = JSON.parse(plansJSON);
-                            if (Array.isArray(plans)) {
-                                plans.forEach(plan => {
-                                    const option = document.createElement('option');
-                                    option.value = plan.id;
-                                    option.textContent = plan.name;
-                                    planSelect.appendChild(option);
-                                });
-                            }
-                        } else {
-                            // Planos padrão
-                            [
-                                { id: 1, name: "Básico" },
-                                { id: 2, name: "Profissional" },
-                                { id: 3, name: "Empresarial" }
-                            ].forEach(plan => {
-                                const option = document.createElement('option');
-                                option.value = plan.id;
-                                option.textContent = plan.name;
-                                planSelect.appendChild(option);
-                            });
-                        }
-                    } catch (erro) {
-                        console.error('Erro ao carregar planos:', erro);
-                    }
-                }
-                
-                // Definir título do modal
-                const modalTitle = modal.querySelector('.modal-title');
-                if (modalTitle) {
-                    modalTitle.textContent = 'Nova Empresa';
-                }
-                
-                // Mostrar modal
-                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                    try {
-                        let bsModal = bootstrap.Modal.getInstance(modal);
-                        if (!bsModal) {
-                            bsModal = new bootstrap.Modal(modal);
-                        }
-                        bsModal.show();
-                    } catch (erro) {
-                        console.warn('Erro ao abrir modal via Bootstrap:', erro);
-                        
-                        // Método alternativo
-                        modal.style.display = 'block';
-                        modal.classList.add('show');
-                        document.body.classList.add('modal-open');
-                        
-                        // Adicionar backdrop
-                        if (!document.querySelector('.modal-backdrop')) {
-                            const backdrop = document.createElement('div');
-                            backdrop.className = 'modal-backdrop fade show';
-                            document.body.appendChild(backdrop);
-                        }
-                    }
-                } else {
-                    // Método alternativo
-                    modal.style.display = 'block';
-                    modal.classList.add('show');
-                    document.body.classList.add('modal-open');
-                    
-                    // Adicionar backdrop
-                    if (!document.querySelector('.modal-backdrop')) {
-                        const backdrop = document.createElement('div');
-                        backdrop.className = 'modal-backdrop fade show';
-                        document.body.appendChild(backdrop);
-                    }
-                }
-                
-                console.log('✅ Modal aberto com sucesso!');
-            } catch (erro) {
-                console.error('❌ Erro ao abrir modal:', erro);
-            }
-        };
-        
-        // Configurar botão Nova Empresa
-        const btnNovaEmpresa = document.getElementById('newCompanyBtn');
-        if (btnNovaEmpresa) {
-            btnNovaEmpresa.onclick = function(e) {
-                e.preventDefault();
-                window.openAddCompanyModal();
-            };
-            console.log('✅ Botão Nova Empresa configurado com sucesso!');
         }
         
-        // Carregar e exibir empresas imediatamente
-        carregarEExibirEmpresas();
+        // Expor a função carregarEExibirEmpresas globalmente para ser chamada por outros scripts
+        window.carregarEExibirEmpresas = carregarEExibirEmpresas;
         
-        // Configurar recarregamento periódico
-        setInterval(carregarEExibirEmpresas, 5000);
+        // Carregar empresas imediatamente quando a página for carregada
+        setTimeout(carregarEExibirEmpresas, 500);
         
-        console.log('✅ CORREÇÃO EMERGENCIAL APLICADA COM SUCESSO!');
+        // Recarregar quando a página for completamente carregada
+        if (document.readyState === 'complete') {
+            carregarEExibirEmpresas();
+        } else {
+            window.addEventListener('load', carregarEExibirEmpresas);
+        }
+        
+        console.log('✅ Script de correção emergencial inicializado com sucesso');
     })();
 </script> 
 
-<!-- CORREÇÃO DO PROBLEMA DA TABELA DE EMPRESAS NÃO ENCONTRADA NO DOM -->
-<script src="/public/js/company-table-fix.js"></script> 
+<!-- Script para garantir que o modal exista no DOM -->
+<script src="/public/js/modal-creator.js"></script>
+
+<!-- Script para garantir que o jQuery esteja disponível -->
+<script src="/public/js/jquery-loader.js"></script>
+
+<!-- Script para inicializar o modal corretamente -->
+<script src="/public/js/modal-initializer.js"></script>
+
+<!-- Script para corrigir o botão Nova Empresa -->
+<script src="/public/js/fix-new-company-button.js"></script>
+
+<!-- Script para garantir que o botão seja clicável -->
+<script src="/public/js/ensure-button-clickable.js"></script>
+
+<!-- Script de debug para verificar a tabela -->
+<script src="/public/js/table-debug.js"></script>
+
+<!-- Script para corrigir diretamente a tabela no DOM -->
+<script src="/public/js/direct-table-fix.js"></script>
+
+<!-- Script para localizar e corrigir a tabela -->
+<script src="/public/js/table-finder.js"></script>
+
+<!-- Script para corrigir o ID da tabela -->
+<script src="/public/js/fix-table-id.js"></script>
+
+<!-- Script para corrigir a tabela de empresas -->
+<script src="/public/js/company-table-fix.js"></script>
+
+<!-- Script para remover empresas padrão -->
+<script src="/public/js/remove-default-companies.js"></script>
+
+<!-- Script para validação do formulário de empresa -->
+<script src="/public/js/company-form-validation.js"></script>
+
+<!-- Script para monitorar alterações nos dados de empresas -->
+<script src="/public/js/company-data-watcher.js"></script>
+
+<!-- Script para sincronização com servidor (persistência entre recarregamentos) -->
+<script src="/public/js/company-server-sync.js"></script>
+
+<!-- Script para persistência via IndexedDB (redundância) -->
+<script src="/public/js/persistence-fallback.js"></script>
+
+<!-- Script para recuperação forçada de dados após recarregamento da página -->
+<script src="/public/js/force-data-recovery.js"></script>
+
+<!-- Script para garantir que o campo de plano exista no modal -->
+<script src="/public/js/ensure-plan-field.js"></script>
+
+<!-- Script para exclusão permanente de empresas -->
+<script src="/public/js/company-delete-handler.js"></script>
+
+<!-- Script para persistência de planos no IndexedDB -->
+<script src="/public/js/plans-indexeddb.js"></script>
+
+<!-- Script de correção emergencial para garantir a exclusão de empresas -->
+<script>
+    // Executar imediatamente
+    (function() {
+        console.log('🚨 Aplicando correção emergencial para botões de exclusão');
+        
+        // Função para reconectar os botões de exclusão
+        function conectarBotoesExclusao() {
+            try {
+                // Verificar se nossa função segura de exclusão está disponível
+                if (typeof window.excluirEmpresaPermanentemente !== 'function') {
+                    console.error('❌ Função de exclusão permanente não encontrada!');
+                    return;
+                }
+                
+                // Encontrar todos os botões de exclusão
+                const botoes = document.querySelectorAll('.delete-company');
+                console.log(`🔍 Encontrados ${botoes.length} botões de exclusão diretos`);
+                
+                // Conectar cada botão à nossa função segura
+                botoes.forEach((botao, index) => {
+                    console.log(`🔧 Corrigindo botão de exclusão #${index + 1}`);
+                    
+                    // Substituir o evento onClick existente
+                    botao.onclick = function(event) {
+                        const id = parseInt(this.getAttribute('data-id'));
+                        console.log(`🔴 EMERGENCIAL: Clique de exclusão para ID ${id}`);
+                        
+                        // Impedir comportamento padrão
+                        event.preventDefault();
+                        event.stopPropagation();
+                        
+                        // Chamar diretamente nossa função segura
+                        window.excluirEmpresaPermanentemente(id);
+                        
+                        // Prevenir outras ações
+                        return false;
+                    };
+                });
+                
+                console.log('✅ Correção emergencial aplicada com sucesso!');
+            } catch (erro) {
+                console.error('❌ Erro na correção emergencial:', erro);
+            }
+        }
+        
+        // Executar quando o DOM estiver pronto
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(conectarBotoesExclusao, 100);
+        } else {
+            document.addEventListener('DOMContentLoaded', () => setTimeout(conectarBotoesExclusao, 100));
+        }
+        
+        // Reconectar periodicamente para garantir
+        setInterval(conectarBotoesExclusao, 2000);
+        
+        // Executar quando a página for atualizada
+        window.addEventListener('load', conectarBotoesExclusao);
+        
+        // Executar quando o hash mudar (navegação)
+        window.addEventListener('hashchange', () => setTimeout(conectarBotoesExclusao, 500));
+    })();
+</script>
+</body>
+</html>

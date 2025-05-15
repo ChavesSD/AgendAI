@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
         let company = null;
         if (user.role !== 'admin' && user.company_id) {
             const [companyRows] = await pool.query(
-                'SELECT id, name, email, status, plan_id, payment_status FROM companies WHERE id = ?',
+                'SELECT id, name, email, status, payment_status FROM companies WHERE id = ?',
                 [user.company_id]
             );
             

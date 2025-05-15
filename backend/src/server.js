@@ -17,7 +17,6 @@ const fs = require('fs');
 
 // Importar rotas
 const authRoutes = require('./routes/auth');
-const plansRoutes = require('./routes/plans');
 
 // Importar middlewares
 const { authenticateToken, checkRole } = require('./middlewares/auth');
@@ -62,24 +61,6 @@ async function createTablesIfNotExist() {
     try {
         const connection = await pool.getConnection();
         
-        // Tabela de planos
-        await connection.query(`
-            CREATE TABLE IF NOT EXISTS plans (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(100) NOT NULL,
-                price DECIMAL(10,2) NOT NULL,
-                appointments INT NOT NULL DEFAULT 0,
-                professionals INT NOT NULL DEFAULT 0,
-                services INT NOT NULL DEFAULT 0,
-                status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
-                highlight ENUM('none', 'popular', 'recommended', 'best-value') NOT NULL DEFAULT 'none',
-                description TEXT,
-                features JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-            )
-        `);
-        
         console.log('Tabelas verificadas/criadas com sucesso');
         connection.release();
     } catch (error) {
@@ -100,7 +81,6 @@ app.get('/api/health', (req, res) => {
 
 // Configurar rotas da API
 app.use('/api/auth', authRoutes);
-app.use('/api/plans', plansRoutes);
 
 // Endpoint de login (mantido para compatibilidade)
 app.post('/api/auth/login', async (req, res) => {
@@ -155,7 +135,7 @@ app.post('/api/auth/login', async (req, res) => {
         let company = null;
         if (user.role !== 'admin' && user.company_id) {
             const [companyRows] = await pool.query(
-                'SELECT id, name, email, status, plan_id, payment_status FROM companies WHERE id = ?',
+                'SELECT id, name, email, status, payment_status FROM companies WHERE id = ?',
                 [user.company_id]
             );
             
@@ -249,7 +229,7 @@ app.get('/api/users/me', authenticateToken, async (req, res) => {
         // Se for usuário de empresa, buscar dados da empresa
         if (user.role !== 'admin' && user.company_id) {
             const [companyRows] = await pool.query(
-                'SELECT id, name, email, status, plan_id, payment_status FROM companies WHERE id = ?',
+                'SELECT id, name, email, status, payment_status FROM companies WHERE id = ?',
                 [user.company_id]
             );
             

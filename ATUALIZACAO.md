@@ -39,6 +39,11 @@
    - Atualizado o código para verificar a existência de variáveis antes de declarar, usando `if (typeof window.variableName === 'undefined')`
    - Corrigidos arquivos: admin-clients.html, admin-reports.html, admin-appointments.html, admin-professionals.html, admin.users.html e outros
 
+8. **Melhorias recentes**:
+   - Atualização automática do select de empresas no modal de usuário, garantindo sincronização com o cadastro de empresas
+   - Remoção de arquivos duplicados e desnecessários (user-modal-fix.js, fix-user-button.js, user-modal-basic.js, direct-button-fix.js, user-modal-native.js, create-user-button.js, fix-user-modal.js)
+   - Correção do botão "Novo Usuário" para abrir o modal corretamente via Bootstrap
+
 ## O que falta fazer:
 
 1. **Implementação completa da API Backend**:
@@ -68,18 +73,6 @@
    - Adicionar testes automatizados
    - Configurar CI/CD para deploy contínuo
    - Melhorar os logs e sistema de monitoramento de erros
-
-## Melhorias recentes
-
-1. **Reorganização de arquivos**:
-   - Removidos arquivos duplicados nas pastas views
-   - Atualizado sistema de roteamento para usar estrutura de pastas organizada
-   - Corrigidos todos os caminhos de arquivos no carregamento dinâmico
-
-2. **Correções de navegação**:
-   - Substituídas as URLs hardcoded (http://localhost:3001) por URLs relativas (/)
-   - Melhorada a lógica de carregamento de views com tratamento de erros
-   - Corrigido redirecionamento após logout
 
 ## Informação importante sobre a porta do servidor
 

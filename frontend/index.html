@@ -6,6 +6,44 @@
     <meta name="description" content="AgendAI - Sistema inteligente de agendamento">
     <title>AgendAI - Sistema de Agendamento Inteligente</title>
     
+    <!-- Script para carregar jQuery -->
+    <script src="/public/js/jquery-loader.js"></script>
+    
+    <!-- Script para limpar planos -->
+    <script>
+        // Remover todas as referências a planos imediatamente
+        try {
+            const plansKeys = [
+                'agendai_plans',
+                'agendai_plans_v2',
+                'agendai_plans_cleared',
+                'agendai_plans_removed',
+                'agendai_excluded_plans'
+            ];
+            
+            plansKeys.forEach(key => {
+                if (localStorage.getItem(key) !== null) {
+                    localStorage.removeItem(key);
+                    console.log(`✅ ${key} removido do localStorage`);
+                }
+            });
+        } catch (e) {
+            console.error('❌ Erro ao limpar planos:', e);
+        }
+    </script>
+    
+    <!-- Script para limpar empresas padrão imediatamente -->
+    <script>
+        // Remover empresas padrão no início do carregamento
+        try {
+            localStorage.setItem('agendai_companies_cleared', 'true');
+            localStorage.setItem('agendai_companies', JSON.stringify([]));
+            console.log('✅ Empresas padrão removidas no início do carregamento');
+        } catch (e) {
+            console.error('❌ Erro ao limpar empresas padrão:', e);
+        }
+    </script>
+    
     <!-- Favicon -->
     <link rel="shortcut icon" href="/public/src/img/LogoAgendAI.png" type="image/png">
     
@@ -57,7 +95,6 @@
                 console.log('Botão de logout clicado (handler global)');
                 
                 // Salvar dados importantes antes de limpar o localStorage
-                const plansData = localStorage.getItem('agendai_plans');
                 const companiesData = localStorage.getItem('agendai_companies');
                 const initialized = localStorage.getItem('agendai_initialized');
                 
@@ -66,7 +103,6 @@
                 console.log('Dados de autenticação removidos do localStorage');
                 
                 // Restaurar dados importantes
-                if (plansData) localStorage.setItem('agendai_plans', plansData);
                 if (companiesData) localStorage.setItem('agendai_companies', companiesData);
                 if (initialized) localStorage.setItem('agendai_initialized', initialized);
                 
@@ -204,10 +240,16 @@
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
     
-    <!-- Script de correção para botões de exclusão de planos -->
-    <script src="/public/js/plan-actions-fix.js"></script>
+    <!-- Script para adicionar o botão Nova Empresa -->
+    <script src="/public/js/create-company-button.js"></script>
     
     <!-- Script de diagnóstico e correção de problemas de conexão -->
     <script src="/public/js/connection-fix.js"></script>
+    
+    <!-- Script de limpeza de referências a planos -->
+    <script src="/public/js/clear-plans-refs.js"></script>
+    
+    <!-- Script para gerenciar as rotas de planos -->
+    <script src="/public/js/plans-routes.js"></script>
 </body>
 </html> 
